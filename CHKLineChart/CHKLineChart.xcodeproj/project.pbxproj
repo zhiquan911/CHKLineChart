@@ -7,17 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C559F2591D80FC22002B1E57 /* CHExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C559F2581D80FC22002B1E57 /* CHExtension.swift */; };
 		C5E4E05B1D76CC7E00C47F5A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E05A1D76CC7E00C47F5A /* AppDelegate.swift */; };
 		C5E4E05D1D76CC7E00C47F5A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E05C1D76CC7E00C47F5A /* ViewController.swift */; };
 		C5E4E0601D76CC7E00C47F5A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C5E4E05E1D76CC7E00C47F5A /* Main.storyboard */; };
 		C5E4E0621D76CC7E00C47F5A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C5E4E0611D76CC7E00C47F5A /* Assets.xcassets */; };
 		C5E4E0651D76CC7E00C47F5A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C5E4E0631D76CC7E00C47F5A /* LaunchScreen.storyboard */; };
 		C5E4E06F1D76CF6200C47F5A /* CHSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E06E1D76CF6200C47F5A /* CHSection.swift */; };
-		C5E4E0711D76D7F800C47F5A /* CHYAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E0701D76D7F800C47F5A /* CHYAxis.swift */; };
-		C5E4E0731D76D84400C47F5A /* CHXAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E0721D76D84400C47F5A /* CHXAxis.swift */; };
+		C5E4E0711D76D7F800C47F5A /* CHAxisModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E0701D76D7F800C47F5A /* CHAxisModel.swift */; };
+		C5F700011D7EA94500622E60 /* CHChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F700001D7EA94500622E60 /* CHChartModel.swift */; };
+		C5F7FFFB1D7EA57A00622E60 /* CHKLineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7FFFA1D7EA57A00622E60 /* CHKLineChart.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C559F2581D80FC22002B1E57 /* CHExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHExtension.swift; path = Classes/CHExtension.swift; sourceTree = "<group>"; };
 		C5E4E0571D76CC7E00C47F5A /* CHKLineChart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CHKLineChart.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5E4E05A1D76CC7E00C47F5A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C5E4E05C1D76CC7E00C47F5A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -26,8 +29,9 @@
 		C5E4E0641D76CC7E00C47F5A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C5E4E0661D76CC7E00C47F5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C5E4E06E1D76CF6200C47F5A /* CHSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHSection.swift; path = Classes/CHSection.swift; sourceTree = "<group>"; };
-		C5E4E0701D76D7F800C47F5A /* CHYAxis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHYAxis.swift; path = Classes/CHYAxis.swift; sourceTree = "<group>"; };
-		C5E4E0721D76D84400C47F5A /* CHXAxis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHXAxis.swift; path = Classes/CHXAxis.swift; sourceTree = "<group>"; };
+		C5E4E0701D76D7F800C47F5A /* CHAxisModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHAxisModel.swift; path = Classes/CHAxisModel.swift; sourceTree = "<group>"; };
+		C5F700001D7EA94500622E60 /* CHChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHChartModel.swift; path = Classes/CHChartModel.swift; sourceTree = "<group>"; };
+		C5F7FFFA1D7EA57A00622E60 /* CHKLineChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHKLineChart.swift; path = Classes/CHKLineChart.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,8 +80,10 @@
 			isa = PBXGroup;
 			children = (
 				C5E4E06E1D76CF6200C47F5A /* CHSection.swift */,
-				C5E4E0701D76D7F800C47F5A /* CHYAxis.swift */,
-				C5E4E0721D76D84400C47F5A /* CHXAxis.swift */,
+				C5E4E0701D76D7F800C47F5A /* CHAxisModel.swift */,
+				C5F7FFFA1D7EA57A00622E60 /* CHKLineChart.swift */,
+				C5F700001D7EA94500622E60 /* CHChartModel.swift */,
+				C559F2581D80FC22002B1E57 /* CHExtension.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -160,11 +166,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C5E4E0711D76D7F800C47F5A /* CHYAxis.swift in Sources */,
+				C5E4E0711D76D7F800C47F5A /* CHAxisModel.swift in Sources */,
 				C5E4E06F1D76CF6200C47F5A /* CHSection.swift in Sources */,
-				C5E4E0731D76D84400C47F5A /* CHXAxis.swift in Sources */,
 				C5E4E05D1D76CC7E00C47F5A /* ViewController.swift in Sources */,
+				C559F2591D80FC22002B1E57 /* CHExtension.swift in Sources */,
+				C5F700011D7EA94500622E60 /* CHChartModel.swift in Sources */,
 				C5E4E05B1D76CC7E00C47F5A /* AppDelegate.swift in Sources */,
+				C5F7FFFB1D7EA57A00622E60 /* CHKLineChart.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,6 +324,7 @@
 				C5E4E06B1D76CC7E00C47F5A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
