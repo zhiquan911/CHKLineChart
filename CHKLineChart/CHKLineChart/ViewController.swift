@@ -9,6 +9,8 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    @IBOutlet var chartView: CHKLineChartView!
 
     override func viewDidLoad() {
         super.viewDidLoad()

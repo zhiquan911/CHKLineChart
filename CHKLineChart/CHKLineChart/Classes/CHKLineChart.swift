@@ -15,23 +15,37 @@ import UIKit
  - Right: 右边
  - None:  不显示
  */
-enum CHYAxisShowPosition {
+public enum CHYAxisShowPosition {
     case Left, Right, None
 }
 
 public enum CHKLineChartStyle {
     case Default
     
+    /**
+     分区样式配置
+     
+     - returns:
+     */
     func getSections() -> [CHSection] {
+        let upcolor = UIColor.chHex(0xF80D1F)
+        let downcoloer = UIColor.chHex(0x1E932B)
         let priceSection = CHSection()
+        let candleModel = CHCandleModel(upColor: upcolor, downColor: downcoloer)
+        priceSection.series = [[candleModel]]
+        priceSection.hidden = false
+        priceSection.ratios = 3
+        
         let volumeSection = CHSection()
-        let trendSection = CHSection()
-        return [priceSection, volumeSection, trendSection]
+        let volumeModel = CHColumnModel(upColor: upcolor, downColor: downcoloer)
+        volumeSection.series = [[volumeModel]]
+        volumeSection.hidden = false
+        volumeSection.ratios = 1
+        
+//        let trendSection = CHSection()
+        return [priceSection, volumeSection]
     }
     
-    func getRatios() -> [Int] {
-        return [3, 1, 1]
-    }
 }
 
 
@@ -48,7 +62,7 @@ public protocol CHKLineChartDelegate {
      
      - returns:
      */
-    func numberOfPointsInKLineChart(chart: CHKLineChart) -> Int
+    func numberOfPointsInKLineChart(chart: CHKLineChartView) -> Int
     
     /**
      数据源索引为对应的对象
@@ -58,7 +72,7 @@ public protocol CHKLineChartDelegate {
      
      - returns: K线数据对象
      */
-    func kLineChart(chart: CHKLineChart, valueForPointAtIndex index: Int) -> CHChartItem
+    func kLineChart(chart: CHKLineChartView, valueForPointAtIndex index: Int) -> CHChartItem
     
     /**
      获取图表X轴的显示的内容
@@ -68,39 +82,51 @@ public protocol CHKLineChartDelegate {
      
      - returns:
      */
-    func kLineChart(chart: CHKLineChart, labelOnXAxisForIndex index: Int) -> String
+    func kLineChart(chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String
 }
 
-public class CHKLineChart: UIView {
+public class CHKLineChartView: UIView {
     
     /// MARK: - 常量
     var kMinRange = 9
     var kMaxRange = 121
     
     /// MARK: - 成员变量
-    var upColor: UIColor = UIColor.greenColor()     //升的颜色
-    var downColor: UIColor = UIColor.redColor()     //跌的颜色
-    var style = CHKLineChartStyle.Default           //显示样式
-    var xAxisPerInterval = 4                        //x轴的间断个数
+    @IBInspectable public var upColor: UIColor = UIColor.greenColor()     //升的颜色
+    @IBInspectable public var downColor: UIColor = UIColor.redColor()     //跌的颜色
+    @IBInspectable public var labelFont = UIFont.systemFontOfSize(10)
+    @IBInspectable public var lineColor: UIColor = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1) //线条颜色
+    @IBInspectable public var textColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1) //文字颜色
+    @IBInspectable public var delegate: CHKLineChartDelegate?             //代理
+    @IBInspectable public var xAxisPerInterval: Int = 4                        //x轴的间断个数
+    @IBInspectable public var yLabelWidth:CGFloat = 35                    //Y轴的宽度
+    
+    public var padding: UIEdgeInsets = UIEdgeInsetsZero    //内边距
+    public var showYLabel = CHYAxisShowPosition.Right      //显示y的位置，默认右边
+    public var style = CHKLineChartStyle.Default {           //显示样式
+        didSet {
+            //重新配置样式
+            self.sections = self.style.getSections()
+            self.setNeedsDisplay()
+        }
+        
+    }
     var sections = [CHSection]()
-    var labelFont = UIFont.systemFontOfSize(10)
     var selectedIndex: Int = 0                      //选择索引位
-    var padding: UIEdgeInsets = UIEdgeInsetsZero    //内边距
+    
     var enableSelection = true                      //是否可点选
-    var showYLabel = CHYAxisShowPosition.Right      //显示y的位置，默认右边
-    var yLabelWidth:CGFloat = 35                    //Y轴的宽度
+    
     var borderWidth: CGFloat = 0.5
-    var plotWidth: CGFloat = 1
-    var plotPadding: CGFloat = 0.5
     var plotCount: Int = 0
     var rangeFrom: Int = 0                          //可见区域的开始索引位
     var rangeTo: Int = 0                            //可见区域的结束索引位
-    var range: Int = 49                             //显示在可见区域的个数
+    var range: Int = 48                             //显示在可见区域的个数
     var borderColor: UIColor = UIColor.grayColor()
     var xlabelSize = CGSizeMake(40, 14)
     var isInitialized = false                       //是否已经初始化数据
-    var delegate: CHKLineChartDelegate?             //代理
+    
     var datas: [CHChartItem] = [CHChartItem]()      //数据源
+    
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -110,6 +136,12 @@ public class CHKLineChart: UIView {
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.initData()
+    }
+    
+    convenience init(style: CHKLineChartStyle) {
+        self.init()
+        self.initData()
+        self.style = style
     }
     
     func initData() {
@@ -139,17 +171,30 @@ public class CHKLineChart: UIView {
      */
     override public func drawRect(rect: CGRect) {
         
+        var padding = UIEdgeInsetsZero
+        var width: CGFloat = 0
+        
         //初始化分区的样式
         self.initChart()
         //建立每个分区
-        self.buildSections()
-        //        [self initSections];
-        //        [self initXAxis];
-        //        [self initYAxis];
-        //        [self drawXAxis];
-        //        [self drawYAxis];
-        //        [self drawChart];
+        self.buildSections {
+            (section, index) in
+            //绘制每个区域
+            self.drawSection(section)
+            //初始Y轴的数据
+            self.initYAxis(section)
+            //绘制Y轴坐标
+            self.drawYAxis(section)
+            //绘制图表的点线
+            self.drawChart(section)
+            
+            //记录最后一个分区的边距和宽度
+            padding = section.padding
+            width = section.frame.width
+        }
         
+        //绘制X轴坐标
+        self.drawXAxis(padding, width: width)
     }
     
     /**
@@ -185,9 +230,10 @@ public class CHKLineChart: UIView {
     /**
      初始化各个分区
      
-     - returns:
+     - parameter complete: 初始化后，执行每个分区绘制
      */
-    private func buildSections() {
+    private func buildSections(
+        complete:(section: CHSection, index: Int) -> Void) {
         //计算实际的显示高度和宽度
         let height = self.frame.size.height - (self.padding.top + self.padding.bottom)
         let width  = self.frame.size.width - (self.padding.left + self.padding.right)
@@ -202,7 +248,7 @@ public class CHKLineChart: UIView {
         
         var offsetY: CGFloat = self.padding.top
         //计算每个区域的高度，并绘制
-        for var section in self.sections {
+        for (index, section) in self.sections.enumerate() {
             var heightOfSection: CGFloat = 0
             let WidthOfSection = width
             if section.hidden {
@@ -229,15 +275,8 @@ public class CHKLineChart: UIView {
                                        offsetY, WidthOfSection, heightOfSection)
             offsetY = offsetY + section.frame.height
             
-            //绘制每个区域
-            self.drawSection(section)
-            //绘制X轴坐标
-            self.drawXAxis(section.padding, width: section.frame.size.width)
-            
-            //初始Y轴的数据
-            self.initYAxis(section)
-            //绘制Y轴坐标
-            self.drawYAxis(section)
+            complete(section: section, index: index)
+    
         }
         
         
@@ -262,11 +301,11 @@ public class CHKLineChart: UIView {
         let context = UIGraphicsGetCurrentContext();
         CGContextSetShouldAntialias(context, false);
         CGContextSetLineWidth(context, 0.5);
-        CGContextSetStrokeColorWithColor(context, UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1).CGColor)
+        CGContextSetStrokeColorWithColor(context, self.lineColor.CGColor)
         
         //x轴分平均分4个间断，显示5个x轴坐标，按照图表的值个数，计算每个间断的个数
         let dataRange = self.rangeTo - self.rangeFrom;
-        let xTickInterval: Int = (dataRange - 1) / self.xAxisPerInterval;
+        let xTickInterval: Int = dataRange / self.xAxisPerInterval;
         
         //绘制x轴标签
         //每个点的间隔宽度
@@ -286,7 +325,7 @@ public class CHKLineChart: UIView {
         
         //相当 for var i = self.rangeFrom; i < self.rangeTo; i = i + xTickInterval
         for i in self.rangeFrom.stride(to: self.rangeTo, by: xTickInterval) {
-            CGContextSetRGBFillColor(context, 0.8, 0.8, 0.8, 1.0);
+            CGContextSetFillColorWithColor(context, self.textColor.CGColor)
             CGContextSetShouldAntialias(context, true);  //抗锯齿开启，解决字体发虚
             let xLabel = self.delegate?.kLineChart(self, labelOnXAxisForIndex: i) ?? ""
             var textSize = xLabel.ch_heightWithConstrainedWidth(300, font: labelFont)
@@ -323,7 +362,7 @@ public class CHKLineChart: UIView {
         let context = UIGraphicsGetCurrentContext();
         CGContextSetShouldAntialias(context, false);
         CGContextSetLineWidth(context, 0.5);
-        CGContextSetStrokeColorWithColor(context, UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1).CGColor)
+        CGContextSetStrokeColorWithColor(context, self.lineColor.CGColor)
         
         //画低部边线
         CGContextMoveToPoint(context,
@@ -339,7 +378,16 @@ public class CHKLineChart: UIView {
         CGContextAddLineToPoint(context,
                                 section.frame.origin.x + section.frame.size.width,
                                 section.frame.origin.y);
-        CGContextStrokePath(context);
+        
+        //画左边线
+        CGContextMoveToPoint(context, section.frame.origin.x + section.padding.left, section.frame.origin.y)
+        CGContextAddLineToPoint(context, section.frame.origin.x + section.padding.left, section.frame.size.height + section.frame.origin.y)
+        
+        //画右边线
+        CGContextMoveToPoint(context, section.frame.origin.x + section.frame.size.width - section.padding.right, section.frame.origin.y)
+        CGContextAddLineToPoint(context, section.frame.origin.x + section.frame.size.width - section.padding.right, section.frame.size.height + section.frame.origin.y)
+        
+        CGContextStrokePath(context)
         
     }
     
@@ -355,7 +403,7 @@ public class CHKLineChart: UIView {
                     serieModel.datas = self.datas
                     section.buildYAxis(serieModel.datas,
                                        startIndex: self.rangeFrom,
-                                       endIndex: self.rangeTo - 1)
+                                       endIndex: self.rangeTo)
                 }
             }
             
@@ -369,129 +417,97 @@ public class CHKLineChart: UIView {
      - parameter section: 分区
      */
     private func drawYAxis(section: CHSection) {
-        let context = UIGraphicsGetCurrentContext();
-        CGContextSetShouldAntialias(context, NO );
-        CGContextSetLineWidth(context, 1.0f);
-        CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0].CGColor);
         
-        CGFloat startX = 0;
-        BOOL showYAxisLabel = YES;
+        let context = UIGraphicsGetCurrentContext()
         
-        //画区域边框
-        for(int secIndex=0;secIndex<[self.sections count];secIndex++){
-            Section *sec = [self.sections objectAtIndex:secIndex];
-            
-            
-            if(sec.hidden){
-                continue;
-            }
-            //		CGContextMoveToPoint(context, sec.frame.origin.x+sec.paddingLeft,sec.frame.origin.y+sec.paddingTop);
-            CGContextMoveToPoint(context, sec.frame.origin.x+sec.paddingLeft,sec.frame.origin.y);
-            CGContextAddLineToPoint(context, sec.frame.origin.x+sec.paddingLeft,sec.frame.size.height+sec.frame.origin.y);
-            //		CGContextMoveToPoint(context, sec.frame.origin.x+sec.frame.size.width - sec.paddingRight,sec.frame.origin.y+sec.paddingTop);
-            CGContextMoveToPoint(context, sec.frame.origin.x+sec.frame.size.width - sec.paddingRight,sec.frame.origin.y);
-            CGContextAddLineToPoint(context, sec.frame.origin.x+sec.frame.size.width - sec.paddingRight,sec.frame.size.height+sec.frame.origin.y);
-            CGContextStrokePath(context);
-        }
+        //设置画笔颜色
+        CGContextSetShouldAntialias(context, false)
+        CGContextSetLineWidth(context, 1.0)
+        CGContextSetStrokeColorWithColor(context, self.lineColor.CGColor)
         
-        CGContextSetRGBFillColor(context, 0.8, 0.8, 0.8, 1.0);      //文字填充颜色
-        CGFloat dash[] = {5};
-        CGContextSetLineDash (context,0,dash,1);
+        var startX: CGFloat = 0
+        var showYAxisLabel: Bool = true
+        
+        CGContextSetFillColorWithColor(context, self.textColor.CGColor)      //文字填充颜色
+        let dash:[CGFloat] = [5]
+        CGContextSetLineDash(context, 0, dash, 1)
         
         //分区中各个y轴虚线和y轴的label
-        for(int secIndex=0;secIndex<self.sections.count;secIndex++){
-            Section *sec = [self.sections objectAtIndex:secIndex];
-            
-            //控制y轴的label在左还是右显示
-            if (self.yAxisLabelShow == 0) {
-                showYAxisLabel = NO;
-            } else if (self.yAxisLabelShow == 1) {
-                startX = sec.frame.origin.x-1;
-            } else if (self.yAxisLabelShow == 2) {
-                startX = sec.frame.origin.x + sec.frame.size.width - sec.paddingRight + 3;
-            }
-            
-            if(sec.hidden){
-                continue;
-            }
-            for(int aIndex=0;aIndex<sec.yAxises.count;aIndex++){
-                
-                YAxis *yaxis = [sec.yAxises objectAtIndex:aIndex];
-                NSString *format=[@"%." stringByAppendingFormat:@"%df",yaxis.decimal];
-                
-                float baseY = [self getLocalY:yaxis.baseValue withSection:secIndex withAxis:aIndex];
-                CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0].CGColor);
-                CGContextMoveToPoint(context,sec.frame.origin.x+sec.paddingLeft+sec.frame.size.width-sec.paddingRight,baseY);
-                if(!isnan(baseY)){
-                    CGContextAddLineToPoint(context, sec.frame.origin.x+sec.paddingLeft+sec.frame.size.width-sec.paddingRight+2, baseY);
+        //控制y轴的label在左还是右显示
+        switch self.showYLabel {
+        case .Left:
+            startX = section.frame.origin.x - 1
+        case .Right:
+            startX = section.frame.origin.x + section.frame.size.width - section.padding.right + 3
+        case .None:
+            showYAxisLabel = false
+        }
+        
+        let fontAttributes = [
+            NSFontAttributeName: self.labelFont
+        ]
+        
+        var yaxis = section.yAxis
+        let format = "%.".stringByAppendingFormat("%df", yaxis.decimal)
+        
+        //保持Y轴标签个数偶数显示
+        if (yaxis.tickInterval % 2 == 1) {
+            yaxis.tickInterval += 1
+        }
+        
+        //计算y轴的标签及虚线分几段
+        let step = (yaxis.max - yaxis.min) / CGFloat(yaxis.tickInterval)
+        var i = 0
+        var yVal = yaxis.baseValue + CGFloat(i) * step
+        while yVal <= yaxis.max {
+            //画虚线和Y标签值
+            let iy = section.getLocalY(yVal)
+            if showYAxisLabel {
+                //突出的线段
+                CGContextSetShouldAntialias(context, false)
+                CGContextSetStrokeColorWithColor(context, self.lineColor.CGColor);
+                CGContextMoveToPoint(context, section.frame.origin.x + section.padding.left + section.frame.size.width - section.padding.right, iy)
+                if(!isnan(iy)){
+                    CGContextAddLineToPoint(context, section.frame.origin.x + section.padding.left + section.frame.size.width - section.padding.right + 2, iy)
                 }
                 CGContextStrokePath(context);
-                CGContextSetShouldAntialias(context, YES);  //抗锯齿开启，解决字体发虚
-                [[@"" stringByAppendingFormat:format,yaxis.baseValue] drawAtPoint:CGPointMake(startX,baseY-7) withFont:[UIFont systemFontOfSize: 10]];
                 
-                CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.15 green:0.15 blue:0.15 alpha:1.0].CGColor);
-                CGContextMoveToPoint(context,sec.frame.origin.x+sec.paddingLeft,baseY);
-                if(!isnan(baseY)){
-                    CGContextAddLineToPoint(context,sec.frame.origin.x+sec.frame.size.width-sec.paddingRight,baseY);
-                }
-                
-                if (yaxis.tickInterval%2 == 1) {
-                    yaxis.tickInterval +=1;
-                }
-                
-                //计算y轴的标签及虚线分几段
-                float step = (float)(yaxis.max-yaxis.min)/yaxis.tickInterval;
-                for(int i=1; i<= yaxis.tickInterval+1;i++){
-                    if(yaxis.baseValue + i*step <= yaxis.max){
-                        float iy = [self getLocalY:(yaxis.baseValue + i*step) withSection:secIndex withAxis:aIndex];
-                        
-                        CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0].CGColor);
-                        CGContextMoveToPoint(context,sec.frame.origin.x+sec.paddingLeft+sec.frame.size.width-sec.paddingRight,iy);
-                        if(!isnan(iy)){
-                            CGContextAddLineToPoint(context,sec.frame.origin.x+sec.paddingLeft+sec.frame.size.width-sec.paddingRight+2,iy);
-                        }
-                        CGContextStrokePath(context);
-                        CGContextSetShouldAntialias(context, YES);
-                        [[@"" stringByAppendingFormat:format,yaxis.baseValue+i*step] drawAtPoint:CGPointMake(startX,iy-7) withFont:[UIFont systemFontOfSize: 10]];
-                        
-                        //					if(yaxis.baseValue + i*step < yaxis.max){
-                        CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.15 green:0.15 blue:0.15 alpha:1.0].CGColor);
-                        CGContextMoveToPoint(context,sec.frame.origin.x+sec.paddingLeft,iy);
-                        CGContextAddLineToPoint(context,sec.frame.origin.x+sec.frame.size.width-sec.paddingRight,iy);
-                        //					}
-                        
-                        CGContextStrokePath(context);
-                    }
-                }
-                
-                //不清楚下面代码的作用
-                /*
-                 for(int i=1; i <= yaxis.tickInterval+1;i++){
-                 if(yaxis.baseValue - i*step >= yaxis.min){
-                 float iy = [self getLocalY:(yaxis.baseValue - i*step) withSection:secIndex withAxis:aIndex];
-                 
-                 CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.2 green:0.2 blue:0.2 alpha:1.0].CGColor);
-                 CGContextMoveToPoint(context,sec.frame.origin.x+sec.paddingLeft,iy);
-                 if(!isnan(iy)){
-                 CGContextAddLineToPoint(context,sec.frame.origin.x+sec.paddingLeft-2,iy);
-                 }
-                 CGContextStrokePath(context);
-                 CGContextSetShouldAntialias(context, YES);
-                 [[@"" stringByAppendingFormat:format,yaxis.baseValue-i*step] drawAtPoint:CGPointMake(startX,iy-7) withFont:[UIFont systemFontOfSize: 9]];
-                 
-                 if(yaxis.baseValue - i*step > yaxis.min){
-                 CGContextSetStrokeColorWithColor(context, [[UIColor alloc] initWithRed:0.15 green:0.15 blue:0.15 alpha:1.0].CGColor);
-                 CGContextMoveToPoint(context,sec.frame.origin.x+sec.paddingLeft,iy);
-                 CGContextAddLineToPoint(context,sec.frame.origin.x+sec.frame.size.width-sec.paddingRight,iy);
-                 }
-                 
-                 CGContextStrokePath(context);
-                 }
-                 }
-                 */
+                //把Y轴标签文字画上去
+                CGContextSetShouldAntialias(context, true);  //抗锯齿开启，解决字体发虚
+                NSString(format: format, yaxis.baseValue).drawAtPoint(
+                    CGPointMake(startX, iy - 7), withAttributes: fontAttributes)
             }
+            
+            CGContextSetShouldAntialias(context, false)
+            CGContextSetStrokeColorWithColor(context, self.lineColor.CGColor);
+            CGContextMoveToPoint(context, section.frame.origin.x + section.padding.left, iy)
+            if(!isnan(iy)){
+                CGContextAddLineToPoint(context, section.frame.origin.x + section.frame.size.width - section.padding.right, iy)
+            }
+            
+            CGContextStrokePath(context);
+            
+            //递增下一个
+            i =  i + 1
+            yVal = yaxis.baseValue + CGFloat(i) * step
         }
-        CGContextSetLineDash (context,0,NULL,0);
+        
+        CGContextSetLineDash (context, 0, nil, 0);
+    }
+    
+    /**
+     绘制图表上的点线
+     
+     - parameter section:
+     */
+    func drawChart(section: CHSection) {
+        
+        //当前显示的系列
+        let serie = section.series[section.selectedIndex]
+        //循环画出每个模型的线
+        for model in serie {
+            model.drawSerie(self.rangeFrom, endIndex: self.rangeTo)
+        }
     }
 }
 
