@@ -8,6 +8,12 @@
 
 import UIKit
 
+public enum CHSectionValueType {
+    case Price          //价格
+    case Volume         //交易量
+    case Target         //指标
+}
+
 /**
  *  K线的区域
  */
@@ -17,6 +23,7 @@ class CHSection: NSObject {
     var upColor: UIColor = UIColor.greenColor()     //升的颜色
     var downColor: UIColor = UIColor.redColor()     //跌的颜色
     var labelFont = UIFont.systemFontOfSize(10)
+    var valueType: CHSectionValueType = CHSectionValueType.Price
     
     var name: String = ""                           //区域的名称
     var hidden: Bool = false
@@ -43,12 +50,22 @@ class CHSection: NSObject {
             return  //没有数据返回
         }
         
-        self.yAxis.decimal = self.decimal
+        if !self.yAxis.isUsed {
+            self.yAxis.decimal = self.decimal
+            
+            self.yAxis.max = 0
+            self.yAxis.min = CGFloat.max
+            self.yAxis.isUsed = true
+        }
         
-        self.yAxis.max = 0
-        self.yAxis.min = CGFloat.max
         
         for i in startIndex.stride(to: endIndex, by: 1) {
+            
+            let value = model[i].value
+            
+            if value == nil{
+                continue  //无法计算的值不绘画
+            }
             
             let item = datas[i]
             
@@ -68,25 +85,22 @@ class CHSection: NSObject {
                 
             case is CHLineModel:
                 
-                let value = item.closePrice
                 //判断数据集合的每个价格，把最大值和最少设置到y轴对象中
                 if value > self.yAxis.max {
-                    self.yAxis.max = value
+                    self.yAxis.max = value!
                 }
                 if value < self.yAxis.min {
-                    self.yAxis.min = value
+                    self.yAxis.min = value!
                 }
                 
             case is CHColumnModel:
                 
-                let value = item.vol
-                
                 //判断数据集合的每个价格，把最大值和最少设置到y轴对象中
                 if value > self.yAxis.max {
-                    self.yAxis.max = value
+                    self.yAxis.max = value!
                 }
                 if value < self.yAxis.min {
-                    self.yAxis.min = value
+                    self.yAxis.min = value!
                 }
             default:break
                 
@@ -209,7 +223,7 @@ class CHSection: NSObject {
         let series = self.series[self.selectedIndex]
         for model in series.chartModels {
             var title = ""
-            let item = model.datas[chartSelectedIndex]
+            let item = model[chartSelectedIndex]
             switch model {
             case is CHCandleModel:
                 
@@ -225,7 +239,11 @@ class CHSection: NSObject {
             case is CHColumnModel:
                 title += model.title + ": " + item.vol.ch_toString(maxF: self.decimal) + "  "
             default:
-                title += model.title + ": " + item.value.ch_toString(maxF: self.decimal) + "  "
+                if item.value != nil {
+                    title += model.title + ": " + item.value!.ch_toString(maxF: self.decimal) + "  "
+                }  else {
+                    title += model.title + ": --  "
+                }
 
             }
             

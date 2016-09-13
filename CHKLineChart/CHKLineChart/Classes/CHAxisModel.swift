@@ -24,6 +24,7 @@ public struct CHYAxis {
     var tickInterval: Int = 4           //间断显示个数
     var pos: Int = 0
     var decimal: Int = 2                //约束小数位
+    var isUsed = false
 }
 
 /**

@@ -8,11 +8,7 @@
 
 import UIKit
 
-public enum CHChartModelType {
-    case Line
-    case Candle
-    case Column
-}
+
 
 /**
  改数据的走势方向
@@ -38,7 +34,7 @@ public class CHChartItem: NSObject {
     var lowPrice: CGFloat = 0
     var highPrice: CGFloat = 0
     var vol: CGFloat = 0
-    var value: CGFloat = 0
+    var value: CGFloat?
     var isNull: Bool = false        //是否空值点
     
     var trend: CHChartItemTrend {
@@ -55,6 +51,7 @@ public class CHChartItem: NSObject {
             }
         }
     }
+    
 }
 
 /**
@@ -71,6 +68,8 @@ public class CHChartModel {
     public var showMaxVal: Bool = false                             //是否显示最大值
     public var showMinVal: Bool = false                             //是否显示最小值
     public var title: String = ""                                   //标题
+    public var key: String = ""                                     //key的名字
+    
     weak var section: CHSection!
     
     convenience init(upColor: UIColor,
@@ -125,16 +124,21 @@ public class CHLineModel: CHChartModel {
         //循环起始到终结 - 1
         for i in startIndex.stride(to: endIndex - 1, by: 1) {
             
-            let item = datas[i]     //开始的点
-            let itemNext = datas[i + 1]     //下一个点
+            let value = self[i].value           //开始的点
+            let valueNext = self[i + 1].value   //下一个点
+            
+            if value == nil || valueNext == nil {
+                continue  //无法计算的值不绘画
+            }
+
             //开始X
             let ix = self.section.frame.origin.x + self.section.padding.left + CGFloat(i - startIndex) * plotWidth
             //结束X
             let iNx = self.section.frame.origin.x + self.section.padding.left + CGFloat(i + 1 - startIndex) * plotWidth
             
             //把具体的数值转为坐标系的y值
-            let iys = self.section.getLocalY(item.closePrice)
-            let iye = self.section.getLocalY(itemNext.closePrice)
+            let iys = self.section.getLocalY(value!)
+            let iye = self.section.getLocalY(valueNext!)
             
             CGContextSetStrokeColorWithColor(context, self.upColor.CGColor)
             CGContextMoveToPoint(context, ix + plotWidth / 2, iys)      //移动到当前点
@@ -336,12 +340,18 @@ public class CHColumnModel: CHChartModel {
         
         //循环起始到终结
         for i in startIndex.stride(to: endIndex, by: 1) {
+            let value = self[i].value
+            
+            if value == nil{
+                continue  //无法计算的值不绘画
+            }
+            
             let item = datas[i]
             //开始X
             let ix = self.section.frame.origin.x + self.section.padding.left + CGFloat(i - startIndex) * plotWidth
             
             //把具体的数值转为坐标系的y值
-            let iyv = self.section.getLocalY(item.vol)
+            let iyv = self.section.getLocalY(value!)
             
             //收盘价比开盘低，则显示跌的颜色
             switch item.trend {
@@ -361,4 +371,111 @@ public class CHColumnModel: CHChartModel {
         }
     }
     
+}
+
+// MARK: - 工厂方法
+extension CHChartModel {
+    
+    //生成一个蜡烛样式
+    class func getCandle(upColor upColor: UIColor, downColor: UIColor) -> CHCandleModel {
+        let model = CHCandleModel(upColor: upColor, downColor: downColor,
+                                        titleColor: UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1))
+        model.key = "CANDLE"
+        model.showMaxVal = true
+        model.showMinVal = true
+        return model
+    }
+    
+    //生成一个MA线样式
+    class func getMA(color: UIColor, num: Int) -> CHLineModel {
+        let model = CHLineModel(upColor: color, downColor: color,
+                                        titleColor: color)
+        model.title = "MA\(num)"
+        model.key = "MA\(num)"
+        return model
+    }
+    
+    //生成一个KDJ线样式
+    class func getKDJ(color: UIColor, name: String) -> CHLineModel {
+        let model = CHLineModel(upColor: color, downColor: color,
+                                titleColor: color)
+        model.title = name
+        model.key = "KDJ_\(name)"
+        return model
+    }
+    
+    //生成一个交易量样式
+    class func getVolume(upColor upColor: UIColor, downColor: UIColor) -> CHColumnModel {
+        let model = CHColumnModel(upColor: upColor, downColor: downColor,
+                                        titleColor: upColor)
+        model.title = NSLocalizedString("Vol", comment: "")
+        model.key = "VOL"
+        return model
+    }
+}
+
+// MARK: - 扩展技术指标公式
+extension CHChartModel {
+    
+    public subscript (index: Int) -> CHChartItem {
+        var value: CGFloat?
+        let item = self.datas[index]
+        if self.key == "VOL" {
+            if self.section.valueType == CHSectionValueType.Volume {
+                //交易量
+                value = self.datas[index].vol
+            }
+            
+        } else if self.key == "PRICE" {
+            if self.section.valueType == CHSectionValueType.Price {
+                //收市价
+                value = self.datas[index].closePrice
+            }
+        } else if self.key == "MA5" {
+            //计算MA5
+            value = self.getMAValue(5, index: index)
+        } else if self.key == "MA7" {
+            //计算MA7
+            value = self.getMAValue(7, index: index)
+        } else if self.key == "MA10" {
+            //计算MA10
+            value = self.getMAValue(10, index: index)
+        } else if self.key == "MA30" {
+            //计算MA30
+            value = self.getMAValue(30, index: index)
+        } else if self.key == "MA60" {
+            //计算MA60
+            value = self.getMAValue(60, index: index)
+        } else {
+            value = item.closePrice
+        }
+        item.value = value
+        return item
+    }
+    
+    /**
+     计算移动平均数MA
+     
+     - parameter num:   N
+     - parameter index: 数据的位置
+     
+     - returns: MA数
+     */
+    func getMAValue(num: Int, index: Int) -> CGFloat? {
+        var val: CGFloat = 0
+        if index + 1 >= num {
+            for i in index.stride(through: index + 1 - num, by: -1) {
+                if self.section.valueType == .Volume {
+                    val += self.datas[i].vol
+                } else {
+                    val += self.datas[i].closePrice
+                }
+            }
+            val = val / CGFloat(num)
+            return val
+        } else {
+            return nil
+        }
+        
+    }
 }

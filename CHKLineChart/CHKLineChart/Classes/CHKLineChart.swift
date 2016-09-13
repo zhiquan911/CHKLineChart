@@ -29,29 +29,20 @@ public enum CHKLineChartStyle {
      */
     func getSections() -> [CHSection] {
         let upcolor = UIColor.chHex(0xF80D1F)
-        let downcoloer = UIColor.chHex(0x1E932B)
+        let downcolor = UIColor.chHex(0x1E932B)
         let priceSection = CHSection()
         priceSection.titleShowOutSide = true
-        let priceSeries = CHSeries()
-        let candleModel = CHCandleModel(upColor: upcolor, downColor: downcoloer,
-                                        titleColor: UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1))
-        candleModel.showMaxVal = true
-        candleModel.showMinVal = true
-        candleModel.section = priceSection
-        priceSeries.chartModels.append(candleModel)
+        let priceSeries = CHSeries.getDefaultPrice(upColor: upcolor, downColor: downcolor, section: priceSection)
         priceSection.series = [priceSeries]
+        priceSection.valueType = .Price
         priceSection.hidden = false
         priceSection.ratios = 3
         priceSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
         
         let volumeSection = CHSection()
-        let volumeSeries = CHSeries()
-        let volumeModel = CHColumnModel(upColor: upcolor, downColor: downcoloer,
-                                        title: NSLocalizedString("Vol", comment: ""),
-                                        titleColor: upcolor)
-        volumeModel.section = volumeSection
-        volumeSeries.chartModels.append(volumeModel)
+        let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
         volumeSection.series = [volumeSeries]
+        volumeSection.valueType = .Volume
         volumeSection.hidden = false
         volumeSection.ratios = 1
         volumeSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 4, right: 0)
@@ -61,7 +52,7 @@ public enum CHKLineChartStyle {
     }
     
     func getBackgroundColor() -> UIColor {
-        return UIColor.blackColor()
+        return UIColor.chHex(0x1D1C1C)
     }
     
     func getPadding() -> UIEdgeInsets {
@@ -130,7 +121,7 @@ public class CHKLineChartView: UIView {
     @IBInspectable public var downColor: UIColor = UIColor.redColor()     //跌的颜色
     @IBInspectable public var labelFont = UIFont.systemFontOfSize(10)
     @IBInspectable public var lineColor: UIColor = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1) //线条颜色
-    @IBInspectable public var dashColor: UIColor = UIColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1) //线条颜色
+    @IBInspectable public var dashColor: UIColor = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1) //线条颜色
     @IBInspectable public var textColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1) //文字颜色
     @IBInspectable public var xAxisPerInterval: Int = 4                        //x轴的间断个数
     @IBInspectable public var yLabelWidth:CGFloat = 46                    //Y轴的宽度
@@ -588,6 +579,7 @@ extension CHKLineChartView {
     private func initYAxis(section: CHSection) {
         
         if section.series.count > 0 {
+            section.yAxis.isUsed = false
             //建立分区每条线的坐标系
             for serie in section.series {
                 for serieModel in serie.chartModels {
