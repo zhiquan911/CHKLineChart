@@ -17,14 +17,13 @@ public struct CHYAxis {
     
     var max: CGFloat = 0                //Y轴的最大值
     var min: CGFloat = 0                //Y轴的最小值
-    var ext: CGFloat = 0.05             //上下边界溢出值的比例
+    var ext: CGFloat = 0.00             //上下边界溢出值的比例
     var baseValue: CGFloat = 0          //固定的基值
     var baseValueSticky = false         //是否以固定基值显示最小或最大值，若超过范围
     var symmetrical = false             //是否以固定基值为中位数，对称显示最大最小值
-    var tickInterval: Int = 6           //间断显示个数
+    var tickInterval: Int = 4           //间断显示个数
     var pos: Int = 0
     var decimal: Int = 2                //约束小数位
-     
 }
 
 /**

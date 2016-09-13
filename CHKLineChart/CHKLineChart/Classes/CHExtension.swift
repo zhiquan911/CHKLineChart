@@ -20,8 +20,8 @@ extension String {
      
      - returns:
      */
-    func ch_heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGSize {
-        let constraintRect = CGSize(width: width, height: CGFloat.max)
+    func ch_heightWithConstrainedWidth(font: UIFont) -> CGSize {
+        let constraintRect = CGSize(width: CGFloat.max, height: CGFloat.max)
         let boundingBox = self.boundingRectWithSize(constraintRect, options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil)
         return boundingBox.size
     }
@@ -44,7 +44,50 @@ extension UIColor {
                   blue: CGFloat(hex & 0x0000FF) / 255.0,
                   alpha: CGFloat(alpha))
     }
+
+}
+
+extension NSDate {
     
+    /*!
+     * @method 把时间戳转换为用户格式时间
+     * @abstract
+     * @discussion
+     * @param   timestamp     时间戳
+     * @param   format        格式
+     * @result                时间
+     */
+    class func getTimeByStamp(timestamp: Int, format: String) -> String {
+        var time = ""
+        if (timestamp == 0) {
+            return ""
+        }
+        let confromTimesp = NSDate(timeIntervalSince1970: NSTimeInterval(timestamp))
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = format
+        time = formatter.stringFromDate(confromTimesp)
+        return time;
+    }
+}
+
+
+extension CGFloat {
     
-    
+    /**
+     转化为字符串格式
+     
+     - parameter minF:
+     - parameter maxF:
+     - parameter minI:
+     
+     - returns:
+     */
+    func ch_toString(minF: Int = 2, maxF: Int = 6, minI: Int = 1) -> String {
+        let valueDecimalNumber = NSDecimalNumber(double: Double(self))
+        let twoDecimalPlacesFormatter = NSNumberFormatter()
+        twoDecimalPlacesFormatter.maximumFractionDigits = maxF
+        twoDecimalPlacesFormatter.minimumFractionDigits = minF
+        twoDecimalPlacesFormatter.minimumIntegerDigits = minI
+        return twoDecimalPlacesFormatter.stringFromNumber(valueDecimalNumber)!
+    }
 }

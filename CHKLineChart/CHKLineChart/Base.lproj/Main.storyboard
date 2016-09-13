@@ -5,10 +5,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Demo View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="DemoViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -24,11 +24,17 @@
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="I4G-E5-gDN" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="7Ao-QE-2cK"/>
                             <constraint firstItem="I4G-E5-gDN" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="BGf-Nd-ggK"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="I4G-E5-gDN" secondAttribute="bottom" id="FcN-ME-WM0"/>
                             <constraint firstItem="I4G-E5-gDN" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="NOG-hV-jTV"/>
                             <constraint firstAttribute="trailing" secondItem="I4G-E5-gDN" secondAttribute="trailing" id="WYN-UZ-brq"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="NOG-hV-jTV"/>
+                            </mask>
+                        </variation>
                     </view>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
