@@ -34,6 +34,7 @@ class CHSection: NSObject {
     /// MARK: - 成员变量
     var upColor: UIColor = UIColor.greenColor()     //升的颜色
     var downColor: UIColor = UIColor.redColor()     //跌的颜色
+    var titleColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1) //文字颜色
     var labelFont = UIFont.systemFontOfSize(10)
     var valueType: CHSectionValueType = CHSectionValueType.Price
     
@@ -126,8 +127,8 @@ class CHSection: NSObject {
         }
         
         //让边界溢出些，这样图表不会占满屏幕
-//        self.yAxis.max += (self.yAxis.max - self.yAxis.min) * self.yAxis.ext
-//        self.yAxis.min -= (self.yAxis.max - self.yAxis.min) * self.yAxis.ext
+        //        self.yAxis.max += (self.yAxis.max - self.yAxis.min) * self.yAxis.ext
+        //        self.yAxis.min -= (self.yAxis.max - self.yAxis.min) * self.yAxis.ext
         
         if !self.yAxis.baseValueSticky {        //不使用固定基值
             if self.yAxis.max >= 0 && self.yAxis.min >= 0 {
@@ -186,10 +187,10 @@ class CHSection: NSObject {
          当前y值的实际坐标 = 分区高度 + 分区y坐标 - paddingBottom - 当前y值的实际的相对y轴有值的区间的高度
          */
         let baseY = self.frame.size.height + self.frame.origin.y - self.padding.bottom - (self.frame.size.height - self.padding.top - self.padding.bottom) * (val - min) / (max - min)
-//        NSLog("baseY(val) = \(baseY)(\(val))")
-//        NSLog("fra.size.height = \(self.frame.size.height)");
-//        NSLog("max = \(max)");
-//        NSLog("min = \(min)");
+        //        NSLog("baseY(val) = \(baseY)(\(val))")
+        //        NSLog("fra.size.height = \(self.frame.size.height)");
+        //        NSLog("max = \(max)");
+        //        NSLog("min = \(min)");
         return baseY
     }
     
@@ -212,7 +213,7 @@ class CHSection: NSObject {
         }
         
         let value = (y - ymax) / (ymin - ymax) * (max - min) + min
-
+        
         return value
     }
     
@@ -228,6 +229,8 @@ class CHSection: NSObject {
         let context = UIGraphicsGetCurrentContext()
         CGContextSetShouldAntialias(context, true)
         
+        
+        
         var yPos: CGFloat = 0, w: CGFloat = 0
         if titleShowOutSide {
             yPos = self.frame.origin.y - self.padding.top + 2
@@ -236,6 +239,21 @@ class CHSection: NSObject {
         }
         
         let series = self.series[self.selectedIndex]
+        
+        //绘画系列的标题
+        
+        if !series.title.isEmpty {
+            let seriesTitle = series.title + "  "
+            let point = CGPointMake(self.frame.origin.x + self.padding.left + 2 + w, yPos)
+            NSString(string: seriesTitle).drawAtPoint(point,
+                                                withAttributes:
+                [
+                    NSFontAttributeName: self.labelFont,
+                    NSForegroundColorAttributeName: self.titleColor
+                ])
+            w += seriesTitle.ch_heightWithConstrainedWidth(self.labelFont).width
+        }
+        
         for model in series.chartModels {
             var title = ""
             let item = model[chartSelectedIndex]
@@ -259,7 +277,7 @@ class CHSection: NSObject {
                 }  else {
                     title += model.title + ": --  "
                 }
-
+                
             }
             
             var textColor: UIColor

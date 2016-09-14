@@ -27,38 +27,44 @@ public enum CHKLineChartStyle {
      
      - returns:
      */
-    func getSections() -> [CHSection] {
-        let upcolor = UIColor.ch_hex(0xF80D1F)
-        let downcolor = UIColor.ch_hex(0x1E932B)
-        let priceSection = CHSection()
-        priceSection.titleShowOutSide = true
-        priceSection.valueType = .Price
-        priceSection.hidden = false
-        priceSection.ratios = 3
-        priceSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
-        let priceSeries = CHSeries.getDefaultPrice(upColor: upcolor, downColor: downcolor, section: priceSection)
-        priceSection.series = [priceSeries]
+    var sections: [CHSection] {
         
-        let volumeSection = CHSection()
-        volumeSection.valueType = .Volume
-        volumeSection.hidden = false
-        volumeSection.ratios = 1
-        volumeSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
-        let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
-        volumeSection.series = [volumeSeries]
+        switch self {
+        case .Default:
+            let upcolor = UIColor.ch_hex(0xF80D1F)
+            let downcolor = UIColor.ch_hex(0x1E932B)
+            let priceSection = CHSection()
+            priceSection.titleShowOutSide = true
+            priceSection.valueType = .Price
+            priceSection.hidden = false
+            priceSection.ratios = 3
+            priceSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
+            let priceSeries = CHSeries.getDefaultPrice(upColor: upcolor, downColor: downcolor, section: priceSection)
+            priceSection.series = [priceSeries]
+            
+            let volumeSection = CHSection()
+            volumeSection.valueType = .Volume
+            volumeSection.hidden = false
+            volumeSection.ratios = 1
+            volumeSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
+            let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
+            volumeSection.series = [volumeSeries]
+            
+            let trendSection = CHSection()
+            trendSection.valueType = .Analysis
+            trendSection.hidden = false
+            trendSection.ratios = 1
+            trendSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
+            let kdjSeries = CHSeries.getKDJ(UIColor.ch_hex(0xDDDDDD),
+                                            dc: UIColor.ch_hex(0xF9EE30),
+                                            jc: UIColor.ch_hex(0xF600FF),
+                                            section: trendSection)
+            kdjSeries.title = "KDJ(9,3,3)"
+            trendSection.series = [kdjSeries]
+            
+            return [priceSection, volumeSection, trendSection]
+        }
         
-        let trendSection = CHSection()
-        trendSection.valueType = .Analysis
-        trendSection.hidden = false
-        trendSection.ratios = 1
-        trendSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
-        let trendSeries = CHSeries.getKDJ(UIColor.ch_hex(0xDDDDDD),
-                                          dc: UIColor.ch_hex(0xF9EE30),
-                                          jc: UIColor.ch_hex(0xF600FF),
-                                          section: trendSection)
-        trendSection.series = [trendSeries]
-
-        return [priceSection, volumeSection, trendSection]
     }
     
     /**
@@ -66,20 +72,39 @@ public enum CHKLineChartStyle {
      
      - returns:
      */
-    func getAlgorithms() -> [CHChartAlgorithm] {
-        return [CHChartAlgorithm.MA(5),
-                CHChartAlgorithm.MA(10),
-                CHChartAlgorithm.MA(30),
-                CHChartAlgorithm.KDJ(9, 3, 3),
-        ]
+    var algorithms: [CHChartAlgorithm] {
+        switch self {
+        case .Default:
+            return [CHChartAlgorithm.MA(5),
+                    CHChartAlgorithm.MA(10),
+                    CHChartAlgorithm.MA(30),
+                    CHChartAlgorithm.KDJ(9, 3, 3),
+            ]
+        }
     }
     
-    func getBackgroundColor() -> UIColor {
-        return UIColor.ch_hex(0x1D1C1C)
+    /**
+     背景颜色
+     
+     - returns:
+     */
+    var backgroundColor: UIColor {
+        switch self {
+        case .Default:
+            return UIColor.ch_hex(0x1D1C1C)
+        }
     }
     
-    func getPadding() -> UIEdgeInsets {
-        return UIEdgeInsets(top: 16, left: 8, bottom: 20, right: 0)
+    /**
+     边距
+     
+     - returns:
+     */
+    var padding: UIEdgeInsets {
+        switch self {
+        case .Default:
+            return UIEdgeInsets(top: 16, left: 8, bottom: 20, right: 0)
+        }
     }
     
 }
@@ -145,11 +170,10 @@ public class CHKLineChartView: UIView {
     public var style = CHKLineChartStyle.Default {           //显示样式
         didSet {
             //重新配置样式
-            self.sections = self.style.getSections()
-            self.backgroundColor = self.style.getBackgroundColor()
-            self.padding = self.style.getPadding()
-            self.handlerOfAlgorithms = self.style.getAlgorithms()
-            //            self.setNeedsDisplay()
+            self.sections = self.style.sections
+            self.backgroundColor = self.style.backgroundColor
+            self.padding = self.style.padding
+            self.handlerOfAlgorithms = self.style.algorithms
         }
         
     }
@@ -403,7 +427,7 @@ extension CHKLineChartView {
                 
                 //记录最后一个分区
                 lastSection = section
-            
+                
             }
             
             //最后一个分区下面绘制X轴坐标
