@@ -45,7 +45,7 @@ public enum CHKLineChartStyle {
         volumeSection.valueType = .Volume
         volumeSection.hidden = false
         volumeSection.ratios = 1
-        volumeSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 4, right: 0)
+        volumeSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
         
         //        let trendSection = CHSection()
         return [priceSection, volumeSection]
@@ -97,16 +97,6 @@ public enum CHKLineChartStyle {
      */
     optional func kLineChart(chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String
     
-    
-    /**
-     点中图表中的索引位
-     
-     - parameter chart:
-     - parameter index:     索引位
-     
-     - returns:
-     */
-    optional func kLineChart(chart: CHKLineChartView, titleForDidSelectPointAtItem: CHChartItem, section: Int) -> String
 }
 
 public class CHKLineChartView: UIView {
