@@ -28,31 +28,54 @@ public enum CHKLineChartStyle {
      - returns:
      */
     func getSections() -> [CHSection] {
-        let upcolor = UIColor.chHex(0xF80D1F)
-        let downcolor = UIColor.chHex(0x1E932B)
+        let upcolor = UIColor.ch_hex(0xF80D1F)
+        let downcolor = UIColor.ch_hex(0x1E932B)
         let priceSection = CHSection()
         priceSection.titleShowOutSide = true
-        let priceSeries = CHSeries.getDefaultPrice(upColor: upcolor, downColor: downcolor, section: priceSection)
-        priceSection.series = [priceSeries]
         priceSection.valueType = .Price
         priceSection.hidden = false
         priceSection.ratios = 3
         priceSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
+        let priceSeries = CHSeries.getDefaultPrice(upColor: upcolor, downColor: downcolor, section: priceSection)
+        priceSection.series = [priceSeries]
         
         let volumeSection = CHSection()
-        let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
-        volumeSection.series = [volumeSeries]
         volumeSection.valueType = .Volume
         volumeSection.hidden = false
         volumeSection.ratios = 1
         volumeSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
+        let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
+        volumeSection.series = [volumeSeries]
         
-        //        let trendSection = CHSection()
-        return [priceSection, volumeSection]
+        let trendSection = CHSection()
+        trendSection.valueType = .Analysis
+        trendSection.hidden = false
+        trendSection.ratios = 1
+        trendSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
+        let trendSeries = CHSeries.getKDJ(UIColor.ch_hex(0xDDDDDD),
+                                          dc: UIColor.ch_hex(0xF9EE30),
+                                          jc: UIColor.ch_hex(0xF600FF),
+                                          section: trendSection)
+        trendSection.series = [trendSeries]
+
+        return [priceSection, volumeSection, trendSection]
+    }
+    
+    /**
+     要处理的算法
+     
+     - returns:
+     */
+    func getAlgorithms() -> [CHChartAlgorithm] {
+        return [CHChartAlgorithm.MA(5),
+                CHChartAlgorithm.MA(10),
+                CHChartAlgorithm.MA(30),
+                CHChartAlgorithm.KDJ(9, 3, 3),
+        ]
     }
     
     func getBackgroundColor() -> UIColor {
-        return UIColor.chHex(0x1D1C1C)
+        return UIColor.ch_hex(0x1D1C1C)
     }
     
     func getPadding() -> UIEdgeInsets {
@@ -116,6 +139,7 @@ public class CHKLineChartView: UIView {
     @IBInspectable public var xAxisPerInterval: Int = 4                        //x轴的间断个数
     @IBInspectable public var yLabelWidth:CGFloat = 46                    //Y轴的宽度
     
+    public var handlerOfAlgorithms: [CHChartAlgorithm] = [CHChartAlgorithm]()
     public var padding: UIEdgeInsets = UIEdgeInsetsZero    //内边距
     public var showYLabel = CHYAxisShowPosition.Right      //显示y的位置，默认右边
     public var style = CHKLineChartStyle.Default {           //显示样式
@@ -124,6 +148,7 @@ public class CHKLineChartView: UIView {
             self.sections = self.style.getSections()
             self.backgroundColor = self.style.getBackgroundColor()
             self.padding = self.style.getPadding()
+            self.handlerOfAlgorithms = self.style.getAlgorithms()
             //            self.setNeedsDisplay()
         }
         
@@ -157,21 +182,26 @@ public class CHKLineChartView: UIView {
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        self.initData()
+        self.initUI()
     }
     
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.initData()
+        self.initUI()
     }
     
     convenience init(style: CHKLineChartStyle) {
         self.init()
-        self.initData()
+        self.initUI()
         self.style = style
     }
     
-    func initData() {
+    /**
+     初始化UI
+     
+     - returns:
+     */
+    private func initUI() {
         
         self.multipleTouchEnabled = true
         
@@ -218,6 +248,33 @@ public class CHKLineChartView: UIView {
         self.addGestureRecognizer(UIPinchGestureRecognizer(
             target: self,
             action: #selector(doPinchAction(_:))))
+        
+        //初始数据
+        self.resetData()
+        
+    }
+    
+    /**
+     初始化数据
+     */
+    private func resetData() {
+        
+        self.plotCount = self.delegate?.numberOfPointsInKLineChart(self) ?? 0
+        
+        if plotCount > 0 {
+            
+            //获取代理上的数据源
+            for i in 0...self.plotCount - 1 {
+                let item = self.delegate?.kLineChart(self, valueForPointAtIndex: i)
+                self.datas.append(item!)
+            }
+            
+            //执行算法方程式计算值，添加到对象中
+            for algorithm in self.handlerOfAlgorithms {
+                //执行该算法，计算指标数据
+                self.datas = algorithm.handleAlgorithm(self.datas)
+            }
+        }
     }
     
     
@@ -376,12 +433,6 @@ extension CHKLineChartView {
                     self.rangeFrom = 0
                 }
                 
-            }
-            
-            //获取代理上的数据源
-            for i in 0...self.plotCount - 1 {
-                let item = self.delegate?.kLineChart(self, valueForPointAtIndex: i)
-                self.datas.append(item!)
             }
         }
         
@@ -693,6 +744,7 @@ extension CHKLineChartView {
      刷新视图
      */
     public func reloadData() {
+        self.resetData()
         self.setNeedsDisplay()
     }
 }

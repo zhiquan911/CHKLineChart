@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C54926661D8923BB0074ACD2 /* CHChartAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */; };
 		C559F2591D80FC22002B1E57 /* CHExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C559F2581D80FC22002B1E57 /* CHExtension.swift */; };
 		C56F6E571D879941002320D2 /* CHSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56F6E561D879941002320D2 /* CHSeries.swift */; };
 		C5E4E05B1D76CC7E00C47F5A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E05A1D76CC7E00C47F5A /* AppDelegate.swift */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHChartAlgorithm.swift; path = Classes/CHChartAlgorithm.swift; sourceTree = "<group>"; };
 		C559F2581D80FC22002B1E57 /* CHExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHExtension.swift; path = Classes/CHExtension.swift; sourceTree = "<group>"; };
 		C56F6E561D879941002320D2 /* CHSeries.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHSeries.swift; path = Classes/CHSeries.swift; sourceTree = "<group>"; };
 		C5E4E0571D76CC7E00C47F5A /* CHKLineChart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CHKLineChart.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -88,6 +90,7 @@
 				C5F700001D7EA94500622E60 /* CHChartModel.swift */,
 				C559F2581D80FC22002B1E57 /* CHExtension.swift */,
 				C56F6E561D879941002320D2 /* CHSeries.swift */,
+				C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -180,6 +183,7 @@
 				C5F700011D7EA94500622E60 /* CHChartModel.swift in Sources */,
 				C5E4E05B1D76CC7E00C47F5A /* AppDelegate.swift in Sources */,
 				C5F7FFFB1D7EA57A00622E60 /* CHKLineChart.swift in Sources */,
+				C54926661D8923BB0074ACD2 /* CHChartAlgorithm.swift in Sources */,
 				C56F6E571D879941002320D2 /* CHSeries.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

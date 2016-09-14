@@ -11,8 +11,20 @@ import UIKit
 public enum CHSectionValueType {
     case Price          //价格
     case Volume         //交易量
-    case Target         //指标
+    case Analysis         //指标
+    
+    var key: String {
+        switch self {
+        case .Price:
+            return "PRICE"
+        case .Volume:
+            return "VOLUME"
+        case .Analysis:
+            return "Analysis"
+        }
+    }
 }
+
 
 /**
  *  K线的区域
@@ -61,11 +73,6 @@ class CHSection: NSObject {
         
         for i in startIndex.stride(to: endIndex, by: 1) {
             
-            let value = model[i].value
-            
-            if value == nil{
-                continue  //无法计算的值不绘画
-            }
             
             let item = datas[i]
             
@@ -85,6 +92,12 @@ class CHSection: NSObject {
                 
             case is CHLineModel:
                 
+                let value = model[i].value
+                
+                if value == nil{
+                    continue  //无法计算的值不绘画
+                }
+                
                 //判断数据集合的每个价格，把最大值和最少设置到y轴对象中
                 if value > self.yAxis.max {
                     self.yAxis.max = value!
@@ -95,12 +108,14 @@ class CHSection: NSObject {
                 
             case is CHColumnModel:
                 
+                let value = item.vol
+                
                 //判断数据集合的每个价格，把最大值和最少设置到y轴对象中
                 if value > self.yAxis.max {
-                    self.yAxis.max = value!
+                    self.yAxis.max = value
                 }
                 if value < self.yAxis.min {
-                    self.yAxis.min = value!
+                    self.yAxis.min = value
                 }
             default:break
                 

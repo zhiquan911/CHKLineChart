@@ -8,11 +8,10 @@
 
 import UIKit
 
-class CHSeries: NSObject {
+public class CHSeries: NSObject {
     
-    var title: String = ""
-    var chartModels = [CHChartModel]()                  //每个系列包含多个点线模型
-
+    public var title: String = ""
+    public var chartModels = [CHChartModel]()                       //每个系列包含多个点线模型
 }
 
 // MARK: - 工厂方法
@@ -25,11 +24,11 @@ extension CHSeries {
         let series = CHSeries()
         let candle = CHChartModel.getCandle(upColor: upColor, downColor: downColor)
         candle.section = section
-        let ma5 = CHChartModel.getMA(UIColor.chHex(0xDDDDDD), num: 5)
+        let ma5 = CHChartModel.getLine(UIColor.ch_hex(0xDDDDDD), title: "MA5", key: "MA5_\(section.valueType.key)")
         ma5.section = section
-        let ma10 = CHChartModel.getMA(UIColor.chHex(0xF9EE30), num: 10)
+        let ma10 = CHChartModel.getLine(UIColor.ch_hex(0xF9EE30), title: "MA10", key: "MA10_\(section.valueType.key)")
         ma10.section = section
-        let ma30 = CHChartModel.getMA(UIColor.chHex(0xF600FF), num: 30)
+        let ma30 = CHChartModel.getLine(UIColor.ch_hex(0xF600FF), title: "MA30", key: "MA30_\(section.valueType.key)")
         ma30.section = section
         series.chartModels = [candle, ma5, ma10, ma30]
         return series
@@ -42,11 +41,11 @@ extension CHSeries {
         let series = CHSeries()
         let vol = CHChartModel.getVolume(upColor: upColor, downColor: downColor)
         vol.section = section
-        let ma5 = CHChartModel.getMA(UIColor.chHex(0xDDDDDD), num: 5)
+        let ma5 = CHChartModel.getLine(UIColor.ch_hex(0xDDDDDD), title: "MA5", key: "MA5_\(section.valueType.key)")
         ma5.section = section
-        let ma10 = CHChartModel.getMA(UIColor.chHex(0xF9EE30), num: 10)
+        let ma10 = CHChartModel.getLine(UIColor.ch_hex(0xF9EE30), title: "MA10", key: "MA10_\(section.valueType.key)")
         ma10.section = section
-        let ma30 = CHChartModel.getMA(UIColor.chHex(0xF600FF), num: 30)
+        let ma30 = CHChartModel.getLine(UIColor.ch_hex(0xF600FF), title: "MA30", key: "MA30_\(section.valueType.key)")
         ma30.section = section
         series.chartModels = [vol, ma5, ma10, ma30]
         return series
@@ -57,11 +56,11 @@ extension CHSeries {
      */
     class func getKDJ(kc: UIColor, dc: UIColor, jc: UIColor, section: CHSection) -> CHSeries {
         let series = CHSeries()
-        let k = CHChartModel.getKDJ(kc,name: "K")
+        let k = CHChartModel.getLine(kc, title: "K", key: "KDJ_K")
         k.section = section
-        let d = CHChartModel.getKDJ(dc,name: "D")
+        let d = CHChartModel.getLine(dc, title: "D", key: "KDJ_D")
         d.section = section
-        let j = CHChartModel.getKDJ(jc,name: "J")
+        let j = CHChartModel.getLine(jc, title: "J", key: "KDJ_J")
         j.section = section
         series.chartModels = [k, d, j]
         return series
