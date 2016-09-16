@@ -19,7 +19,7 @@ class DemoViewController: UIViewController {
         self.chartView.delegate = self
         self.chartView.style = CHKLineChartStyle.default
         self.getDataByFile()
-        //self.getRemoteServiceData()
+//        self.getRemoteServiceData()
     }
 
     override func didReceiveMemoryWarning() {

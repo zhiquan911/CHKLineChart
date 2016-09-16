@@ -68,6 +68,7 @@ open class CHChartModel {
     open var showMaxVal: Bool = false                             //是否显示最大值
     open var showMinVal: Bool = false                             //是否显示最小值
     open var title: String = ""                                   //标题
+    open var useTitleColor = true
     open var key: String = ""                                     //key的名字
     
     weak var section: CHSection!
@@ -140,6 +141,7 @@ open class CHLineModel: CHChartModel {
             let iys = self.section.getLocalY(value!)
             let iye = self.section.getLocalY(valueNext!)
             
+
             context?.setStrokeColor(self.upColor.cgColor)
             context?.move(to: CGPoint(x: ix + plotWidth / 2, y: iys))      //移动到当前点
             context?.addLine(to: CGPoint(x: iNx + plotWidth / 2, y: iye)) //画一条直线到下一个点
@@ -373,6 +375,69 @@ open class CHColumnModel: CHChartModel {
     
 }
 
+/**
+ *  交易量样式模型
+ */
+open class CHBarModel: CHChartModel {
+    
+    /**
+     画点线
+     
+     - parameter startIndex:     起始索引
+     - parameter endIndex:       结束索引
+     - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
+     */
+    open override func drawSerie(_ startIndex: Int, endIndex: Int,
+                                 plotPaddingExt: CGFloat = 0.25) {
+        
+        //每个点的间隔宽度
+        let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
+        let plotPadding = plotWidth * plotPaddingExt
+        
+        let iybase = self.section.getLocalY(section.yAxis.baseValue)
+        
+        let context = UIGraphicsGetCurrentContext()
+        context?.setShouldAntialias(false)
+        context?.setLineWidth(0.5)
+        
+        //循环起始到终结
+        for i in stride(from: startIndex, to: endIndex, by: 1) {
+            //            let value = self[i].value
+            //
+            //            if value == nil{
+            //                continue  //无法计算的值不绘画
+            //            }
+            
+            let value = self[i].value           //读取的值
+            
+            if value == nil {
+                continue  //无法计算的值不绘画
+            }
+            //开始X
+            let ix = self.section.frame.origin.x + self.section.padding.left + CGFloat(i - startIndex) * plotWidth
+            
+            //把具体的数值转为坐标系的y值
+            let iyv = self.section.getLocalY(value!)
+            
+            //如果值是正数
+            if value! > 0 {
+                //收盘价比开盘高，则显示涨的颜色
+                context?.setStrokeColor(self.upColor.cgColor)
+                context?.setFillColor(self.upColor.cgColor)
+            } else {
+                context?.setStrokeColor(self.downColor.cgColor)
+                context?.setFillColor(self.downColor.cgColor)
+            }
+            
+            //画交易量的矩形
+            context?.fill (CGRect(x: ix + plotPadding, y: iyv, width: plotWidth - 2 * plotPadding, height: iybase - iyv))
+            
+            
+        }
+    }
+    
+}
+
 // MARK: - 工厂方法
 extension CHChartModel {
     
@@ -398,9 +463,18 @@ extension CHChartModel {
     //生成一个交易量样式
     class func getVolume(upColor: UIColor, downColor: UIColor) -> CHColumnModel {
         let model = CHColumnModel(upColor: upColor, downColor: downColor,
-                                  titleColor: upColor)
+                                  titleColor: UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1))
         model.title = NSLocalizedString("Vol", comment: "")
         model.key = "VOL"
+        return model
+    }
+    
+    //生成一个柱状样式
+    class func getBar(upColor: UIColor, downColor: UIColor, titleColor: UIColor, title: String, key: String) -> CHBarModel {
+        let model = CHBarModel(upColor: upColor, downColor: downColor,
+                                  titleColor: titleColor)
+        model.title = title
+        model.key = key
         return model
     }
 }

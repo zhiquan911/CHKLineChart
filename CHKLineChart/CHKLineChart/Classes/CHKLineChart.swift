@@ -65,10 +65,13 @@ public enum CHKLineChartStyle {
             let macdSeries = CHSeries.getMACD(UIColor.ch_hex(0xDDDDDD),
                                              deac: UIColor.ch_hex(0xF9EE30),
                                              barc: UIColor.ch_hex(0xF600FF),
+                                             upColor: upcolor, downColor: downcolor,
                                              section: trendSection)
             macdSeries.title = "MACD(12,26,9)"
-            
-            trendSection.series = [kdjSeries, macdSeries]
+            macdSeries.symmetrical = true
+            trendSection.series = [
+                kdjSeries,
+                macdSeries]
             
             return [priceSection, volumeSection, trendSection]
         }
@@ -652,17 +655,8 @@ extension CHKLineChartView {
     fileprivate func initYAxis(_ section: CHSection) {
         
         if section.series.count > 0 {
-            section.yAxis.isUsed = false
             //建立分区每条线的坐标系
-            for serie in section.series {
-                for serieModel in serie.chartModels {
-                    serieModel.datas = self.datas
-                    section.buildYAxis(serieModel,
-                                       startIndex: self.rangeFrom,
-                                       endIndex: self.rangeTo)
-                }
-            }
-            
+            section.buildYAxis(startIndex: self.rangeFrom, endIndex: self.rangeTo, datas: self.datas)
         }
         
     }
@@ -714,6 +708,8 @@ extension CHKLineChartView {
         
         //计算y轴的标签及虚线分几段
         let step = (yaxis.max - yaxis.min) / CGFloat(yaxis.tickInterval)
+        
+        //从base值绘制Y轴标签到最大值
         var i = 0
         var yVal = yaxis.baseValue + CGFloat(i) * step
         while yVal <= yaxis.max && i <= yaxis.tickInterval {
@@ -745,6 +741,37 @@ extension CHKLineChartView {
             yVal = yaxis.baseValue + CGFloat(i) * step
         }
         
+        i = 0
+        yVal = yaxis.baseValue - CGFloat(i) * step
+        while yVal >= yaxis.min && i <= yaxis.tickInterval {
+            //画虚线和Y标签值
+            let iy = section.getLocalY(yVal)
+            if showYAxisLabel {
+                //突出的线段
+                context?.setShouldAntialias(false)
+                context?.setStrokeColor(self.dashColor.cgColor)
+                context?.move(to: CGPoint(x: section.frame.origin.x + section.padding.left + section.frame.size.width - section.padding.right, y: iy))
+                context?.addLine(to: CGPoint(x: section.frame.origin.x + section.padding.left + section.frame.size.width - section.padding.right + 2, y: iy))
+                context?.strokePath()
+                
+                //把Y轴标签文字画上去
+                context?.setShouldAntialias(true)  //抗锯齿开启，解决字体发虚
+                NSString(format: format, yVal).draw(
+                    at: CGPoint(x: startX, y: iy - 7), withAttributes: fontAttributes)
+            }
+            
+            context?.setShouldAntialias(false)
+            context?.setStrokeColor(self.dashColor.cgColor)
+            context?.move(to: CGPoint(x: section.frame.origin.x + section.padding.left, y: iy))
+            context?.addLine(to: CGPoint(x: section.frame.origin.x + section.frame.size.width - section.padding.right, y: iy))
+            
+            context?.strokePath()
+            
+            //递增下一个
+            i =  i + 1
+            yVal = yaxis.baseValue - CGFloat(i) * step
+        }
+        
         context?.setLineDash(phase: 0, lengths: [])
     }
     
@@ -754,13 +781,22 @@ extension CHKLineChartView {
      - parameter section:
      */
     func drawChart(_ section: CHSection) {
-        
-        //当前显示的系列
-        let serie = section.series[section.selectedIndex]
-        //循环画出每个模型的线
-        for model in serie.chartModels {
-            model.drawSerie(self.rangeFrom, endIndex: self.rangeTo)
+        if section.paging {
+            //如果section以分页显示，则读取当前显示的系列
+            let serie = section.series[section.selectedIndex]
+            //循环画出每个模型的线
+            for model in serie.chartModels {
+                model.drawSerie(self.rangeFrom, endIndex: self.rangeTo)
+            }
+        } else {
+            //不分页显示，全部系列绘制到图表上
+            for serie in section.series {
+                for model in serie.chartModels {
+                    model.drawSerie(self.rangeFrom, endIndex: self.rangeTo)
+                }
+            }
         }
+        
     }
     
 }
@@ -843,8 +879,14 @@ extension CHKLineChartView {
         let point = sender.location(in: self)
         let (_, section) = self.getSectionByTouchPoint(point)
         if section != nil {
-            self.setSelectedIndexByPoint(point)
-            //显示点击选中的内容
+            if section!.paging {
+                //显示下一页
+                section!.nextPage()
+            } else {
+                //显示点击选中的内容
+                self.setSelectedIndexByPoint(point)
+            }
+            
             self.setNeedsDisplay()
         }
     }

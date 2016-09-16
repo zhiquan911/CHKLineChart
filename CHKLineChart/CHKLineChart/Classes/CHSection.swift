@@ -7,25 +7,6 @@
 //
 
 import UIKit
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
-}
-
-fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l > r
-  default:
-    return rhs < lhs
-  }
-}
 
 
 public enum CHSectionValueType {
@@ -74,10 +55,76 @@ class CHSection: NSObject {
     var yAxis: CHYAxis = CHYAxis()                           //Y轴参数
     
     
+    func buildYAxis(startIndex: Int, endIndex: Int, datas: [CHChartItem]) {
+        self.yAxis.isUsed = false
+        var baseValueSticky = false
+        var symmetrical = false
+        if self.paging {     //如果分页，计算当前选中的系列作为坐标系的数据源
+            //建立分区每条线的坐标系
+            let serie = self.series[self.selectedIndex]
+            baseValueSticky = serie.baseValueSticky
+            symmetrical = serie.symmetrical
+            for serieModel in serie.chartModels {
+                serieModel.datas = datas
+                self.buildYAxisPerModel(serieModel,
+                                   startIndex: startIndex,
+                                   endIndex: endIndex)
+            }
+        } else {
+            for serie in self.series {   //不分页，计算所有系列作为坐标系的数据源
+                baseValueSticky = serie.baseValueSticky
+                symmetrical = serie.symmetrical
+                for serieModel in serie.chartModels {
+                    serieModel.datas = datas
+                    self.buildYAxisPerModel(serieModel,
+                                       startIndex: startIndex,
+                                       endIndex: endIndex)
+                }
+            }
+        }
+        
+        //让边界溢出些，这样图表不会占满屏幕
+        //        self.yAxis.max += (self.yAxis.max - self.yAxis.min) * self.yAxis.ext
+        //        self.yAxis.min -= (self.yAxis.max - self.yAxis.min) * self.yAxis.ext
+        
+        if !baseValueSticky {        //不使用固定基值
+            if self.yAxis.max >= 0 && self.yAxis.min >= 0 {
+                self.yAxis.baseValue = self.yAxis.min
+            } else if self.yAxis.max < 0 && self.yAxis.min < 0 {
+                self.yAxis.baseValue = self.yAxis.max
+            } else {
+                self.yAxis.baseValue = 0
+            }
+        } else {                                //使用固定基值
+            if self.yAxis.baseValue < self.yAxis.min {
+                self.yAxis.min = self.yAxis.baseValue
+            }
+            
+            if self.yAxis.baseValue > self.yAxis.max {
+                self.yAxis.max = self.yAxis.baseValue
+            }
+        }
+        
+        //如果使用水平对称显示y轴，基本基值计算上下的边界值
+        if symmetrical {
+            if self.yAxis.baseValue > self.yAxis.max {
+                self.yAxis.max = self.yAxis.baseValue + (self.yAxis.baseValue - self.yAxis.min)
+            } else if self.yAxis.baseValue < self.yAxis.min {
+                self.yAxis.min =  self.yAxis.baseValue - (self.yAxis.max - self.yAxis.baseValue)
+            } else {
+                if (self.yAxis.max - self.yAxis.baseValue) > (self.yAxis.baseValue - self.yAxis.min) {
+                    self.yAxis.min = self.yAxis.baseValue - (self.yAxis.max - self.yAxis.baseValue)
+                } else {
+                    self.yAxis.max = self.yAxis.baseValue + (self.yAxis.baseValue - self.yAxis.min)
+                }
+            }
+        }
+    }
+    
     /**
      建立Y轴左边对象，由起始位到结束位
      */
-    func buildYAxis(_ model: CHChartModel, startIndex: Int, endIndex: Int) {
+    func buildYAxisPerModel(_ model: CHChartModel, startIndex: Int, endIndex: Int) {
         let datas = model.datas
         if datas.count == 0 {
             return  //没有数据返回
@@ -120,10 +167,10 @@ class CHSection: NSObject {
                 }
                 
                 //判断数据集合的每个价格，把最大值和最少设置到y轴对象中
-                if value > self.yAxis.max {
+                if value! > self.yAxis.max {
                     self.yAxis.max = value!
                 }
-                if value < self.yAxis.min {
+                if value! < self.yAxis.min {
                     self.yAxis.min = value!
                 }
                 
@@ -144,43 +191,6 @@ class CHSection: NSObject {
             
             
             
-        }
-        
-        //让边界溢出些，这样图表不会占满屏幕
-        //        self.yAxis.max += (self.yAxis.max - self.yAxis.min) * self.yAxis.ext
-        //        self.yAxis.min -= (self.yAxis.max - self.yAxis.min) * self.yAxis.ext
-        
-        if !self.yAxis.baseValueSticky {        //不使用固定基值
-            if self.yAxis.max >= 0 && self.yAxis.min >= 0 {
-                self.yAxis.baseValue = self.yAxis.min
-            } else if self.yAxis.max < 0 && self.yAxis.min < 0 {
-                self.yAxis.baseValue = self.yAxis.max
-            } else {
-                self.yAxis.baseValue = 0
-            }
-        } else {                                //使用固定基值
-            if self.yAxis.baseValue < self.yAxis.min {
-                self.yAxis.min = self.yAxis.baseValue
-            }
-            
-            if self.yAxis.baseValue > self.yAxis.max {
-                self.yAxis.max = self.yAxis.baseValue
-            }
-        }
-        
-        //如果使用水平对称显示y轴，基本基值计算上下的边界值
-        if self.yAxis.symmetrical {
-            if self.yAxis.baseValue > self.yAxis.max {
-                self.yAxis.max = self.yAxis.baseValue + (self.yAxis.baseValue - self.yAxis.min)
-            } else if self.yAxis.baseValue < self.yAxis.min {
-                self.yAxis.min =  self.yAxis.baseValue - (self.yAxis.max - self.yAxis.baseValue)
-            } else {
-                if (self.yAxis.max - self.yAxis.baseValue) > (self.yAxis.baseValue - self.yAxis.min) {
-                    self.yAxis.min = self.yAxis.baseValue - (self.yAxis.max - self.yAxis.baseValue)
-                } else {
-                    self.yAxis.max = self.yAxis.baseValue + (self.yAxis.baseValue - self.yAxis.min)
-                }
-            }
         }
     }
     
@@ -266,7 +276,7 @@ class CHSection: NSObject {
             let seriesTitle = series.title + "  "
             let point = CGPoint(x: self.frame.origin.x + self.padding.left + 2 + w, y: yPos)
             NSString(string: seriesTitle).draw(at: point,
-                                                withAttributes:
+                                               withAttributes:
                 [
                     NSFontAttributeName: self.labelFont,
                     NSForegroundColorAttributeName: self.titleColor
@@ -301,25 +311,41 @@ class CHSection: NSObject {
             }
             
             var textColor: UIColor
-            switch item.trend {
-            case .up, .equal:
-                textColor = model.upColor
-                context?.setFillColor(model.upColor.cgColor)
-            case .down:
-                textColor = model.downColor
-                context?.setFillColor(model.downColor.cgColor)
+            
+            if model.useTitleColor {    //是否用标题颜色
+                textColor = model.titleColor
+                context?.setFillColor(model.titleColor.cgColor)
+            } else {
+                switch item.trend {
+                case .up, .equal:
+                    textColor = model.upColor
+                    context?.setFillColor(model.upColor.cgColor)
+                case .down:
+                    textColor = model.downColor
+                    context?.setFillColor(model.downColor.cgColor)
+                }
             }
+            
             
             let fontAttributes = [
                 NSFontAttributeName: self.labelFont,
                 NSForegroundColorAttributeName: textColor
-            ] as [String : Any]
+                ] as [String : Any]
             
             let point = CGPoint(x: self.frame.origin.x + self.padding.left + 2 + w, y: yPos)
             NSString(string: title).draw(at: point,
-                                                withAttributes: fontAttributes)
+                                         withAttributes: fontAttributes)
             
             w += title.ch_heightWithConstrainedWidth(self.labelFont).width
+        }
+    }
+    
+    //切换到下一个系列显示
+    func nextPage() {
+        if(self.selectedIndex < self.series.count - 1){
+            self.selectedIndex += 1
+        } else {
+            self.selectedIndex = 0
         }
     }
 }
