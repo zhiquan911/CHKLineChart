@@ -18,15 +18,15 @@ import UIKit
  - Equal: 相等
  */
 public enum CHChartItemTrend {
-    case Up
-    case Down
-    case Equal
+    case up
+    case down
+    case equal
 }
 
 /**
  *  数据元素
  */
-public class CHChartItem: NSObject {
+open class CHChartItem: NSObject {
     
     var time: Int = 0
     var openPrice: CGFloat = 0
@@ -39,15 +39,15 @@ public class CHChartItem: NSObject {
     
     var trend: CHChartItemTrend {
         if closePrice == openPrice {
-            return .Equal
+            return .equal
             
         }else{
             //收盘价比开盘低
             if closePrice < openPrice {
-                return .Down
+                return .down
             } else {
                 //收盘价比开盘高
-                return .Up
+                return .up
             }
         }
     }
@@ -57,18 +57,18 @@ public class CHChartItem: NSObject {
 /**
  *  定义图表数据模型
  */
-public class CHChartModel {
+open class CHChartModel {
     
     /// MARK: - 成员变量
-    public var upColor = UIColor.greenColor()                       //升的颜色
-    public var downColor = UIColor.redColor()                       //跌的颜色
-    public var titleColor = UIColor.whiteColor()                    //标题文本的颜色
-    public var datas: [CHChartItem] = [CHChartItem]()               //数据值
-    public var decimal: Int = 2                                     //小数位的长度
-    public var showMaxVal: Bool = false                             //是否显示最大值
-    public var showMinVal: Bool = false                             //是否显示最小值
-    public var title: String = ""                                   //标题
-    public var key: String = ""                                     //key的名字
+    open var upColor = UIColor.green                       //升的颜色
+    open var downColor = UIColor.red                       //跌的颜色
+    open var titleColor = UIColor.white                    //标题文本的颜色
+    open var datas: [CHChartItem] = [CHChartItem]()               //数据值
+    open var decimal: Int = 2                                     //小数位的长度
+    open var showMaxVal: Bool = false                             //是否显示最大值
+    open var showMinVal: Bool = false                             //是否显示最小值
+    open var title: String = ""                                   //标题
+    open var key: String = ""                                     //key的名字
     
     weak var section: CHSection!
     
@@ -95,14 +95,14 @@ public class CHChartModel {
      - parameter endIndex:       结束索引
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
-    public func drawSerie(startIndex: Int, endIndex: Int, plotPaddingExt: CGFloat = 0.25) { }
+    open func drawSerie(_ startIndex: Int, endIndex: Int, plotPaddingExt: CGFloat = 0.25) { }
 }
 
 
 /**
  *  线点样式模型
  */
-public class CHLineModel: CHChartModel {
+open class CHLineModel: CHChartModel {
     
     /**
      画点线
@@ -111,18 +111,18 @@ public class CHLineModel: CHChartModel {
      - parameter endIndex:       结束索引
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
-    public override func drawSerie(startIndex: Int, endIndex: Int,
+    open override func drawSerie(_ startIndex: Int, endIndex: Int,
                                    plotPaddingExt: CGFloat = 0.25) {
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
         
         let context = UIGraphicsGetCurrentContext()
-        CGContextSetShouldAntialias(context, false)
-        CGContextSetLineWidth(context, 0.5)
+        context?.setShouldAntialias(true)
+        context?.setLineWidth(0.5)
         
         //循环起始到终结 - 1
-        for i in startIndex.stride(to: endIndex - 1, by: 1) {
+        for i in stride(from: startIndex, to: endIndex - 1, by: 1) {
             
             let value = self[i].value           //开始的点
             let valueNext = self[i + 1].value   //下一个点
@@ -140,11 +140,11 @@ public class CHLineModel: CHChartModel {
             let iys = self.section.getLocalY(value!)
             let iye = self.section.getLocalY(valueNext!)
             
-            CGContextSetStrokeColorWithColor(context, self.upColor.CGColor)
-            CGContextMoveToPoint(context, ix + plotWidth / 2, iys)      //移动到当前点
-            CGContextAddLineToPoint(context, iNx + plotWidth / 2, iye) //画一条直线到下一个点
+            context?.setStrokeColor(self.upColor.cgColor)
+            context?.move(to: CGPoint(x: ix + plotWidth / 2, y: iys))      //移动到当前点
+            context?.addLine(to: CGPoint(x: iNx + plotWidth / 2, y: iye)) //画一条直线到下一个点
             
-            CGContextStrokePath(context)
+            context?.strokePath()
             
             
         }
@@ -155,7 +155,7 @@ public class CHLineModel: CHChartModel {
 /**
  *  蜡烛样式模型
  */
-public class CHCandleModel: CHChartModel {
+open class CHCandleModel: CHChartModel {
     
     /**
      画点线
@@ -164,7 +164,7 @@ public class CHCandleModel: CHChartModel {
      - parameter endIndex:       结束索引
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
-    public override func drawSerie(startIndex: Int, endIndex: Int,
+    open override func drawSerie(_ startIndex: Int, endIndex: Int,
                                    plotPaddingExt: CGFloat = 0.25) {
         
         //每个点的间隔宽度
@@ -172,8 +172,8 @@ public class CHCandleModel: CHChartModel {
         let plotPadding = plotWidth * plotPaddingExt
         
         let context = UIGraphicsGetCurrentContext()
-        CGContextSetShouldAntialias(context, false)
-        CGContextSetLineWidth(context, 0.5)
+        context?.setShouldAntialias(false)
+        context?.setLineWidth(0.5)
         
         var maxItem: CHChartItem?       //最大值的项
         var maxPoint: CGPoint?          //最大值所在坐标
@@ -181,7 +181,7 @@ public class CHCandleModel: CHChartModel {
         var minPoint: CGPoint?          //最小值所在坐标
         
         //循环起始到终结
-        for i in startIndex.stride(to: endIndex, by: 1) {
+        for i in stride(from: startIndex, to: endIndex, by: 1) {
             let item = datas[i]
             //开始X
             let ix = self.section.frame.origin.x + self.section.padding.left + CGFloat(i - startIndex) * plotWidth
@@ -199,37 +199,37 @@ public class CHCandleModel: CHChartModel {
             }
             
             switch item.trend {
-            case .Equal:
+            case .equal:
                 //开盘收盘一样，则显示横线
-                CGContextSetStrokeColorWithColor(context, self.upColor.CGColor)
-            case .Up:
+                context?.setStrokeColor(self.upColor.cgColor)
+            case .up:
                 //收盘价比开盘高，则显示涨的颜色
-                CGContextSetStrokeColorWithColor(context, self.upColor.CGColor)
-                CGContextSetFillColorWithColor(context, self.upColor.CGColor)
-            case .Down:
+                context?.setStrokeColor(self.upColor.cgColor)
+                context?.setFillColor(self.upColor.cgColor)
+            case .down:
                 //收盘价比开盘低，则显示跌的颜色
-                CGContextSetStrokeColorWithColor(context, self.downColor.CGColor)
-                CGContextSetFillColorWithColor(context, self.downColor.CGColor)
+                context?.setStrokeColor(self.downColor.cgColor)
+                context?.setFillColor(self.downColor.cgColor)
             }
             
             //1.先画最高和最低价格的线
-            CGContextMoveToPoint(context, ix + plotWidth / 2, iyh)
-            CGContextAddLineToPoint(context,ix + plotWidth / 2,iyl)
-            CGContextStrokePath(context)
+            context?.move(to: CGPoint(x: ix + plotWidth / 2, y: iyh))
+            context?.addLine(to: CGPoint(x: ix + plotWidth / 2, y: iyl))
+            context?.strokePath()
             
             //2.画蜡烛柱的矩形，空心的刚好覆盖上面的线
             switch item.trend {
-            case .Equal:
+            case .equal:
                 //开盘收盘一样，则显示横线
-                CGContextMoveToPoint(context, ix + plotPadding, iyo)
-                CGContextAddLineToPoint(context, iNx - plotPadding, iyo)
-                CGContextStrokePath(context)
-            case .Up:
+                context?.move(to: CGPoint(x: ix + plotPadding, y: iyo))
+                context?.addLine(to: CGPoint(x: iNx - plotPadding, y: iyo))
+                context?.strokePath()
+            case .up:
                 //收盘价比开盘高，则从收盘的Y值向下画矩形
-                CGContextFillRect(context, CGRectMake(ix + plotPadding, iyc, plotWidth - 2 * plotPadding, iyo - iyc))
-            case .Down:
+                context?.fill(CGRect(x: ix + plotPadding, y: iyc, width: plotWidth - 2 * plotPadding, height: iyo - iyc))
+            case .down:
                 //收盘价比开盘低，则从开盘的Y值向下画矩形
-                CGContextFillRect(context, CGRectMake(ix + plotPadding, iyo, plotWidth - 2 *  plotPadding, iyc - iyo))
+                context?.fill(CGRect(x: ix + plotPadding, y: iyo, width: plotWidth - 2 *  plotPadding, height: iyc - iyo))
             }
             
             
@@ -263,7 +263,7 @@ public class CHCandleModel: CHChartModel {
     /**
      绘画最大值
      */
-    func drawGuideValue(context: CGContext, value: String, section: CHSection, point: CGPoint) {
+    func drawGuideValue(_ context: CGContext, value: String, section: CHSection, point: CGPoint) {
         
         let fontSize = value.ch_heightWithConstrainedWidth(section.labelFont)
         var arrowLineWidth: CGFloat = 4
@@ -276,37 +276,37 @@ public class CHCandleModel: CHChartModel {
             maxPriceStartX = point.x + arrowLineWidth * 5 - fontSize.width
         }
         
-        CGContextSetShouldAntialias(context, true)
-        CGContextSetStrokeColorWithColor(context, self.titleColor.CGColor)
+        context.setShouldAntialias(true)
+        context.setStrokeColor(self.titleColor.cgColor)
         
         //画小箭头
-        CGContextMoveToPoint(context, point.x, point.y)
-        CGContextAddLineToPoint(context,point.x + arrowLineWidth,point.y - arrowLineWidth)
-        CGContextStrokePath(context)
+        context.move(to: CGPoint(x: point.x, y: point.y))
+        context.addLine(to: CGPoint(x: point.x + arrowLineWidth, y: point.y - arrowLineWidth))
+        context.strokePath()
         
-        CGContextMoveToPoint(context, point.x, point.y)
-        CGContextAddLineToPoint(context,point.x + arrowLineWidth,point.y + arrowLineWidth)
-        CGContextStrokePath(context)
+        context.move(to: CGPoint(x: point.x, y: point.y))
+        context.addLine(to: CGPoint(x: point.x + arrowLineWidth, y: point.y + arrowLineWidth))
+        context.strokePath()
         
-        CGContextMoveToPoint(context, point.x, point.y)
-        CGContextAddLineToPoint(context,point.x + arrowLineWidth * 4,point.y)
-        CGContextStrokePath(context)
+        context.move(to: CGPoint(x: point.x, y: point.y))
+        context.addLine(to: CGPoint(x: point.x + arrowLineWidth * 4, y: point.y))
+        context.strokePath()
         
         
         let fontAttributes = [
             NSFontAttributeName: section.labelFont,
             NSForegroundColorAttributeName: self.titleColor
-        ]
+        ] as [String : Any]
         
         //计算画文字的位置
-        let point = CGPointMake(maxPriceStartX, point.y - fontSize.height / 2)
+        let point = CGPoint(x: maxPriceStartX, y: point.y - fontSize.height / 2)
         
         //画最大值数字
         NSString(string: value)
-            .drawAtPoint(point,
+            .draw(at: point,
                          withAttributes: fontAttributes)
         
-        CGContextSetShouldAntialias(context, false)
+        context.setShouldAntialias(false)
         
     }
     
@@ -316,7 +316,7 @@ public class CHCandleModel: CHChartModel {
 /**
  *  交易量样式模型
  */
-public class CHColumnModel: CHChartModel {
+open class CHColumnModel: CHChartModel {
     
     /**
      画点线
@@ -325,7 +325,7 @@ public class CHColumnModel: CHChartModel {
      - parameter endIndex:       结束索引
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
-    public override func drawSerie(startIndex: Int, endIndex: Int,
+    open override func drawSerie(_ startIndex: Int, endIndex: Int,
                                    plotPaddingExt: CGFloat = 0.25) {
         
         //每个点的间隔宽度
@@ -335,11 +335,11 @@ public class CHColumnModel: CHChartModel {
         let iybase = self.section.getLocalY(section.yAxis.baseValue)
         
         let context = UIGraphicsGetCurrentContext()
-        CGContextSetShouldAntialias(context, false)
-        CGContextSetLineWidth(context, 0.5)
+        context?.setShouldAntialias(false)
+        context?.setLineWidth(0.5)
         
         //循环起始到终结
-        for i in startIndex.stride(to: endIndex, by: 1) {
+        for i in stride(from: startIndex, to: endIndex, by: 1) {
 //            let value = self[i].value
 //            
 //            if value == nil{
@@ -355,17 +355,17 @@ public class CHColumnModel: CHChartModel {
             
             //收盘价比开盘低，则显示跌的颜色
             switch item.trend {
-            case .Up, .Equal:
+            case .up, .equal:
                 //收盘价比开盘高，则显示涨的颜色
-                CGContextSetStrokeColorWithColor(context, self.upColor.CGColor)
-                CGContextSetFillColorWithColor(context, self.upColor.CGColor)
-            case .Down:
-                CGContextSetStrokeColorWithColor(context, self.downColor.CGColor)
-                CGContextSetFillColorWithColor(context, self.downColor.CGColor)
+                context?.setStrokeColor(self.upColor.cgColor)
+                context?.setFillColor(self.upColor.cgColor)
+            case .down:
+                context?.setStrokeColor(self.downColor.cgColor)
+                context?.setFillColor(self.downColor.cgColor)
             }
             
             //画交易量的矩形
-            CGContextFillRect (context, CGRectMake(ix + plotPadding, iyv, plotWidth - 2 * plotPadding, iybase - iyv))
+            context?.fill (CGRect(x: ix + plotPadding, y: iyv, width: plotWidth - 2 * plotPadding, height: iybase - iyv))
             
             
         }
@@ -377,7 +377,7 @@ public class CHColumnModel: CHChartModel {
 extension CHChartModel {
     
     //生成一个点线样式
-    class func getLine(color: UIColor, title: String, key: String) -> CHLineModel {
+    class func getLine(_ color: UIColor, title: String, key: String) -> CHLineModel {
         let model = CHLineModel(upColor: color, downColor: color,
                                 titleColor: color)
         model.title = title
@@ -386,7 +386,7 @@ extension CHChartModel {
     }
     
     //生成一个蜡烛样式
-    class func getCandle(upColor upColor: UIColor, downColor: UIColor) -> CHCandleModel {
+    class func getCandle(upColor: UIColor, downColor: UIColor) -> CHCandleModel {
         let model = CHCandleModel(upColor: upColor, downColor: downColor,
                                   titleColor: UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1))
         model.key = "CANDLE"
@@ -396,7 +396,7 @@ extension CHChartModel {
     }
     
     //生成一个交易量样式
-    class func getVolume(upColor upColor: UIColor, downColor: UIColor) -> CHColumnModel {
+    class func getVolume(upColor: UIColor, downColor: UIColor) -> CHColumnModel {
         let model = CHColumnModel(upColor: upColor, downColor: downColor,
                                   titleColor: upColor)
         model.title = NSLocalizedString("Vol", comment: "")

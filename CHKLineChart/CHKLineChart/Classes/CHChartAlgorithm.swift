@@ -13,11 +13,11 @@ import UIKit
  */
 public enum CHChartAlgorithm {
     
-    case None                                   //无算法
-    case MA(Int)                                //简单移动平均数
-    case EMA(Int)                               //指数移动平均数
-    case KDJ(Int, Int, Int)                     //随机指标
-    case MACD(Int, Int, Int)                    //指数平滑异同平均线
+    case none                                   //无算法
+    case ma(Int)                                //简单移动平均数
+    case ema(Int)                               //指数移动平均数
+    case kdj(Int, Int, Int)                     //随机指标
+    case macd(Int, Int, Int)                    //指数平滑异同平均线
     
     /**
      获取Key值的名称
@@ -26,17 +26,17 @@ public enum CHChartAlgorithm {
      
      - returns:
      */
-    public func key(name: String = "") -> String {
+    public func key(_ name: String = "") -> String {
         switch self {
-        case .None:
+        case .none:
             return ""
-        case let .MA(num):
+        case let .ma(num):
             return "MA\(num)_\(name)"
-        case let .EMA(num):
+        case let .ema(num):
             return "EMA\(num)_\(name)"
-        case .KDJ(_, _, _):
+        case .kdj(_, _, _):
             return "KDJ_\(name)"
-        case .MACD(_, _, _):
+        case .macd(_, _, _):
             return "MACD_\(name)"
         
         }
@@ -49,20 +49,18 @@ public enum CHChartAlgorithm {
      
      - returns:
      */
-    public func handleAlgorithm(datas: [CHChartItem]) -> [CHChartItem] {
+    public func handleAlgorithm(_ datas: [CHChartItem]) -> [CHChartItem] {
         switch self {
-        case .None:
+        case .none:
             return datas
-        case let .MA(num):
+        case let .ma(num):
             return self.handleMA(num, datas: datas)
-        case let .EMA(num):
-            //TODO
-            return datas
-        case let .KDJ(p1, p2, p3):
+        case let .ema(num):
+            return self.handleEMA(num, datas: datas)
+        case let .kdj(p1, p2, p3):
             return self.handleKDJ(p1, p2: p2, p3: p3, datas: datas)
-        case .MACD(_, _, _):
-            //TODO
-            return datas
+        case let .macd(p1, p2, p3):
+            return self.handleMACD(p1, p2: p2, p3: p3, datas: datas)
             
         }
     }
@@ -79,11 +77,11 @@ extension CHChartAlgorithm {
      - parameter num:   天数
      - parameter datas: 数据集
      */
-    private func handleMA(num: Int, datas: [CHChartItem]) -> [CHChartItem] {
-        for (index, data) in datas.enumerate() {
+    fileprivate func handleMA(_ num: Int, datas: [CHChartItem]) -> [CHChartItem] {
+        for (index, data) in datas.enumerated() {
             let value = self.getMAValue(num, index: index, datas: datas)
-            data.extVal["\(self.key(CHSectionValueType.Price.key))"] = value.0
-            data.extVal["\(self.key(CHSectionValueType.Volume.key))"] = value.1
+            data.extVal["\(self.key(CHSectionValueType.price.key))"] = value.0
+            data.extVal["\(self.key(CHSectionValueType.volume.key))"] = value.1
         }
         return datas
     }
@@ -96,21 +94,70 @@ extension CHChartAlgorithm {
      
      - returns: MA数（价格，交易量）
      */
-    private func getMAValue(num: Int, index: Int, datas: [CHChartItem]) -> (CGFloat?, CGFloat?) {
+    fileprivate func getMAValue(_ num: Int, index: Int, datas: [CHChartItem]) -> (CGFloat?, CGFloat?) {
         var priceVal: CGFloat = 0
         var volVal: CGFloat = 0
-        if index + 1 >= num {
-            for i in index.stride(through: index + 1 - num, by: -1) {
+        if index + 1 >= num {       //index + 1 >= N，累计N天内的
+            for i in stride(from: index, through: index + 1 - num, by: -1) {
                 volVal += datas[i].vol
                 priceVal += datas[i].closePrice
             }
             volVal = volVal / CGFloat(num)
             priceVal = priceVal / CGFloat(num)
             return (priceVal, volVal)
-        } else {
-            return (nil, nil)
+        } else {                    //index + 1 < N，累计index + 1天内的
+            for i in stride(from: index, through: 0, by: -1) {
+                volVal += datas[i].vol
+                priceVal += datas[i].closePrice
+            }
+            volVal = volVal / CGFloat(index + 1)
+            priceVal = priceVal / CGFloat(index + 1)
+            return (priceVal, volVal)
+            // return (nil, nil)
         }
         
+    }
+    
+}
+
+// MARK: - 《EMA指数移动平均数》 处理算法
+extension CHChartAlgorithm {
+    
+    /**
+     处理EMA运算
+     EMA（N）=2/（N+1）*（C-昨日EMA）+昨日EMA；
+     EMA（12）=昨日EMA（12）*11/13+C*2/13；
+     - parameter num:   天数
+     - parameter datas: 数据集
+     */
+    fileprivate func handleEMA(_ num: Int, datas: [CHChartItem]) -> [CHChartItem] {
+        var prev_ema_price: CGFloat = 0
+        var prev_ema_vol: CGFloat = 0
+        for (index, data) in datas.enumerated() {
+            
+            let c = datas[index].closePrice
+            let v = datas[index].vol
+            
+            var ema_price: CGFloat = 0
+            var ema_vol: CGFloat = 0
+            //EMA（N）=2/（N+1）*（C-昨日EMA）+昨日EMA；
+            if index > 0 {
+                //EMA（N）=2/（N+1）*（C-昨日EMA）+昨日EMA；
+                ema_price = prev_ema_price + (c - prev_ema_price) * 2 / (CGFloat(num) + 1)
+                ema_vol = prev_ema_vol + (v - prev_ema_vol) * 2 / (CGFloat(num) + 1)
+                
+            } else {
+                ema_price = c
+                ema_vol = v
+            }
+            
+            data.extVal["\(self.key(CHSectionValueType.price.key))"] = ema_price
+            data.extVal["\(self.key(CHSectionValueType.volume.key))"] = ema_vol
+            
+            prev_ema_price = ema_price
+            prev_ema_vol = ema_vol
+        }
+        return datas
     }
     
 }
@@ -128,10 +175,10 @@ extension CHChartAlgorithm {
      
      - returns: 处理好的集合
      */
-    private func handleKDJ(p1: Int, p2: Int,p3: Int, datas: [CHChartItem]) -> [CHChartItem] {
-        var prev_k: CGFloat = 50;
-        var prev_d: CGFloat = 50;
-        for (index, data) in datas.enumerate() {
+    fileprivate func handleKDJ(_ p1: Int, p2: Int,p3: Int, datas: [CHChartItem]) -> [CHChartItem] {
+        var prev_k: CGFloat = 50
+        var prev_d: CGFloat = 50
+        for (index, data) in datas.enumerated() {
             //计算RSV值
             if let rsv = self.getRSV(p1, index: index, datas: datas) {
                 //计算K,D,J值
@@ -158,32 +205,97 @@ extension CHChartAlgorithm {
      
      - returns:
      */
-    private func getRSV(num: Int, index: Int, datas: [CHChartItem]) -> CGFloat? {
+    fileprivate func getRSV(_ num: Int, index: Int, datas: [CHChartItem]) -> CGFloat? {
         var rsv: CGFloat = 0
-        if index + 1 >= num {
-            let c = datas[index].closePrice
-            var h = datas[index].highPrice
-            var l = datas[index].lowPrice
-            //计算num天数内最低价，最高价
-            for i in index.stride(through: index + 1 - num, by: -1) {
-                let item = datas[i]
-                
-                if item.highPrice > h {
-                    h = item.highPrice
-                }
-                
-                if item.lowPrice < l {
-                    l = item.lowPrice
-                }
+        let c = datas[index].closePrice
+        var h = datas[index].highPrice
+        var l = datas[index].lowPrice
+        
+        let block: (Int) -> Void = {
+            (i) -> Void in
+            
+            let item = datas[i]
+            
+            if item.highPrice > h {
+                h = item.highPrice
             }
             
-            if h != l {
-                rsv = (c - l) / (h - l) * 100
+            if item.lowPrice < l {
+                l = item.lowPrice
             }
-            return rsv
-        } else {
-            return nil
         }
+        
+        if index + 1 >= num {    //index + 1 >= N，累计N天内的
+            //计算num天数内最低价，最高价
+            for i in stride(from: index, through: index + 1 - num, by: -1) {
+                block(i)
+            }
+        } else {                //index + 1 < N，累计index + 1天内的
+            //计算index天数内最低价，最高价
+            for i in stride(from: index, through: 0, by: -1) {
+                block(i)
+            }
+        }
+        
+        if h != l {
+            rsv = (c - l) / (h - l) * 100
+        }
+        return rsv
+    }
+    
+}
+
+// MARK: - 《MACD平滑异同移动平均线》 处理算法
+extension CHChartAlgorithm {
+    
+    /**
+     处理MACD运算
+     EMA（N）=2/（N+1）*（C-昨日EMA）+昨日EMA；
+     EMA（12）=昨日EMA（12）*11/13+C*2/13；
+     - parameter num:   天数
+     - parameter datas: 数据集
+     */
+    fileprivate func handleMACD(_ p1: Int, p2: Int,p3: Int, datas: [CHChartItem]) -> [CHChartItem] {
+        var pre_dea: CGFloat = 0
+        for (index, data) in datas.enumerated() {
+            //EMA（p1）=2/（p1+1）*（C-昨日EMA）+昨日EMA；
+            let (ema1, _) = self.getEMA(p1, index: index, datas: datas)
+            //EMA（p2）=2/（p2+1）*（C-昨日EMA）+昨日EMA；
+            let (ema2, _) = self.getEMA(p2, index: index, datas: datas)
+            
+            if ema1 != nil && ema2 != nil {
+                //DIF=今日EMA（p1）- 今日EMA（p2）
+                let dif = ema1! - ema2!
+                //dea（p3）=2/（p3+1）*（dif-昨日dea）+昨日dea；
+                let dea = pre_dea + (dif - pre_dea) * 2 / (CGFloat(p3) + 1)
+                //BAR=2×(DIF－DEA)
+                let bar = 2 * (dif - dea)
+                
+                data.extVal["\(self.key("DIF"))"] = dif
+                data.extVal["\(self.key("DEA"))"] = dea
+                data.extVal["\(self.key("BAR"))"] = bar
+                
+                pre_dea = dea
+            }
+        }
+        return datas
+    }
+    
+    /**
+     获取某日的EMA数据
+     
+     - parameter num:   天数周期
+     - parameter index:
+     - parameter datas:
+     
+     - returns: //EMA的成交价和成交量
+     */
+    fileprivate func getEMA(_ num: Int, index: Int, datas: [CHChartItem]) -> (CGFloat?, CGFloat?) {
+        let ema = CHChartAlgorithm.ema(num)
+        let data = datas[index]
+        let ema_price = data.extVal["\(ema.key(CHSectionValueType.price.key))"]
+        let ema_vol = data.extVal["\(ema.key(CHSectionValueType.volume.key))"]
+        return (ema_price, ema_vol)
     }
     
 }

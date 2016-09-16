@@ -7,19 +7,39 @@
 //
 
 import UIKit
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 public enum CHSectionValueType {
-    case Price          //价格
-    case Volume         //交易量
-    case Analysis         //指标
+    case price          //价格
+    case volume         //交易量
+    case analysis         //指标
     
     var key: String {
         switch self {
-        case .Price:
+        case .price:
             return "PRICE"
-        case .Volume:
+        case .volume:
             return "VOLUME"
-        case .Analysis:
+        case .analysis:
             return "Analysis"
         }
     }
@@ -32,32 +52,32 @@ public enum CHSectionValueType {
 class CHSection: NSObject {
     
     /// MARK: - 成员变量
-    var upColor: UIColor = UIColor.greenColor()     //升的颜色
-    var downColor: UIColor = UIColor.redColor()     //跌的颜色
+    var upColor: UIColor = UIColor.green     //升的颜色
+    var downColor: UIColor = UIColor.red     //跌的颜色
     var titleColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1) //文字颜色
-    var labelFont = UIFont.systemFontOfSize(10)
-    var valueType: CHSectionValueType = CHSectionValueType.Price
+    var labelFont = UIFont.systemFont(ofSize: 10)
+    var valueType: CHSectionValueType = CHSectionValueType.price
     
     var name: String = ""                           //区域的名称
     var hidden: Bool = false
     var isInitialized: Bool = false
     var paging: Bool = false
     var selectedIndex: Int = 0
-    var padding: UIEdgeInsets = UIEdgeInsetsZero
+    var padding: UIEdgeInsets = UIEdgeInsets.zero
     var series = [CHSeries]()                  //每个分区包含多组系列，每个系列包含多个点线模型
     var tickInterval: Int = 0
     var title: String = ""                                      //标题
     var titleShowOutSide: Bool = false                          //标题是否显示在外面
     var decimal: Int = 2                                        //小数位的长度
     var ratios: Int = 1                                         //所占区域比例
-    var frame: CGRect = CGRectZero
+    var frame: CGRect = CGRect.zero
     var yAxis: CHYAxis = CHYAxis()                           //Y轴参数
     
     
     /**
      建立Y轴左边对象，由起始位到结束位
      */
-    func buildYAxis(model: CHChartModel, startIndex: Int, endIndex: Int) {
+    func buildYAxis(_ model: CHChartModel, startIndex: Int, endIndex: Int) {
         let datas = model.datas
         if datas.count == 0 {
             return  //没有数据返回
@@ -67,12 +87,12 @@ class CHSection: NSObject {
             self.yAxis.decimal = self.decimal
             
             self.yAxis.max = 0
-            self.yAxis.min = CGFloat.max
+            self.yAxis.min = CGFloat.greatestFiniteMagnitude
             self.yAxis.isUsed = true
         }
         
         
-        for i in startIndex.stride(to: endIndex, by: 1) {
+        for i in stride(from: startIndex, to: endIndex, by: 1) {
             
             
             let item = datas[i]
@@ -171,7 +191,7 @@ class CHSection: NSObject {
      
      - returns: 坐标系中实际的y值
      */
-    func getLocalY(val: CGFloat) -> CGFloat {
+    func getLocalY(_ val: CGFloat) -> CGFloat {
         let max = self.yAxis.max
         let min = self.yAxis.min
         
@@ -201,7 +221,7 @@ class CHSection: NSObject {
      
      - returns:
      */
-    func getRawValue(y: CGFloat) -> CGFloat {
+    func getRawValue(_ y: CGFloat) -> CGFloat {
         let max = self.yAxis.max
         let min = self.yAxis.min
         
@@ -220,14 +240,14 @@ class CHSection: NSObject {
     /**
      画分区的标题
      */
-    func drawTitle(chartSelectedIndex: Int) {
+    func drawTitle(_ chartSelectedIndex: Int) {
         
         if chartSelectedIndex == -1 {
             return      //没有数据返回
         }
         
         let context = UIGraphicsGetCurrentContext()
-        CGContextSetShouldAntialias(context, true)
+        context?.setShouldAntialias(true)
         
         
         
@@ -244,8 +264,8 @@ class CHSection: NSObject {
         
         if !series.title.isEmpty {
             let seriesTitle = series.title + "  "
-            let point = CGPointMake(self.frame.origin.x + self.padding.left + 2 + w, yPos)
-            NSString(string: seriesTitle).drawAtPoint(point,
+            let point = CGPoint(x: self.frame.origin.x + self.padding.left + 2 + w, y: yPos)
+            NSString(string: seriesTitle).draw(at: point,
                                                 withAttributes:
                 [
                     NSFontAttributeName: self.labelFont,
@@ -282,21 +302,21 @@ class CHSection: NSObject {
             
             var textColor: UIColor
             switch item.trend {
-            case .Up, .Equal:
+            case .up, .equal:
                 textColor = model.upColor
-                CGContextSetFillColorWithColor(context, model.upColor.CGColor)
-            case .Down:
+                context?.setFillColor(model.upColor.cgColor)
+            case .down:
                 textColor = model.downColor
-                CGContextSetFillColorWithColor(context, model.downColor.CGColor)
+                context?.setFillColor(model.downColor.cgColor)
             }
             
             let fontAttributes = [
                 NSFontAttributeName: self.labelFont,
                 NSForegroundColorAttributeName: textColor
-            ]
+            ] as [String : Any]
             
-            let point = CGPointMake(self.frame.origin.x + self.padding.left + 2 + w, yPos)
-            NSString(string: title).drawAtPoint(point,
+            let point = CGPoint(x: self.frame.origin.x + self.padding.left + 2 + w, y: yPos)
+            NSString(string: title).draw(at: point,
                                                 withAttributes: fontAttributes)
             
             w += title.ch_heightWithConstrainedWidth(self.labelFont).width

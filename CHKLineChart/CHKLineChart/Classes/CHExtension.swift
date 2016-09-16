@@ -20,9 +20,9 @@ extension String {
      
      - returns:
      */
-    func ch_heightWithConstrainedWidth(font: UIFont) -> CGSize {
-        let constraintRect = CGSize(width: CGFloat.max, height: CGFloat.max)
-        let boundingBox = self.boundingRectWithSize(constraintRect, options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil)
+    func ch_heightWithConstrainedWidth(_ font: UIFont) -> CGSize {
+        let constraintRect = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        let boundingBox = self.boundingRect(with: constraintRect, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil)
         return boundingBox.size
     }
     
@@ -38,7 +38,7 @@ extension UIColor {
      
      - returns:
      */
-    class func ch_hex(hex: UInt, alpha: Float = 1.0) -> UIColor {
+    class func ch_hex(_ hex: UInt, alpha: Float = 1.0) -> UIColor {
         return UIColor(red: CGFloat((hex & 0xFF0000) >> 16) / 255.0,
                   green: CGFloat((hex & 0x00FF00) >> 8) / 255.0,
                   blue: CGFloat(hex & 0x0000FF) / 255.0,
@@ -47,7 +47,7 @@ extension UIColor {
 
 }
 
-extension NSDate {
+extension Date {
     
     /*!
      * @method 把时间戳转换为用户格式时间
@@ -57,15 +57,15 @@ extension NSDate {
      * @param   format        格式
      * @result                时间
      */
-    class func getTimeByStamp(timestamp: Int, format: String) -> String {
+    static func getTimeByStamp(_ timestamp: Int, format: String) -> String {
         var time = ""
         if (timestamp == 0) {
             return ""
         }
-        let confromTimesp = NSDate(timeIntervalSince1970: NSTimeInterval(timestamp))
-        let formatter = NSDateFormatter()
+        let confromTimesp = Date(timeIntervalSince1970: TimeInterval(timestamp))
+        let formatter = DateFormatter()
         formatter.dateFormat = format
-        time = formatter.stringFromDate(confromTimesp)
+        time = formatter.string(from: confromTimesp)
         return time;
     }
 }
@@ -82,12 +82,12 @@ extension CGFloat {
      
      - returns:
      */
-    func ch_toString(minF: Int = 2, maxF: Int = 6, minI: Int = 1) -> String {
-        let valueDecimalNumber = NSDecimalNumber(double: Double(self))
-        let twoDecimalPlacesFormatter = NSNumberFormatter()
+    func ch_toString(_ minF: Int = 2, maxF: Int = 6, minI: Int = 1) -> String {
+        let valueDecimalNumber = NSDecimalNumber(value: Double(self) as Double)
+        let twoDecimalPlacesFormatter = NumberFormatter()
         twoDecimalPlacesFormatter.maximumFractionDigits = maxF
         twoDecimalPlacesFormatter.minimumFractionDigits = minF
         twoDecimalPlacesFormatter.minimumIntegerDigits = minI
-        return twoDecimalPlacesFormatter.stringFromNumber(valueDecimalNumber)!
+        return twoDecimalPlacesFormatter.string(from: valueDecimalNumber)!
     }
 }

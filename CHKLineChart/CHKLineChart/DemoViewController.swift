@@ -17,9 +17,9 @@ class DemoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.chartView.delegate = self
-        self.chartView.style = CHKLineChartStyle.Default
+        self.chartView.style = CHKLineChartStyle.default
         self.getDataByFile()
-//        self.getRemoteServiceData()
+        //self.getRemoteServiceData()
     }
 
     override func didReceiveMemoryWarning() {
@@ -29,19 +29,19 @@ class DemoViewController: UIViewController {
 
     func getRemoteServiceData() {
         // 快捷方式获得session对象
-        let session = NSURLSession.sharedSession()
+        let session = URLSession.shared
         
-        let url = NSURL(string: "https://www.btc123.com/kline/klineapi?symbol=chbtcbtccny&type=1min&size=300")
+        let url = URL(string: "https://www.btc123.com/kline/klineapi?symbol=chbtcbtccny&type=1day&size=300")
         // 通过URL初始化task,在block内部可以直接对返回的数据进行处理
-        let task = session.dataTaskWithURL(url!) {
+        let task = session.dataTask(with: url!, completionHandler: {
             (data, response, error) in
             if let data = data {
                 /*
                  对从服务器获取到的数据data进行相应的处理.
                  */
                 do {
-                    NSLog("\(NSString(data: data, encoding: NSUTF8StringEncoding))")
-                    let dict = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableLeaves) as! [String: AnyObject]
+                    NSLog("\(NSString(data: data, encoding: String.Encoding.utf8.rawValue))")
+                    let dict = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as! [String: AnyObject]
                     
                     let isSuc = dict["isSuc"] as? Bool ?? false
                     if isSuc {
@@ -56,15 +56,15 @@ class DemoViewController: UIViewController {
                 }
                 
             }
-        }
+        }) 
         
         // 启动任务
         task.resume()
     }
     
     func getDataByFile() {
-        let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource("data", ofType: "json")!)
-        let dict = try! NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.MutableLeaves) as! [String: AnyObject]
+        let data = try? Data(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "data", ofType: "json")!))
+        let dict = try! JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableLeaves) as! [String: AnyObject]
         
         let isSuc = dict["isSuc"] as? Bool ?? false
         if isSuc {
@@ -79,11 +79,11 @@ class DemoViewController: UIViewController {
 
 extension DemoViewController: CHKLineChartDelegate {
     
-    func numberOfPointsInKLineChart(chart: CHKLineChartView) -> Int {
+    func numberOfPointsInKLineChart(_ chart: CHKLineChartView) -> Int {
         return self.klineDatas.count
     }
     
-    func kLineChart(chart: CHKLineChartView, valueForPointAtIndex index: Int) -> CHChartItem {
+    func kLineChart(_ chart: CHKLineChartView, valueForPointAtIndex index: Int) -> CHChartItem {
         let data = self.klineDatas[index] as! [Double]
         let item = CHChartItem()
         item.time = Int(data[0] / 1000)
@@ -95,10 +95,10 @@ extension DemoViewController: CHKLineChartDelegate {
         return item
     }
     
-    func kLineChart(chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String {
+    func kLineChart(_ chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String {
         let data = self.klineDatas[index] as! [Double]
         let timestamp = Int(data[0])
-        return NSDate.getTimeByStamp(timestamp, format: "HH:mm")
+        return Date.getTimeByStamp(timestamp, format: "HH:mm")
     }
     
 
@@ -110,7 +110,7 @@ extension DemoViewController: CHKLineChartDelegate {
 extension DemoViewController {
     
     
-    override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+    override func willAnimateRotation(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
         
         self.chartView.reloadData()
     }
