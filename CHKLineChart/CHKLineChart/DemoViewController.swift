@@ -17,7 +17,7 @@ class DemoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.chartView.delegate = self
-        self.chartView.style = CHKLineChartStyle.default
+        self.chartView.style = CHKLineChartStyle.base
         self.getDataByFile()
 //        self.getRemoteServiceData()
     }

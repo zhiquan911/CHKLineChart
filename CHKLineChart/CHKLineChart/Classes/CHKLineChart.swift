@@ -20,7 +20,7 @@ public enum CHYAxisShowPosition {
 }
 
 public enum CHKLineChartStyle {
-    case `default`
+    case base
     
     /**
      分区样式配置
@@ -30,7 +30,7 @@ public enum CHKLineChartStyle {
     var sections: [CHSection] {
         
         switch self {
-        case .default:
+        case .base:
             let upcolor = UIColor.ch_hex(0xF80D1F)
             let downcolor = UIColor.ch_hex(0x1E932B)
             let priceSection = CHSection()
@@ -85,7 +85,7 @@ public enum CHKLineChartStyle {
      */
     var algorithms: [CHChartAlgorithm] {
         switch self {
-        case .default:
+        case .base:
             return [
 //                CHChartAlgorithm.MA(5),
 //                CHChartAlgorithm.MA(10),
@@ -109,7 +109,7 @@ public enum CHKLineChartStyle {
      */
     var backgroundColor: UIColor {
         switch self {
-        case .default:
+        case .base:
             return UIColor.ch_hex(0x1D1C1C)
         }
     }
@@ -121,7 +121,7 @@ public enum CHKLineChartStyle {
      */
     var padding: UIEdgeInsets {
         switch self {
-        case .default:
+        case .base:
             return UIEdgeInsets(top: 16, left: 8, bottom: 20, right: 0)
         }
     }
@@ -186,7 +186,7 @@ open class CHKLineChartView: UIView {
     open var handlerOfAlgorithms: [CHChartAlgorithm] = [CHChartAlgorithm]()
     open var padding: UIEdgeInsets = UIEdgeInsets.zero    //内边距
     open var showYLabel = CHYAxisShowPosition.right      //显示y的位置，默认右边
-    open var style = CHKLineChartStyle.default {           //显示样式
+    open var style = CHKLineChartStyle.base {           //显示样式
         didSet {
             //重新配置样式
             self.sections = self.style.sections

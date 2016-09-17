@@ -17,9 +17,9 @@ public enum CHSectionValueType {
     var key: String {
         switch self {
         case .price:
-            return "PRICE"
+            return "Price"
         case .volume:
-            return "VOLUME"
+            return "Volume"
         case .analysis:
             return "Analysis"
         }
