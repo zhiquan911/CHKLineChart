@@ -40,21 +40,51 @@ public enum CHKLineChartStyle {
             priceSection.ratios = 3
             priceSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
             let priceSeries = CHSeries.getDefaultPrice(upColor: upcolor, downColor: downcolor, section: priceSection)
-            priceSection.series = [priceSeries]
+            
+            let priceMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
+                                               colors: [
+                                                UIColor.ch_hex(0xDDDDDD),
+                                                UIColor.ch_hex(0xF9EE30),
+                                                UIColor.ch_hex(0xF600FF),
+                                                ], section: priceSection)
+            priceMASeries.hidden = false
+            let priceEMASeries = CHSeries.getMA(isEMA: true, num: [5,10,30],
+                                               colors: [
+                                                UIColor.ch_hex(0xDDDDDD),
+                                                UIColor.ch_hex(0xF9EE30),
+                                                UIColor.ch_hex(0xF600FF),
+                ], section: priceSection)
+            priceEMASeries.hidden = true
+            priceSection.series = [priceSeries, priceMASeries, priceEMASeries]
             
             let volumeSection = CHSection()
             volumeSection.valueType = .volume
             volumeSection.hidden = false
             volumeSection.ratios = 1
+            volumeSection.yAxis.tickInterval = 3
             volumeSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
             let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
-            volumeSection.series = [volumeSeries]
+            let volumeMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
+                                               colors: [
+                                                UIColor.ch_hex(0xDDDDDD),
+                                                UIColor.ch_hex(0xF9EE30),
+                                                UIColor.ch_hex(0xF600FF),
+                                                ], section: volumeSection)
+            let volumeEMASeries = CHSeries.getMA(isEMA: true, num: [5,10,30],
+                                                colors: [
+                                                    UIColor.ch_hex(0xDDDDDD),
+                                                    UIColor.ch_hex(0xF9EE30),
+                                                    UIColor.ch_hex(0xF600FF),
+                                                    ], section: volumeSection)
+            priceEMASeries.hidden = true
+            volumeSection.series = [volumeSeries, volumeMASeries, volumeEMASeries]
             
             let trendSection = CHSection()
             trendSection.valueType = .analysis
             trendSection.hidden = false
             trendSection.ratios = 1
             trendSection.paging = true
+            trendSection.yAxis.tickInterval = 3
             trendSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
             let kdjSeries = CHSeries.getKDJ(UIColor.ch_hex(0xDDDDDD),
                                             dc: UIColor.ch_hex(0xF9EE30),
@@ -87,10 +117,9 @@ public enum CHKLineChartStyle {
         switch self {
         case .base:
             return [
-//                CHChartAlgorithm.MA(5),
-//                CHChartAlgorithm.MA(10),
-//                CHChartAlgorithm.MA(30),
-                
+                CHChartAlgorithm.ma(5),
+                CHChartAlgorithm.ma(10),
+                CHChartAlgorithm.ma(30),
                 CHChartAlgorithm.ema(5),
                 CHChartAlgorithm.ema(10),
                 CHChartAlgorithm.ema(12),       //计算MACD，必须先计算到同周期的EMA
@@ -213,7 +242,6 @@ open class CHKLineChartView: UIView {
     var range: Int = 49                             //显示在可见区域的个数
     var borderColor: UIColor = UIColor.gray
     var labelSize = CGSize(width: 40, height: 16)
-    var isInitialized = false                       //是否已经初始化数据
     
     var datas: [CHChartItem] = [CHChartItem]()      //数据源
     
@@ -784,21 +812,28 @@ extension CHKLineChartView {
         if section.paging {
             //如果section以分页显示，则读取当前显示的系列
             let serie = section.series[section.selectedIndex]
-            //循环画出每个模型的线
-            for model in serie.chartModels {
-                model.drawSerie(self.rangeFrom, endIndex: self.rangeTo)
-            }
+            self.drawSerie(serie)
+            
         } else {
             //不分页显示，全部系列绘制到图表上
             for serie in section.series {
-                for model in serie.chartModels {
-                    model.drawSerie(self.rangeFrom, endIndex: self.rangeTo)
-                }
+                self.drawSerie(serie)
             }
         }
         
     }
     
+    /**
+     绘制图表分区上的系列点先
+     */
+    func drawSerie(_ serie: CHSeries) {
+        if !serie.hidden {
+            //循环画出每个模型的线
+            for model in serie.chartModels {
+                model.drawSerie(self.rangeFrom, endIndex: self.rangeTo)
+            }
+        }
+    }
 }
 
 // MARK: - 公开方法
@@ -809,6 +844,42 @@ extension CHKLineChartView {
      */
     public func reloadData() {
         self.resetData()
+        self.setNeedsDisplay()
+    }
+    
+    /**
+     通过key隐藏或显示线系列
+     */
+    public func setSerie(hidden: Bool, by key: String) {
+        for section in self.sections {
+            for (index, serie)  in section.series.enumerated() {
+                if serie.key == key {
+                    
+                    if section.paging {
+                        if hidden == false {
+                            section.selectedIndex = index
+                        }
+                    } else {
+                        serie.hidden = hidden
+                    }
+                    
+                    break
+                }
+            }
+        }
+        self.setNeedsDisplay()
+    }
+    
+    /**
+     通过key隐藏或显示分区
+     */
+    public func setSection(hidden: Bool, by key: String) {
+        for section in self.sections {
+            if section.key == key {
+                section.hidden = hidden
+                break
+            }
+        }
         self.setNeedsDisplay()
     }
 }

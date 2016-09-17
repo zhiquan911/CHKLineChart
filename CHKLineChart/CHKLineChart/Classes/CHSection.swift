@@ -37,11 +37,14 @@ class CHSection: NSObject {
     var downColor: UIColor = UIColor.red     //跌的颜色
     var titleColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1) //文字颜色
     var labelFont = UIFont.systemFont(ofSize: 10)
-    var valueType: CHSectionValueType = CHSectionValueType.price
-    
+    var valueType: CHSectionValueType = CHSectionValueType.price {
+        didSet {
+            self.key = valueType.key
+        }
+    }
+    var key = ""
     var name: String = ""                           //区域的名称
     var hidden: Bool = false
-    var isInitialized: Bool = false
     var paging: Bool = false
     var selectedIndex: Int = 0
     var padding: UIEdgeInsets = UIEdgeInsets.zero
@@ -255,11 +258,32 @@ class CHSection: NSObject {
         if chartSelectedIndex == -1 {
             return      //没有数据返回
         }
+        var startX = self.frame.origin.x + self.padding.left + 2
+        if self.paging {     //如果分页
+            let series = self.series[self.selectedIndex]
+            let _ = self.drawTitlePerSerie(startX, chartSelectedIndex: chartSelectedIndex, series: series)
+        } else {
+            for serie in self.series {   //不分页
+                startX = self.drawTitlePerSerie(startX, chartSelectedIndex: chartSelectedIndex, series: serie)
+            }
+        }
+        
+        
+        
+        
+    }
+    
+    /**
+     画分区中每个系列的标题
+     */
+    func drawTitlePerSerie(_ xPos: CGFloat, chartSelectedIndex: Int, series: CHSeries) -> CGFloat {
+        
+        if series.hidden {
+            return xPos
+        }
         
         let context = UIGraphicsGetCurrentContext()
         context?.setShouldAntialias(true)
-        
-        
         
         var yPos: CGFloat = 0, w: CGFloat = 0
         if titleShowOutSide {
@@ -268,13 +292,13 @@ class CHSection: NSObject {
             yPos = self.frame.origin.y + 2
         }
         
-        let series = self.series[self.selectedIndex]
+        let startX = xPos
         
         //绘画系列的标题
         
         if !series.title.isEmpty {
             let seriesTitle = series.title + "  "
-            let point = CGPoint(x: self.frame.origin.x + self.padding.left + 2 + w, y: yPos)
+            let point = CGPoint(x: startX + w, y: yPos)
             NSString(string: seriesTitle).draw(at: point,
                                                withAttributes:
                 [
@@ -332,13 +356,16 @@ class CHSection: NSObject {
                 NSForegroundColorAttributeName: textColor
                 ] as [String : Any]
             
-            let point = CGPoint(x: self.frame.origin.x + self.padding.left + 2 + w, y: yPos)
+            let point = CGPoint(x: startX + w, y: yPos)
             NSString(string: title).draw(at: point,
                                          withAttributes: fontAttributes)
             
             w += title.ch_heightWithConstrainedWidth(self.labelFont).width
         }
+        return startX + w
     }
+    
+    
     
     //切换到下一个系列显示
     func nextPage() {

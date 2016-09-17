@@ -11,6 +11,8 @@ import UIKit
 class DemoViewController: UIViewController {
     
     @IBOutlet var chartView: CHKLineChartView!
+    @IBOutlet var segPrice: UISegmentedControl!
+    @IBOutlet var segAnalysis: UISegmentedControl!
     
     var klineDatas = [AnyObject]()
 
@@ -19,6 +21,8 @@ class DemoViewController: UIViewController {
         self.chartView.delegate = self
         self.chartView.style = CHKLineChartStyle.base
         self.getDataByFile()
+        //显示EMA线
+        self.chartView.setSerie(hidden: false, by: CHSeriesKey.ema)
 //        self.getRemoteServiceData()
     }
 
@@ -74,6 +78,43 @@ class DemoViewController: UIViewController {
             self.chartView.reloadData()
         }
     }
+    
+    
+    @IBAction func handleSegmentChange(sender: UISegmentedControl) {
+        
+        if sender === self.segPrice {
+            switch sender.selectedSegmentIndex {
+            case 0:
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.ma)
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.ema)
+            case 1:
+                self.chartView.setSerie(hidden: false, by: CHSeriesKey.ma)
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.ema)
+            case 2:
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.ma)
+                self.chartView.setSerie(hidden: false, by: CHSeriesKey.ema)
+            default:
+                break
+            }
+        } else {
+            switch sender.selectedSegmentIndex {
+            case 0:
+                self.chartView.setSection(hidden: true, by: CHSectionValueType.analysis.key)
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.kdj)
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.macd)
+            case 1:
+                self.chartView.setSection(hidden: false, by: CHSectionValueType.analysis.key)
+                self.chartView.setSerie(hidden: false, by: CHSeriesKey.kdj)
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.macd)
+            case 2:
+                self.chartView.setSection(hidden: false, by: CHSectionValueType.analysis.key)
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.kdj)
+                self.chartView.setSerie(hidden: false, by: CHSeriesKey.macd)
+            default:
+                break
+            }
+        }
+    }
 
 }
 
@@ -100,8 +141,6 @@ extension DemoViewController: CHKLineChartDelegate {
         let timestamp = Int(data[0])
         return Date.getTimeByStamp(timestamp, format: "HH:mm")
     }
-    
-
     
 }
 

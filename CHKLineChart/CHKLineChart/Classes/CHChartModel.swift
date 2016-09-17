@@ -454,7 +454,7 @@ extension CHChartModel {
     class func getCandle(upColor: UIColor, downColor: UIColor) -> CHCandleModel {
         let model = CHCandleModel(upColor: upColor, downColor: downColor,
                                   titleColor: UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1))
-        model.key = "CANDLE"
+        model.key = "Candle"
         model.showMaxVal = true
         model.showMinVal = true
         return model
@@ -465,7 +465,7 @@ extension CHChartModel {
         let model = CHColumnModel(upColor: upColor, downColor: downColor,
                                   titleColor: UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1))
         model.title = NSLocalizedString("Vol", comment: "")
-        model.key = "VOL"
+        model.key = "Vol"
         return model
     }
     
