@@ -439,7 +439,18 @@ open class CHKLineChartView: UIView {
                 let time = Date.getTimeByStamp(item.time, format: "yyyy-MM-dd HH:mm") //显示实际值
                 let size = time.ch_heightWithConstrainedWidth(self.labelFont)
                 self.selectedXAxisLabel.text = time
-                self.selectedXAxisLabel.frame = CGRect(x: hx - (size.width + 6) / 2, y: self.frame.size.height - self.padding.bottom, width: size.width  + 6, height: self.labelSize.height)
+                
+                //判断x是否超过左右边界
+                let labelWidth = size.width  + 6
+                var x = hx - (labelWidth) / 2
+                
+                if x < section!.frame.origin.x {
+                    x = section!.frame.origin.x
+                } else if x + labelWidth > section!.frame.origin.x + section!.frame.size.width {
+                    x = section!.frame.origin.x + section!.frame.size.width - labelWidth
+                }
+                
+                self.selectedXAxisLabel.frame = CGRect(x: x, y: self.frame.size.height - self.padding.bottom, width: size.width  + 6, height: self.labelSize.height)
                 
                 break
             }
