@@ -197,7 +197,7 @@ public enum CHKLineChartStyle {
      完成绘画图表
      
      */
-    @objc optional func didFinishKLineChartBuilding(_ chart: CHKLineChartView)
+    @objc optional func didFinishKLineChartRefresh(_ chart: CHKLineChartView)
     
 }
 
@@ -489,7 +489,7 @@ extension CHKLineChartView {
             //重新显示点击选中的坐标
             self.setSelectedIndexByPoint(self.selectedPoint)
             
-            self.delegate?.didFinishKLineChartBuilding?(self)
+            self.delegate?.didFinishKLineChartRefresh?(self)
         }
     }
     
@@ -850,10 +850,7 @@ extension CHKLineChartView {
      */
     public func reloadData() {
         self.resetData()
-        //drawRect刷新率为1/60秒，所以避免刷新冲突导致没有重新加载数据，延迟0.1秒后执行新数据刷新
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
-            self.setNeedsDisplay()
-        }
+        self.setNeedsDisplay()
     }
     
     /**

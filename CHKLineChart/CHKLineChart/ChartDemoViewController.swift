@@ -67,31 +67,39 @@ class ChartDemoViewController: UIViewController {
         // 快捷方式获得session对象
         let session = URLSession.shared
         
-        let url = URL(string: "https://www.btc123.com/kline/klineapi?symbol=chbtcbtccny&type=1day&size=300")
+        let url = URL(string: "https://www.btc123.com/kline/klineapi?symbol=chbtcbtccny&type=1day&size=1200")
         // 通过URL初始化task,在block内部可以直接对返回的数据进行处理
         let task = session.dataTask(with: url!, completionHandler: {
             (data, response, error) in
             if let data = data {
-                /*
-                 对从服务器获取到的数据data进行相应的处理.
-                 */
-                do {
-                    NSLog("\(NSString(data: data, encoding: String.Encoding.utf8.rawValue))")
-                    let dict = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as! [String: AnyObject]
-                    
-                    let isSuc = dict["isSuc"] as? Bool ?? false
-                    if isSuc {
-                        let datas = dict["datas"] as! [AnyObject]
-                        NSLog("chart.datas = \(datas.count)")
-                        self.klineDatas = datas
+                
+                DispatchQueue.main.async {
+                    /*
+                     对从服务器获取到的数据data进行相应的处理.
+                     */
+                    do {
+                        NSLog("\(NSString(data: data, encoding: String.Encoding.utf8.rawValue))")
+                        let dict = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as! [String: AnyObject]
                         
-                        self.chartView.reloadData()
+                        let isSuc = dict["isSuc"] as? Bool ?? false
+                        if isSuc {
+                            let datas = dict["datas"] as! [AnyObject]
+                            NSLog("chart.datas = \(datas.count)")
+                            self.klineDatas = datas
+                            
+                            self.chartView.reloadData()
+                            
+                            
+                        }
+                        
+                    } catch _ {
                         
                     }
                     
-                } catch _ {
-                    
+                    self.loadingView.stopAnimating()
+                    self.loadingView.isHidden = true
                 }
+                
                 
             }
         })
@@ -176,10 +184,6 @@ extension ChartDemoViewController: CHKLineChartDelegate {
         return Date.getTimeByStamp(timestamp, format: "HH:mm")
     }
     
-    func didFinishKLineChartBuilding(_ chart: CHKLineChartView) {
-        self.loadingView.stopAnimating()
-        self.loadingView.isHidden = true
-    }
     
 }
 
