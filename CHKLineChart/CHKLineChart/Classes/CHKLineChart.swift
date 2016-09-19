@@ -19,146 +19,6 @@ public enum CHYAxisShowPosition {
     case left, right, none
 }
 
-public enum CHKLineChartStyle {
-    case base
-    
-    /**
-     分区样式配置
-     
-     - returns:
-     */
-    var sections: [CHSection] {
-        
-        switch self {
-        case .base:
-            let upcolor = UIColor.ch_hex(0xF80D1F)
-            let downcolor = UIColor.ch_hex(0x1E932B)
-            let priceSection = CHSection()
-            priceSection.titleShowOutSide = true
-            priceSection.valueType = .price
-            priceSection.hidden = false
-            priceSection.ratios = 3
-            priceSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
-            let priceSeries = CHSeries.getDefaultPrice(upColor: upcolor, downColor: downcolor, section: priceSection)
-            
-            let priceMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
-                                               colors: [
-                                                UIColor.ch_hex(0xDDDDDD),
-                                                UIColor.ch_hex(0xF9EE30),
-                                                UIColor.ch_hex(0xF600FF),
-                                                ], section: priceSection)
-            priceMASeries.hidden = false
-            let priceEMASeries = CHSeries.getMA(isEMA: true, num: [5,10,30],
-                                               colors: [
-                                                UIColor.ch_hex(0xDDDDDD),
-                                                UIColor.ch_hex(0xF9EE30),
-                                                UIColor.ch_hex(0xF600FF),
-                ], section: priceSection)
-            priceEMASeries.hidden = true
-            priceSection.series = [priceSeries, priceMASeries, priceEMASeries]
-            
-            let volumeSection = CHSection()
-            volumeSection.valueType = .volume
-            volumeSection.hidden = false
-            volumeSection.ratios = 1
-            volumeSection.yAxis.tickInterval = 3
-            volumeSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
-            let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
-            let volumeMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
-                                               colors: [
-                                                UIColor.ch_hex(0xDDDDDD),
-                                                UIColor.ch_hex(0xF9EE30),
-                                                UIColor.ch_hex(0xF600FF),
-                                                ], section: volumeSection)
-            let volumeEMASeries = CHSeries.getMA(isEMA: true, num: [5,10,30],
-                                                colors: [
-                                                    UIColor.ch_hex(0xDDDDDD),
-                                                    UIColor.ch_hex(0xF9EE30),
-                                                    UIColor.ch_hex(0xF600FF),
-                                                    ], section: volumeSection)
-            volumeEMASeries.hidden = true
-            volumeSection.series = [volumeSeries, volumeMASeries, volumeEMASeries]
-            
-            let trendSection = CHSection()
-            trendSection.valueType = .analysis
-            trendSection.hidden = false
-            trendSection.ratios = 1
-            trendSection.paging = true
-            trendSection.yAxis.tickInterval = 3
-            trendSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
-            let kdjSeries = CHSeries.getKDJ(UIColor.ch_hex(0xDDDDDD),
-                                            dc: UIColor.ch_hex(0xF9EE30),
-                                            jc: UIColor.ch_hex(0xF600FF),
-                                            section: trendSection)
-            kdjSeries.title = "KDJ(9,3,3)"
-            
-            let macdSeries = CHSeries.getMACD(UIColor.ch_hex(0xDDDDDD),
-                                             deac: UIColor.ch_hex(0xF9EE30),
-                                             barc: UIColor.ch_hex(0xF600FF),
-                                             upColor: upcolor, downColor: downcolor,
-                                             section: trendSection)
-            macdSeries.title = "MACD(12,26,9)"
-            macdSeries.symmetrical = true
-            trendSection.series = [
-                kdjSeries,
-                macdSeries]
-            
-            return [priceSection, volumeSection, trendSection]
-        }
-        
-    }
-    
-    /**
-     要处理的算法
-     
-     - returns:
-     */
-    var algorithms: [CHChartAlgorithm] {
-        switch self {
-        case .base:
-            return [
-                CHChartAlgorithm.ma(5),
-                CHChartAlgorithm.ma(10),
-                CHChartAlgorithm.ma(30),
-                CHChartAlgorithm.ema(5),
-                CHChartAlgorithm.ema(10),
-                CHChartAlgorithm.ema(12),       //计算MACD，必须先计算到同周期的EMA
-                CHChartAlgorithm.ema(26),       //计算MACD，必须先计算到同周期的EMA
-                CHChartAlgorithm.ema(30),
-                CHChartAlgorithm.macd(12, 26, 9),
-                CHChartAlgorithm.kdj(9, 3, 3),
-            ]
-        }
-    }
-    
-    /**
-     背景颜色
-     
-     - returns:
-     */
-    var backgroundColor: UIColor {
-        switch self {
-        case .base:
-            return UIColor.ch_hex(0x1D1C1C)
-        }
-    }
-    
-    /**
-     边距
-     
-     - returns:
-     */
-    var padding: UIEdgeInsets {
-        switch self {
-        case .base:
-            return UIEdgeInsets(top: 16, left: 8, bottom: 20, right: 0)
-        }
-    }
-    
-}
-
-
-
 /**
  *  K线数据源代理
  */
@@ -182,6 +42,16 @@ public enum CHKLineChartStyle {
      - returns: K线数据对象
      */
     func kLineChart(_ chart: CHKLineChartView, valueForPointAtIndex index: Int) -> CHChartItem
+    
+    /**
+     获取图表Y轴的显示的内容
+     
+     - parameter chart:
+     - parameter value:     计算得出的y值
+     
+     - returns:
+     */
+    func kLineChart(_ chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, section: CHSection) -> String
     
     /**
      获取图表X轴的显示的内容
@@ -221,15 +91,27 @@ open class CHKLineChartView: UIView {
     open var handlerOfAlgorithms: [CHChartAlgorithm] = [CHChartAlgorithm]()
     open var padding: UIEdgeInsets = UIEdgeInsets.zero    //内边距
     open var showYLabel = CHYAxisShowPosition.right      //显示y的位置，默认右边
-    open var style = CHKLineChartStyle.base {           //显示样式
+    open var style: CHKLineChartStyle! {           //显示样式
         didSet {
             //重新配置样式
             self.sections = self.style.sections
             self.backgroundColor = self.style.backgroundColor
             self.padding = self.style.padding
             self.handlerOfAlgorithms = self.style.algorithms
+            self.lineColor = self.style.lineColor
+            self.textColor = self.style.textColor
+            self.dashColor = self.style.dashColor
+            self.labelFont = self.style.labelFont
         }
         
+    }
+    
+    open var decimal: Int = 2 {                     //保留小数位
+        didSet {
+            for section in self.sections {
+                section.decimal = self.decimal
+            }
+        }
     }
     
     @IBOutlet open weak var delegate: CHKLineChartDelegate?             //代理
@@ -251,7 +133,7 @@ open class CHKLineChartView: UIView {
     
     var datas: [CHChartItem] = [CHChartItem]()      //数据源
     
-    var selectedBGColor: UIColor = UIColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 1)
+    var selectedBGColor: UIColor = UIColor(white: 0.4, alpha: 1)
     var verticalLineView: UIView!
     var horizontalLineView: UIView!
     var selectedXAxisLabel: UILabel!
@@ -744,7 +626,7 @@ extension CHKLineChartView {
         ] as [String : Any]
         
         var yaxis = section.yAxis
-        let format = NSString(string: "%.".appendingFormat("%df", yaxis.decimal))
+//        let format = NSString(string: "%.".appendingFormat("%df", yaxis.decimal))
         
         //保持Y轴标签个数偶数显示
         if (yaxis.tickInterval % 2 == 1) {
@@ -770,7 +652,10 @@ extension CHKLineChartView {
                 
                 //把Y轴标签文字画上去
                 context?.setShouldAntialias(true)  //抗锯齿开启，解决字体发虚
-                NSString(format: format, yVal).draw(
+                
+                let strValue = self.delegate?.kLineChart(self, labelOnYAxisForValue: yVal, section: section) ?? ""
+                
+                NSString(string: strValue).draw(
                     at: CGPoint(x: startX, y: iy - 7), withAttributes: fontAttributes)
             }
             
@@ -801,7 +686,10 @@ extension CHKLineChartView {
                 
                 //把Y轴标签文字画上去
                 context?.setShouldAntialias(true)  //抗锯齿开启，解决字体发虚
-                NSString(format: format, yVal).draw(
+                
+                let strValue = self.delegate?.kLineChart(self, labelOnYAxisForValue: yVal, section: section) ?? ""
+                
+                NSString(string: strValue).draw(
                     at: CGPoint(x: startX, y: iy - 7), withAttributes: fontAttributes)
             }
             

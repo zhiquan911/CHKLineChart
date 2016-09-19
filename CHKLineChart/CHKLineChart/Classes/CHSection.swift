@@ -30,7 +30,7 @@ public enum CHSectionValueType {
 /**
  *  K线的区域
  */
-class CHSection: NSObject {
+open class CHSection: NSObject {
     
     /// MARK: - 成员变量
     var upColor: UIColor = UIColor.green     //升的颜色

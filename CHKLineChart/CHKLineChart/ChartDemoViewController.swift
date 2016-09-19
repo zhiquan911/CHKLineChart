@@ -21,7 +21,7 @@ class ChartDemoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.chartView.delegate = self
-        self.chartView.style = CHKLineChartStyle.base
+        self.chartView.style = CHKLineChartStyle.baseStyle
         //使用代码创建K线图表
         //self.createChartView()
 
@@ -41,7 +41,7 @@ class ChartDemoViewController: UIViewController {
         self.chartView = CHKLineChartView()
         self.chartView.translatesAutoresizingMaskIntoConstraints = false
         self.chartView.delegate = self
-        self.chartView.style = CHKLineChartStyle.base
+        self.chartView.style = CHKLineChartStyle.baseStyle
         self.contentView.addSubview(self.chartView)
         
         //水平布局
@@ -176,6 +176,16 @@ extension ChartDemoViewController: CHKLineChartDelegate {
         item.closePrice = CGFloat(data[4])
         item.vol = CGFloat(data[5])
         return item
+    }
+    
+    func kLineChart(_ chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, section: CHSection) -> String {
+        var strValue = ""
+        if value / 10000 > 1 {
+            strValue = (value / 10000).ch_toString(maxF: 2) + "万"
+        } else {
+            strValue = value.ch_toString(maxF: 2)
+        }
+        return strValue
     }
     
     func kLineChart(_ chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String {
