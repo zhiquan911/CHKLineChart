@@ -1,8 +1,8 @@
 #CHKLineChart
 
-![demo2.png](https://coding.net/api/project/516888/files/1022957/imagePreview?width=840&type=2&1474266769000)
+![demo2.png](https://github.com/zhiquan911/CHKLineChart/blob/master/demo.png)
 
-> 一款纯Swift3.0代码编写的K线图表组件，支持：MA,EMA,KDJ,MACD等技术指标显示。集成使用简单，二次开发扩展强大。
+> 纯Swift3.0代码编写的K线图表组件，支持：MA,EMA,KDJ,MACD等技术指标显示。集成使用简单，二次开发扩展强大。
 
 ###Features
 
