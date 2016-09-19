@@ -2,7 +2,7 @@
 //  CHSeries.swift
 //  CHKLineChart
 //
-//  Created by 麦志泉 on 16/9/13.
+//  Created by Chance on 16/9/13.
 //  Copyright © 2016年 bitbank. All rights reserved.
 //
 
