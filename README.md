@@ -20,20 +20,20 @@
 把项目classes文件夹导入到项目中，在使用的viewController，导入框架
 
 ```swift
-var chartView: CHKLineChartView!
-
-override func viewDidLoad() {
-    self.chartView = CHKLineChartView(style: CHKLineChartStyle.base)
-    self.chartView.delegate = self
-    self.chartView.frame = self.view.bounds
-    self.view.addSubview(self.chartView)
-}
+    var chartView: CHKLineChartView!
+    
+    override func viewDidLoad() {
+        self.chartView = CHKLineChartView(style: CHKLineChartStyle.base)
+        self.chartView.delegate = self
+        self.chartView.frame = self.view.bounds
+        self.view.addSubview(self.chartView)
+    }
 ```
 
 实现图表的数据源代理方法
 
 ```swift
-func numberOfPointsInKLineChart(_ chart: CHKLineChartView) -> Int {
+    func numberOfPointsInKLineChart(_ chart: CHKLineChartView) -> Int {
         return self.klineDatas.count
     }
     
