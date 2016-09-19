@@ -54,6 +54,16 @@ func kLineChart(_ chart: CHKLineChartView, valueForPointAtIndex index: Int) -> C
     return item
 }
 
+func kLineChart(_ chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, section: CHSection) -> String {
+    var strValue = ""
+    if value / 10000 > 1 {
+        strValue = (value / 10000).ch_toString(maxF: 2) + "万"
+    } else {
+        strValue = value.ch_toString(maxF: 2)
+    }
+    return strValue
+}
+    
 func kLineChart(_ chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String {
     let data = self.klineDatas[index] as! [Double]
     let timestamp = Int(data[0])
