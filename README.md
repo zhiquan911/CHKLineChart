@@ -1,7 +1,8 @@
 #CHKLineChart
 
-一款纯Swift3.0代码编写的K线图表组件，支持：MA,EMA,KDJ,MACD等技术指标显示。集成使用简单，二次开发扩展强大。
+![demo2.png](https://coding.net/api/project/516888/files/1022957/imagePreview?width=840&type=2&1474266769000)
 
+> 一款纯Swift3.0代码编写的K线图表组件，支持：MA,EMA,KDJ,MACD等技术指标显示。集成使用简单，二次开发扩展强大。
 
 ###Features
 
@@ -15,6 +16,7 @@
 
 - iOS 8+
 - Xcode 8+
+- Swift 3.0+
 - iPhone/iPad
 
 ###Example
@@ -59,3 +61,12 @@ func kLineChart(_ chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> S
 }
 ```
 
+更详细集成方法，根据实际的例子请查看源代码中的demo
+
+###Donations
+
+为了让开发者更积极分享技术，开源程序代码，我们发起数字货币捐助计划，捐款只接收以下货币。
+
+- **BTC Address**:  1HvgRTi2CmaSHUkfWUCAqkYjF7AiBohzbB
+
+- **ETH/ETC Address**:  0xc312ed502fb57e0c42f9C7663CB7A3B0A6c4f6D2
