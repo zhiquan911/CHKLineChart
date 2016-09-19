@@ -76,7 +76,7 @@ public enum CHKLineChartStyle {
                                                     UIColor.ch_hex(0xF9EE30),
                                                     UIColor.ch_hex(0xF600FF),
                                                     ], section: volumeSection)
-            priceEMASeries.hidden = true
+            volumeEMASeries.hidden = true
             volumeSection.series = [volumeSeries, volumeMASeries, volumeEMASeries]
             
             let trendSection = CHSection()
@@ -193,6 +193,12 @@ public enum CHKLineChartStyle {
      */
     @objc optional func kLineChart(_ chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String
     
+    /**
+     完成绘画图表
+     
+     */
+    @objc optional func didFinishKLineChartBuilding(_ chart: CHKLineChartView)
+    
 }
 
 open class CHKLineChartView: UIView {
@@ -261,11 +267,11 @@ open class CHKLineChartView: UIView {
         self.initUI()
     }
     
-    convenience init(style: CHKLineChartStyle) {
-        self.init()
-        self.initUI()
-        self.style = style
-    }
+//    convenience init(style: CHKLineChartStyle) {
+//        self.init()
+//        self.initUI()
+//        self.style = style
+//    }
     
     /**
      初始化UI
@@ -329,7 +335,7 @@ open class CHKLineChartView: UIView {
      初始化数据
      */
     fileprivate func resetData() {
-        
+        self.datas.removeAll()
         self.plotCount = self.delegate?.numberOfPointsInKLineChart(self) ?? 0
         
         if plotCount > 0 {
@@ -482,8 +488,9 @@ extension CHKLineChartView {
             
             //重新显示点击选中的坐标
             self.setSelectedIndexByPoint(self.selectedPoint)
+            
+            self.delegate?.didFinishKLineChartBuilding?(self)
         }
-        
     }
     
     /**
@@ -516,7 +523,6 @@ extension CHKLineChartView {
         let context = UIGraphicsGetCurrentContext()
         context?.setFillColor(self.backgroundColor!.cgColor)
         context?.fill (CGRect (x: 0, y: 0, width: self.bounds.size.width,height: self.bounds.size.height))
-        
         return self.datas.count > 0 ? true : false
     }
     
@@ -844,7 +850,10 @@ extension CHKLineChartView {
      */
     public func reloadData() {
         self.resetData()
-        self.setNeedsDisplay()
+        //drawRect刷新率为1/60秒，所以避免刷新冲突导致没有重新加载数据，延迟0.1秒后执行新数据刷新
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
+            self.setNeedsDisplay()
+        }
     }
     
     /**
