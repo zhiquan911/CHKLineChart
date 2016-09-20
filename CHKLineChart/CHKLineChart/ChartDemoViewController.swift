@@ -21,7 +21,7 @@ class ChartDemoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.chartView.delegate = self
-        self.chartView.style = CHKLineChartStyle.baseStyle
+        self.chartView.style = .base
         //使用代码创建K线图表
         //self.createChartView()
 
@@ -41,7 +41,7 @@ class ChartDemoViewController: UIViewController {
         self.chartView = CHKLineChartView()
         self.chartView.translatesAutoresizingMaskIntoConstraints = false
         self.chartView.delegate = self
-        self.chartView.style = CHKLineChartStyle.baseStyle
+        self.chartView.style = CHKLineChartStyle.base
         self.contentView.addSubview(self.chartView)
         
         //水平布局

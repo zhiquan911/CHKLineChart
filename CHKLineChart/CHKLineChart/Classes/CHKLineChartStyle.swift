@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 // MARK: - 图表样式配置类
-open class CHKLineChartStyle: NSObject {
+open class CHKLineChartStyle {
     
     /**
      分区样式配置
@@ -61,7 +61,7 @@ open class CHKLineChartStyle: NSObject {
 extension CHKLineChartStyle {
     
     //实现一个最基本的样式，开发者可以自由扩展配置样式
-    class var baseStyle: CHKLineChartStyle {
+    class var base: CHKLineChartStyle {
         let style = CHKLineChartStyle()
         style.labelFont = UIFont.systemFont(ofSize: 10)
         style.lineColor = UIColor(white: 0.2, alpha: 1)
