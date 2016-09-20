@@ -80,3 +80,8 @@ func kLineChart(_ chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> S
 - **BTC Address**:  1HvgRTi2CmaSHUkfWUCAqkYjF7AiBohzbB
 
 - **ETH/ETC Address**:  0xc312ed502fb57e0c42f9C7663CB7A3B0A6c4f6D2
+
+
+###License
+
+Released under [MIT License.](https://github.com/zhiquan911/CHKLineChart/blob/master/LICENSE) 
