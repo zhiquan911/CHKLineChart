@@ -28,16 +28,16 @@ public enum CHChartItemTrend {
  */
 open class CHChartItem: NSObject {
     
-    var time: Int = 0
-    var openPrice: CGFloat = 0
-    var closePrice: CGFloat = 0
-    var lowPrice: CGFloat = 0
-    var highPrice: CGFloat = 0
-    var vol: CGFloat = 0
-    var value: CGFloat?
-    var extVal: [String: CGFloat] = [String: CGFloat]()        //扩展值，用来记录各种技术指标
+    open var time: Int = 0
+    open var openPrice: CGFloat = 0
+    open var closePrice: CGFloat = 0
+    open var lowPrice: CGFloat = 0
+    open var highPrice: CGFloat = 0
+    open var vol: CGFloat = 0
+    open var value: CGFloat?
+    open var extVal: [String: CGFloat] = [String: CGFloat]()        //扩展值，用来记录各种技术指标
     
-    var trend: CHChartItemTrend {
+    open var trend: CHChartItemTrend {
         if closePrice == openPrice {
             return .equal
             

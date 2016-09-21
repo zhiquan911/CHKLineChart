@@ -58,10 +58,10 @@ open class CHKLineChartStyle {
 }
 
 // MARK: - 扩展样式
-extension CHKLineChartStyle {
+public extension CHKLineChartStyle {
     
     //实现一个最基本的样式，开发者可以自由扩展配置样式
-    class var base: CHKLineChartStyle {
+    public static let base: CHKLineChartStyle = {
         let style = CHKLineChartStyle()
         style.labelFont = UIFont.systemFont(ofSize: 10)
         style.lineColor = UIColor(white: 0.2, alpha: 1)
@@ -160,5 +160,5 @@ extension CHKLineChartStyle {
         style.sections = [priceSection, volumeSection, trendSection]
         
         return style
-    }
+    }()
 }
