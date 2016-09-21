@@ -191,7 +191,7 @@ extension ChartDemoViewController: CHKLineChartDelegate {
     func kLineChart(_ chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String {
         let data = self.klineDatas[index] as! [Double]
         let timestamp = Int(data[0])
-        return Date.getTimeByStamp(timestamp, format: "HH:mm")
+        return Date.ch_getTimeByStamp(timestamp, format: "HH:mm")
     }
     
     

@@ -22,6 +22,7 @@
 		C5F6766E1D84E6A600E65F6F /* data.json in Resources */ = {isa = PBXBuildFile; fileRef = C5F6766D1D84E6A600E65F6F /* data.json */; };
 		C5F700011D7EA94500622E60 /* CHChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F700001D7EA94500622E60 /* CHChartModel.swift */; };
 		C5F7FFFB1D7EA57A00622E60 /* CHKLineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7FFFA1D7EA57A00622E60 /* CHKLineChart.swift */; };
+		C5FA1F871D92400200271E36 /* CHKLineChart.podspec in Resources */ = {isa = PBXBuildFile; fileRef = C5FA1F861D92400200271E36 /* CHKLineChart.podspec */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		C5F6766D1D84E6A600E65F6F /* data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = data.json; sourceTree = "<group>"; };
 		C5F700001D7EA94500622E60 /* CHChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHChartModel.swift; path = Classes/CHChartModel.swift; sourceTree = "<group>"; };
 		C5F7FFFA1D7EA57A00622E60 /* CHKLineChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHKLineChart.swift; path = Classes/CHKLineChart.swift; sourceTree = "<group>"; };
+		C5FA1F861D92400200271E36 /* CHKLineChart.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CHKLineChart.podspec; path = ../../CHKLineChart.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 		C5E4E0591D76CC7E00C47F5A /* CHKLineChart */ = {
 			isa = PBXGroup;
 			children = (
+				C5FA1F861D92400200271E36 /* CHKLineChart.podspec */,
 				C5E4E06C1D76CCB400C47F5A /* Classes */,
 				C5E4E06D1D76CCF800C47F5A /* Demo */,
 				C5E4E05A1D76CC7E00C47F5A /* AppDelegate.swift */,
@@ -171,6 +174,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C5E4E0651D76CC7E00C47F5A /* LaunchScreen.storyboard in Resources */,
+				C5FA1F871D92400200271E36 /* CHKLineChart.podspec in Resources */,
 				C5E4E0621D76CC7E00C47F5A /* Assets.xcassets in Resources */,
 				C5E4E0601D76CC7E00C47F5A /* Main.storyboard in Resources */,
 				C5F6766E1D84E6A600E65F6F /* data.json in Resources */,
