@@ -74,8 +74,8 @@ public enum CHYAxisShowPosition {
 open class CHKLineChartView: UIView {
     
     /// MARK: - 常量
-    var kMinRange = 9       //最小缩放范围
-    var kMaxRange = 121     //最大缩放范围
+    var kMinRange = 13       //最小缩放范围
+    var kMaxRange = 133     //最大缩放范围
     var kPerInterval = 4    //缩放的每段间隔
     
     /// MARK: - 成员变量
@@ -127,7 +127,7 @@ open class CHKLineChartView: UIView {
     var plotCount: Int = 0
     var rangeFrom: Int = 0                          //可见区域的开始索引位
     var rangeTo: Int = 0                            //可见区域的结束索引位
-    var range: Int = 49                             //显示在可见区域的个数
+    var range: Int = 77                             //显示在可见区域的个数
     var borderColor: UIColor = UIColor.gray
     var labelSize = CGSize(width: 40, height: 16)
     
