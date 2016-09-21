@@ -161,7 +161,7 @@ open class CHSection: NSObject {
                     self.yAxis.min = low
                 }
                 
-            case is CHLineModel:
+            case is CHLineModel, is CHBarModel:
                 
                 let value = model[i].value
                 
