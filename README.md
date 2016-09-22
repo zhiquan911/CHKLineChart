@@ -4,7 +4,7 @@
 
 > 纯Swift3.0代码编写的K线图表组件，支持：MA,EMA,KDJ,MACD等技术指标显示。集成使用简单，二次开发扩展强大。
 
-###Features
+##Features
 
 - 完美支持Swift3.0编译
 - 支持显示蜡烛图，交易量图，及MA,EMA,KDJ,MACD等技术指标图表
@@ -12,14 +12,34 @@
 - 集成使用简单，二次开发扩展强大
 
 
-###Requirements
+##Requirements
 
 - iOS 8+
 - Xcode 8+
 - Swift 3.0+
 - iPhone/iPad
 
-###Example
+###Installation
+---
+###CocoaPods
+
+[CocoaPods](http://cocoapods.org/) is a dependency manager for Cocoa projects.
+
+You can install it with the following command:
+
+```java
+$ gem install cocoapods
+```
+
+To integrate Log into your Xcode project using CocoaPods, specify it in your Podfile:
+
+```java
+use_frameworks!
+
+pod 'CHKLineChart'
+```
+
+##Example
 
 把项目classes文件夹导入到项目中，在使用的viewController，导入框架
 
