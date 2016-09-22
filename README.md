@@ -20,7 +20,7 @@
 - iPhone/iPad
 
 ##Installation
----
+
 ###CocoaPods
 
 [CocoaPods](http://cocoapods.org/) is a dependency manager for Cocoa projects.
