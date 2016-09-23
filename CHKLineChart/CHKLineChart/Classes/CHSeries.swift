@@ -12,13 +12,13 @@ import UIKit
  系列对应的key值
  */
 public struct CHSeriesKey {
-    static let candle = "Candle"
-    static let timeline = "Timeline"
-    static let volume = "Volume"
-    static let ma = "MA"
-    static let ema = "EMA"
-    static let kdj = "KDJ"
-    static let macd = "MACD"
+    public static let candle = "Candle"
+    public static let timeline = "Timeline"
+    public static let volume = "Volume"
+    public static let ma = "MA"
+    public static let ema = "EMA"
+    public static let kdj = "KDJ"
+    public static let macd = "MACD"
 }
 
 /**
