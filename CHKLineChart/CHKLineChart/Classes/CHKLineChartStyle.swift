@@ -17,41 +17,41 @@ open class CHKLineChartStyle {
      
      - returns:
      */
-    var sections: [CHSection]!
+    open var sections: [CHSection]!
     
     /**
      要处理的算法
      
      - returns:
      */
-    var algorithms: [CHChartAlgorithm]!
+    open var algorithms: [CHChartAlgorithm]!
     
     /**
      背景颜色
      
      - returns:
      */
-    var backgroundColor: UIColor!
+    open var backgroundColor: UIColor!
     
     /**
      边距
      
      - returns:
      */
-    var padding: UIEdgeInsets!
+    open var padding: UIEdgeInsets!
     
     //字体大小
-    var labelFont: UIFont!
+    open var labelFont: UIFont!
     
     //线条颜色
-    var lineColor: UIColor!
+    open var lineColor: UIColor!
     
     //线条颜色
-    var dashColor: UIColor!
+    open var dashColor: UIColor!
     
     
     //文字颜色
-    var textColor: UIColor!
+    open var textColor: UIColor!
     
     
     
