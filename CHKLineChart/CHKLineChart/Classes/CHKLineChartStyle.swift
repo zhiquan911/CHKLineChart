@@ -54,7 +54,9 @@ open class CHKLineChartStyle {
     open var textColor: UIColor!
     
     
-    
+    public init() {
+        
+    }
 }
 
 // MARK: - 扩展样式
