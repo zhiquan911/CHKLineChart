@@ -33,29 +33,29 @@ public enum CHSectionValueType {
 open class CHSection: NSObject {
     
     /// MARK: - 成员变量
-    var upColor: UIColor = UIColor.green     //升的颜色
-    var downColor: UIColor = UIColor.red     //跌的颜色
-    var titleColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1) //文字颜色
-    var labelFont = UIFont.systemFont(ofSize: 10)
-    var valueType: CHSectionValueType = CHSectionValueType.price {
+    open var upColor: UIColor = UIColor.green     //升的颜色
+    open var downColor: UIColor = UIColor.red     //跌的颜色
+    open var titleColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1) //文字颜色
+    open var labelFont = UIFont.systemFont(ofSize: 10)
+    open var valueType: CHSectionValueType = CHSectionValueType.price {
         didSet {
             self.key = valueType.key
         }
     }
-    var key = ""
-    var name: String = ""                           //区域的名称
-    var hidden: Bool = false
-    var paging: Bool = false
-    var selectedIndex: Int = 0
-    var padding: UIEdgeInsets = UIEdgeInsets.zero
-    var series = [CHSeries]()                  //每个分区包含多组系列，每个系列包含多个点线模型
-    var tickInterval: Int = 0
-    var title: String = ""                                      //标题
-    var titleShowOutSide: Bool = false                          //标题是否显示在外面
-    var decimal: Int = 2                                        //小数位的长度
-    var ratios: Int = 1                                         //所占区域比例
-    var frame: CGRect = CGRect.zero
-    var yAxis: CHYAxis = CHYAxis()                           //Y轴参数
+    open var key = ""
+    open var name: String = ""                           //区域的名称
+    open var hidden: Bool = false
+    open var paging: Bool = false
+    open var selectedIndex: Int = 0
+    open var padding: UIEdgeInsets = UIEdgeInsets.zero
+    open var series = [CHSeries]()                  //每个分区包含多组系列，每个系列包含多个点线模型
+    open var tickInterval: Int = 0
+    open var title: String = ""                                      //标题
+    open var titleShowOutSide: Bool = false                          //标题是否显示在外面
+    open var decimal: Int = 2                                        //小数位的长度
+    open var ratios: Int = 1                                         //所占区域比例
+    open var frame: CGRect = CGRect.zero
+    open var yAxis: CHYAxis = CHYAxis()                           //Y轴参数
     
     
     func buildYAxis(startIndex: Int, endIndex: Int, datas: [CHChartItem]) {

@@ -26,12 +26,12 @@ public struct CHSeriesKey {
  */
 open class CHSeries: NSObject {
  
-    var key = ""
-    var title: String = ""
-    var chartModels = [CHChartModel]()          //每个系列包含多个点线模型
-    var hidden: Bool = false
-    var baseValueSticky = false                 //是否以固定基值显示最小或最大值，若超过范围
-    var symmetrical = false                     //是否以固定基值为中位数，对称显示最大最小值
+    open var key = ""
+    open var title: String = ""
+    open var chartModels = [CHChartModel]()          //每个系列包含多个点线模型
+    open var hidden: Bool = false
+    open var baseValueSticky = false                 //是否以固定基值显示最小或最大值，若超过范围
+    open var symmetrical = false                     //是否以固定基值为中位数，对称显示最大最小值
     
 }
 
@@ -41,7 +41,7 @@ extension CHSeries {
     /**
      返回一个标准的价格系列样式
      */
-    class func getDefaultPrice(upColor: UIColor, downColor: UIColor, section: CHSection) -> CHSeries {
+    public class func getDefaultPrice(upColor: UIColor, downColor: UIColor, section: CHSection) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.candle
         let candle = CHChartModel.getCandle(upColor: upColor, downColor: downColor)
@@ -54,7 +54,7 @@ extension CHSeries {
     /**
      返回一个标准的交易量系列样式
      */
-    class func getDefaultVolume(upColor: UIColor, downColor: UIColor, section: CHSection) -> CHSeries {
+    public class func getDefaultVolume(upColor: UIColor, downColor: UIColor, section: CHSection) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.volume
         let vol = CHChartModel.getVolume(upColor: upColor, downColor: downColor)
@@ -67,7 +67,7 @@ extension CHSeries {
     /**
      返回一个移动平均线系列样式
      */
-    class func getMA(isEMA: Bool = false, num: [Int], colors: [UIColor], section: CHSection) -> CHSeries {
+    public class func getMA(isEMA: Bool = false, num: [Int], colors: [UIColor], section: CHSection) -> CHSeries {
         var key = ""
         if isEMA {
             key = CHSeriesKey.ema
@@ -89,7 +89,7 @@ extension CHSeries {
     /**
      返回一个KDJ系列样式
      */
-    class func getKDJ(_ kc: UIColor, dc: UIColor, jc: UIColor, section: CHSection) -> CHSeries {
+    public class func getKDJ(_ kc: UIColor, dc: UIColor, jc: UIColor, section: CHSection) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.kdj
         let k = CHChartModel.getLine(kc, title: "K", key: "KDJ_K")
@@ -105,7 +105,7 @@ extension CHSeries {
     /**
      返回一个MACD系列样式
      */
-    class func getMACD(_ difc: UIColor, deac: UIColor, barc: UIColor,
+    public class func getMACD(_ difc: UIColor, deac: UIColor, barc: UIColor,
                        upColor: UIColor, downColor: UIColor, section: CHSection) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.macd

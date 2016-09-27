@@ -15,14 +15,14 @@ import UIKit
  */
 public struct CHYAxis {
     
-    var max: CGFloat = 0                //Y轴的最大值
-    var min: CGFloat = 0                //Y轴的最小值
-    var ext: CGFloat = 0.00             //上下边界溢出值的比例
-    var baseValue: CGFloat = 0          //固定的基值
-    var tickInterval: Int = 4           //间断显示个数
-    var pos: Int = 0
-    var decimal: Int = 2                //约束小数位
-    var isUsed = false
+    public var max: CGFloat = 0                //Y轴的最大值
+    public var min: CGFloat = 0                //Y轴的最小值
+    public var ext: CGFloat = 0.00             //上下边界溢出值的比例
+    public var baseValue: CGFloat = 0          //固定的基值
+    public var tickInterval: Int = 4           //间断显示个数
+    public var pos: Int = 0
+    public var decimal: Int = 2                //约束小数位
+    public var isUsed = false
 }
 
 /**
@@ -30,5 +30,5 @@ public struct CHYAxis {
  */
 public struct CHXAxis {
     
-    var tickInterval: Int = 6           //间断显示个数
+    public var tickInterval: Int = 6           //间断显示个数
 }
