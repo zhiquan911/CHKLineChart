@@ -396,7 +396,8 @@ extension CHKLineChartView {
         self.plotCount = self.delegate?.numberOfPointsInKLineChart(self) ?? 0
         
         if plotCount > 0 {
-            if self.rangeTo == 0 {      //如果图表尽头的索引为0，则进行初始化
+            //如果图表尽头的索引为0，则进行初始化
+            if self.rangeTo == 0 || self.plotCount < self.rangeTo {
                 self.rangeTo = self.plotCount               //默认是数据最后一条为尽头
                 if self.rangeTo - self.range > 0 {          //如果尽头 - 默认显示数大于0
                     self.rangeFrom = self.rangeTo - range   //计算开始的显示的位置
