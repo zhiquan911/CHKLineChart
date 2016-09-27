@@ -14,7 +14,7 @@ public enum CHSectionValueType {
     case volume         //交易量
     case analysis         //指标
     
-    var key: String {
+    public var key: String {
         switch self {
         case .price:
             return "Price"
