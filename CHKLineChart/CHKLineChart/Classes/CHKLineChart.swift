@@ -116,11 +116,11 @@ open class CHKLineChartView: UIView {
     
     @IBOutlet open weak var delegate: CHKLineChartDelegate?             //代理
     
-    var sections = [CHSection]()
-    var selectedIndex: Int = -1                      //选择索引位
+    open var sections = [CHSection]()
+    open var selectedIndex: Int = -1                      //选择索引位
     var selectedPoint: CGPoint = CGPoint.zero
     
-    var enableSelection = true                      //是否可点选
+    open var enableSelection = true                      //是否可点选
     
     var borderWidth: CGFloat = 0.5
     var lineWidth: CGFloat = 0.5
@@ -129,7 +129,7 @@ open class CHKLineChartView: UIView {
     var rangeTo: Int = 0                            //可见区域的结束索引位
     var range: Int = 77                             //显示在可见区域的个数
     var borderColor: UIColor = UIColor.gray
-    var labelSize = CGSize(width: 40, height: 16)
+    open var labelSize = CGSize(width: 40, height: 16)
     
     var datas: [CHChartItem] = [CHChartItem]()      //数据源
     
