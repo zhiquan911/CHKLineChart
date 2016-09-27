@@ -26,7 +26,7 @@ class ChartDemoViewController: UIViewController {
         //self.createChartView()
 
 //        self.getDataByFile()        //读取文件
-        self.getRemoteServiceData()       //读取网络
+        self.getRemoteServiceData(size: "1200")       //读取网络
     }
     
     override func didReceiveMemoryWarning() {
@@ -61,13 +61,13 @@ class ChartDemoViewController: UIViewController {
                 views:["chartView": self.chartView]))
     }
     
-    func getRemoteServiceData() {
+    func getRemoteServiceData(size: String) {
         self.loadingView.startAnimating()
         self.loadingView.isHidden = false
         // 快捷方式获得session对象
         let session = URLSession.shared
         
-        let url = URL(string: "https://www.btc123.com/kline/klineapi?symbol=chbtcbtccny&type=1day&size=1200")
+        let url = URL(string: "https://www.btc123.com/kline/klineapi?symbol=chbtcbtccny&type=1day&size=\(size)")
         // 通过URL初始化task,在block内部可以直接对返回的数据进行处理
         let task = session.dataTask(with: url!, completionHandler: {
             (data, response, error) in
@@ -156,6 +156,8 @@ class ChartDemoViewController: UIViewController {
                 break
             }
         }
+        
+        //self.getRemoteServiceData(size: "1200")       //读取网络
     }
     
 }
