@@ -404,7 +404,7 @@ extension CHKLineChartView {
                 } else {
                     self.rangeFrom = 0
                 }
-//                self.selectedIndex = -1
+                self.selectedIndex = -1
             }
         }
         
