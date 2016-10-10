@@ -14,9 +14,13 @@ class ChartDemoViewController: UIViewController {
     @IBOutlet var contentView: UIView!
     @IBOutlet var segPrice: UISegmentedControl!
     @IBOutlet var segAnalysis: UISegmentedControl!
+    @IBOutlet var segTimes: UISegmentedControl!
     @IBOutlet var loadingView: UIActivityIndicatorView!
     
     var klineDatas = [AnyObject]()
+    
+    let times: [String] = ["1min", "5min", "15min", "30min", "1day"]
+    var selectTimes: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +30,8 @@ class ChartDemoViewController: UIViewController {
         //self.createChartView()
 
 //        self.getDataByFile()        //读取文件
-        self.getRemoteServiceData(size: "1200")       //读取网络
+        self.selectTimes = self.times[0]
+        self.getRemoteServiceData(size: "700")       //读取网络
     }
     
     override func didReceiveMemoryWarning() {
@@ -67,7 +72,7 @@ class ChartDemoViewController: UIViewController {
         // 快捷方式获得session对象
         let session = URLSession.shared
         
-        let url = URL(string: "https://www.btc123.com/kline/klineapi?symbol=chbtcbtccny&type=1day&size=\(size)")
+        let url = URL(string: "https://www.btc123.com/kline/klineapi?symbol=chbtcbtccny&type=\(self.selectTimes)&size=\(size)")
         // 通过URL初始化task,在block内部可以直接对返回的数据进行处理
         let task = session.dataTask(with: url!, completionHandler: {
             (data, response, error) in
@@ -78,7 +83,7 @@ class ChartDemoViewController: UIViewController {
                      对从服务器获取到的数据data进行相应的处理.
                      */
                     do {
-                        NSLog("\(NSString(data: data, encoding: String.Encoding.utf8.rawValue))")
+//                        NSLog("\(NSString(data: data, encoding: String.Encoding.utf8.rawValue))")
                         let dict = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as! [String: AnyObject]
                         
                         let isSuc = dict["isSuc"] as? Bool ?? false
@@ -160,6 +165,15 @@ class ChartDemoViewController: UIViewController {
         //self.getRemoteServiceData(size: "1200")       //读取网络
     }
     
+    
+    /// 切换时间
+    ///
+    /// - parameter sender:
+    @IBAction func handleTimeSegmentChange(sender: UISegmentedControl) {
+        let index = sender.selectedSegmentIndex
+        self.selectTimes = self.times[index]
+        self.getRemoteServiceData(size: "600")
+    }
 }
 
 extension ChartDemoViewController: CHKLineChartDelegate {

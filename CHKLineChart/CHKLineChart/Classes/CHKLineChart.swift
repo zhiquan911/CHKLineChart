@@ -20,6 +20,17 @@ public enum CHYAxisShowPosition {
 }
 
 /**
+ 图表滚动到那个位置
+ 
+ - top: 头部
+ - end: 尾部
+ - None:  不处理
+ */
+public enum CHChartViewScrollPosition {
+    case top, end, none
+}
+
+/**
  *  K线数据源代理
  */
 @objc public protocol CHKLineChartDelegate: class {
@@ -118,6 +129,7 @@ open class CHKLineChartView: UIView {
     
     open var sections = [CHSection]()
     open var selectedIndex: Int = -1                      //选择索引位
+    open var scrollToPosition: CHChartViewScrollPosition = .none  //图表刷新后开始显示位置
     var selectedPoint: CGPoint = CGPoint.zero
     
     open var enableSelection = true                      //是否可点选
@@ -396,8 +408,25 @@ extension CHKLineChartView {
         self.plotCount = self.delegate?.numberOfPointsInKLineChart(self) ?? 0
         
         if plotCount > 0 {
-            //如果图表尽头的索引为0，则进行初始化
-            if self.rangeTo == 0 || self.plotCount < self.rangeTo {
+            
+            //图表刷新滚动为默认时，如果第一次初始化，就默认滚动到最后显示
+            if self.scrollToPosition == .none {
+                //如果图表尽头的索引为0，则进行初始化
+                if self.rangeTo == 0 || self.plotCount < self.rangeTo {
+                    self.scrollToPosition = .end
+                }
+            }
+            
+            
+            if self.scrollToPosition == .top {
+                self.rangeFrom = 0
+                if self.rangeFrom + self.range < self.plotCount {
+                    self.rangeTo = self.rangeFrom + self.range   //计算结束的显示的位置
+                } else {
+                    self.rangeTo = self.plotCount
+                }
+                self.selectedIndex = -1
+            } else if self.scrollToPosition == .end {
                 self.rangeTo = self.plotCount               //默认是数据最后一条为尽头
                 if self.rangeTo - self.range > 0 {          //如果尽头 - 默认显示数大于0
                     self.rangeFrom = self.rangeTo - range   //计算开始的显示的位置
@@ -406,7 +435,11 @@ extension CHKLineChartView {
                 }
                 self.selectedIndex = -1
             }
+            
         }
+        
+        //重置图表刷新滚动默认不处理
+        self.scrollToPosition = .none
         
         //选择最后一个元素选中
         if selectedIndex == -1 {
@@ -748,7 +781,8 @@ extension CHKLineChartView {
     /**
      刷新视图
      */
-    public func reloadData() {
+    public func reloadData(toPosition: CHChartViewScrollPosition = .none) {
+        self.scrollToPosition = toPosition
         self.resetData()
         self.setNeedsDisplay()
     }

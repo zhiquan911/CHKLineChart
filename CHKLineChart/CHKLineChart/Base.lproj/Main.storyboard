@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="hJF-XE-bqk">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="hJF-XE-bqk">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
@@ -15,7 +15,7 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I4G-E5-gDN" customClass="CHKLineChartView" customModule="CHKLineChart" customModuleProvider="target">
@@ -44,7 +44,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="WwJ-XV-ZhO"/>
                                     <barButtonItem style="plain" id="wal-UK-a0X">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="1" id="Avt-ge-BGH">
-                                            <rect key="frame" x="164" y="7" width="140" height="30"/>
+                                            <rect key="frame" x="219" y="7" width="140" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="N/A"/>
@@ -58,19 +58,45 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pV7-7B-fgQ">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="0Kv-HG-lfX"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem style="plain" id="sT4-05-Sol">
+                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="hGN-nJ-H5C">
+                                            <rect key="frame" x="16" y="7" width="348" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
+                                            <segments>
+                                                <segment title="1M"/>
+                                                <segment title="5M"/>
+                                                <segment title="15M"/>
+                                                <segment title="30M"/>
+                                                <segment title="1D"/>
+                                            </segments>
+                                            <connections>
+                                                <action selector="handleTimeSegmentChangeWithSender:" destination="BYZ-38-t0r" eventType="valueChanged" id="lhg-YN-0SS"/>
+                                            </connections>
+                                        </segmentedControl>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="pV7-7B-fgQ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="1O5-06-Hc3"/>
                             <constraint firstItem="0Jw-hs-7fi" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="A9w-fB-RwO"/>
                             <constraint firstItem="I4G-E5-gDN" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="BGf-Nd-ggK"/>
                             <constraint firstAttribute="trailing" secondItem="0Jw-hs-7fi" secondAttribute="trailing" id="DZx-s6-lIb"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="I4G-E5-gDN" secondAttribute="bottom" id="FcN-ME-WM0"/>
                             <constraint firstItem="I4G-E5-gDN" firstAttribute="top" secondItem="0Jw-hs-7fi" secondAttribute="bottom" id="GXz-on-OSy"/>
                             <constraint firstItem="I4G-E5-gDN" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="NOG-hV-jTV"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="pV7-7B-fgQ" secondAttribute="bottom" id="TvE-Xc-W9B"/>
                             <constraint firstAttribute="trailing" secondItem="I4G-E5-gDN" secondAttribute="trailing" id="WYN-UZ-brq"/>
                             <constraint firstItem="JJu-bF-F9p" firstAttribute="centerX" secondItem="I4G-E5-gDN" secondAttribute="centerX" id="cnC-Q0-rfF"/>
+                            <constraint firstAttribute="trailing" secondItem="pV7-7B-fgQ" secondAttribute="trailing" id="cyU-qN-yJz"/>
                             <constraint firstItem="0Jw-hs-7fi" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="dc6-Bn-GT4"/>
                             <constraint firstItem="JJu-bF-F9p" firstAttribute="centerY" secondItem="I4G-E5-gDN" secondAttribute="centerY" id="zM9-74-03h"/>
+                            <constraint firstItem="pV7-7B-fgQ" firstAttribute="top" secondItem="I4G-E5-gDN" secondAttribute="bottom" id="zWW-Xi-cbn"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
@@ -84,11 +110,12 @@
                         <outlet property="loadingView" destination="JJu-bF-F9p" id="NJH-UA-XWx"/>
                         <outlet property="segAnalysis" destination="Avt-ge-BGH" id="r6S-Lz-scz"/>
                         <outlet property="segPrice" destination="86l-Gr-tLi" id="nSt-qZ-XTz"/>
+                        <outlet property="segTimes" destination="hGN-nJ-H5C" id="6uj-Oq-M9U"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="962" y="398"/>
+            <point key="canvasLocation" x="960.79999999999995" y="397.15142428785612"/>
         </scene>
         <!--Demo View Controller-->
         <scene sceneID="LTC-y6-SMR">
@@ -99,7 +126,7 @@
                         <viewControllerLayoutGuide type="bottom" id="ZPk-yi-ItV"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="sV5-tA-c6O">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x26-DJ-CqR">
