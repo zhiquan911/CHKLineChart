@@ -48,7 +48,7 @@ var chartView: CHKLineChartView!
 
 override func viewDidLoad() {
     self.chartView = CHKLineChartView()
-    self.chartView.style = CHKLineChartStyle.baseStyle       //默认样式
+    self.chartView.style = .base       //默认样式
     self.chartView.delegate = self
     self.chartView.frame = self.view.bounds
     self.view.addSubview(self.chartView)
