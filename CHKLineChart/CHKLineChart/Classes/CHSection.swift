@@ -305,7 +305,7 @@ open class CHSection: NSObject {
                     NSFontAttributeName: self.labelFont,
                     NSForegroundColorAttributeName: self.titleColor
                 ])
-            w += seriesTitle.ch_heightWithConstrainedWidth(self.labelFont).width
+            w += seriesTitle.ch_sizeWithConstrained(self.labelFont).width
         }
         
         for model in series.chartModels {
@@ -360,7 +360,7 @@ open class CHSection: NSObject {
             NSString(string: title).draw(at: point,
                                          withAttributes: fontAttributes)
             
-            w += title.ch_heightWithConstrainedWidth(self.labelFont).width
+            w += title.ch_sizeWithConstrained(self.labelFont).width
         }
         return startX + w
     }

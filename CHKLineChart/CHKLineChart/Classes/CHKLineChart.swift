@@ -42,7 +42,7 @@ public enum CHChartViewScrollPosition {
      
      - returns:
      */
-    func numberOfPointsInKLineChart(_ chart: CHKLineChartView) -> Int
+    func numberOfPointsInKLineChart(chart: CHKLineChartView) -> Int
     
     /**
      数据源索引为对应的对象
@@ -52,7 +52,7 @@ public enum CHChartViewScrollPosition {
      
      - returns: K线数据对象
      */
-    func kLineChart(_ chart: CHKLineChartView, valueForPointAtIndex index: Int) -> CHChartItem
+    func kLineChart(chart: CHKLineChartView, valueForPointAtIndex index: Int) -> CHChartItem
     
     /**
      获取图表Y轴的显示的内容
@@ -62,7 +62,7 @@ public enum CHChartViewScrollPosition {
      
      - returns:
      */
-    func kLineChart(_ chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, section: CHSection) -> String
+    func kLineChart(chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, section: CHSection) -> String
     
     /**
      获取图表X轴的显示的内容
@@ -72,22 +72,40 @@ public enum CHChartViewScrollPosition {
      
      - returns:
      */
-    @objc optional func kLineChart(_ chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String
+    @objc optional func kLineChart(chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String
     
     /**
      完成绘画图表
      
      */
-    @objc optional func didFinishKLineChartRefresh(_ chart: CHKLineChartView)
+    @objc optional func didFinishKLineChartRefresh(chart: CHKLineChartView)
+    
+    
+    /// 配置各个分区小数位保留数
+    ///
+    /// - parameter chart:
+    /// - parameter decimalForSection: 分区
+    ///
+    /// - returns:
+    @objc optional func kLineChart(chart: CHKLineChartView, decimalAt section: Int) -> Int
+    
+    
+    /// 设置y周便签的宽度
+    ///
+    /// - parameter chart:
+    ///
+    /// - returns:
+    @objc optional func widthForYAxisLabel(in chart: CHKLineChartView) -> CGFloat
     
 }
 
 open class CHKLineChartView: UIView {
     
     /// MARK: - 常量
-    var kMinRange = 13       //最小缩放范围
-    var kMaxRange = 133     //最大缩放范围
-    var kPerInterval = 4    //缩放的每段间隔
+    let kMinRange = 13       //最小缩放范围
+    let kMaxRange = 133     //最大缩放范围
+    let kPerInterval = 4    //缩放的每段间隔
+    open let kYAxisLabelWidth: CGFloat = 46        //默认宽度
     
     /// MARK: - 成员变量
     @IBInspectable open var upColor: UIColor = UIColor.green     //升的颜色
@@ -97,8 +115,8 @@ open class CHKLineChartView: UIView {
     @IBInspectable open var dashColor: UIColor = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1) //线条颜色
     @IBInspectable open var textColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1) //文字颜色
     @IBInspectable open var xAxisPerInterval: Int = 4                        //x轴的间断个数
-    @IBInspectable open var yLabelWidth:CGFloat = 46                    //Y轴的宽度
     
+    open var yLabelWidth: CGFloat = 0                    //Y轴的宽度
     open var handlerOfAlgorithms: [CHChartAlgorithm] = [CHChartAlgorithm]()
     open var padding: UIEdgeInsets = UIEdgeInsets.zero    //内边距
     open var showYLabel = CHYAxisShowPosition.right      //显示y的位置，默认右边
@@ -117,13 +135,6 @@ open class CHKLineChartView: UIView {
         
     }
     
-    open var decimal: Int = 2 {                     //保留小数位
-        didSet {
-            for section in self.sections {
-                section.decimal = self.decimal
-            }
-        }
-    }
     
     @IBOutlet open weak var delegate: CHKLineChartDelegate?             //代理
     
@@ -230,13 +241,13 @@ open class CHKLineChartView: UIView {
      */
     fileprivate func resetData() {
         self.datas.removeAll()
-        self.plotCount = self.delegate?.numberOfPointsInKLineChart(self) ?? 0
+        self.plotCount = self.delegate?.numberOfPointsInKLineChart(chart: self) ?? 0
         
         if plotCount > 0 {
             
             //获取代理上的数据源
             for i in 0...self.plotCount - 1 {
-                let item = self.delegate?.kLineChart(self, valueForPointAtIndex: i)
+                let item = self.delegate?.kLineChart(chart: self, valueForPointAtIndex: i)
                 self.datas.append(item!)
             }
             
@@ -331,7 +342,7 @@ open class CHKLineChartView: UIView {
                 self.selectedYAxisLabel.text = String(format: format, yVal)     //显示实际值
                 self.selectedYAxisLabel.frame = CGRect(x: yAxisStartX, y: point.y - self.labelSize.height / 2, width: self.yLabelWidth, height: self.labelSize.height)
                 let time = Date.ch_getTimeByStamp(item.time, format: "yyyy-MM-dd HH:mm") //显示实际值
-                let size = time.ch_heightWithConstrainedWidth(self.labelFont)
+                let size = time.ch_sizeWithConstrained(self.labelFont)
                 self.selectedXAxisLabel.text = time
                 
                 //判断x是否超过左右边界
@@ -371,6 +382,11 @@ extension CHKLineChartView {
             //建立每个分区
             self.buildSections {
                 (section, index) in
+                
+                //获取各section的小数保留位数
+                let decimal = self.delegate?.kLineChart?(chart: self, decimalAt: index) ?? 2
+                section.decimal = decimal
+                
                 //绘制每个区域
                 self.drawSection(section)
                 //初始Y轴的数据
@@ -394,7 +410,7 @@ extension CHKLineChartView {
             //重新显示点击选中的坐标
             self.setSelectedIndexByPoint(self.selectedPoint)
             
-            self.delegate?.didFinishKLineChartRefresh?(self)
+            self.delegate?.didFinishKLineChartRefresh?(chart: self)
         }
     }
     
@@ -405,7 +421,7 @@ extension CHKLineChartView {
      */
     fileprivate func initChart() -> Bool {
         
-        self.plotCount = self.delegate?.numberOfPointsInKLineChart(self) ?? 0
+        self.plotCount = self.delegate?.numberOfPointsInKLineChart(chart: self) ?? 0
         
         if plotCount > 0 {
             
@@ -483,6 +499,8 @@ extension CHKLineChartView {
             //计算每个区域的高度
             heightOfSection = height * CGFloat(section.ratios) / CGFloat(total)
             
+            self.yLabelWidth = self.delegate?.widthForYAxisLabel?(in: self) ?? self.kYAxisLabelWidth 
+            
             //y轴的标签显示方位
             switch self.showYLabel {
             case .left:         //左边显示
@@ -554,8 +572,8 @@ extension CHKLineChartView {
         for i in stride(from: self.rangeFrom, to: self.rangeTo, by: xTickInterval) {
             context?.setFillColor(self.textColor.cgColor)
             context?.setShouldAntialias(true)  //抗锯齿开启，解决字体发虚
-            let xLabel = self.delegate?.kLineChart?(self, labelOnXAxisForIndex: i) ?? ""
-            var textSize = xLabel.ch_heightWithConstrainedWidth(self.labelFont)
+            let xLabel = self.delegate?.kLineChart?(chart: self, labelOnXAxisForIndex: i) ?? ""
+            var textSize = xLabel.ch_sizeWithConstrained(self.labelFont)
             textSize.width = textSize.width + 4
             var xPox = startX - textSize.width / 2 + perPlotWidth / 2
             //计算最左最右的x轴标签不越过边界
@@ -687,7 +705,8 @@ extension CHKLineChartView {
                 //把Y轴标签文字画上去
                 context?.setShouldAntialias(true)  //抗锯齿开启，解决字体发虚
                 
-                let strValue = self.delegate?.kLineChart(self, labelOnYAxisForValue: yVal, section: section) ?? ""
+                //获取调用者回调的label字符串值
+                let strValue = self.delegate?.kLineChart(chart: self, labelOnYAxisForValue: yVal, section: section) ?? ""
                 
                 NSString(string: strValue).draw(
                     at: CGPoint(x: startX, y: iy - 7), withAttributes: fontAttributes)
@@ -721,7 +740,7 @@ extension CHKLineChartView {
                 //把Y轴标签文字画上去
                 context?.setShouldAntialias(true)  //抗锯齿开启，解决字体发虚
                 
-                let strValue = self.delegate?.kLineChart(self, labelOnYAxisForValue: yVal, section: section) ?? ""
+                let strValue = self.delegate?.kLineChart(chart: self, labelOnYAxisForValue: yVal, section: section) ?? ""
                 
                 NSString(string: strValue).draw(
                     at: CGPoint(x: startX, y: iy - 7), withAttributes: fontAttributes)

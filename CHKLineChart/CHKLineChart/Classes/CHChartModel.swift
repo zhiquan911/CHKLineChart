@@ -267,7 +267,7 @@ open class CHCandleModel: CHChartModel {
      */
     func drawGuideValue(_ context: CGContext, value: String, section: CHSection, point: CGPoint) {
         
-        let fontSize = value.ch_heightWithConstrainedWidth(section.labelFont)
+        let fontSize = value.ch_sizeWithConstrained(section.labelFont)
         var arrowLineWidth: CGFloat = 4
         
         //判断绘画完整时是否超过界限

@@ -20,7 +20,7 @@ public extension String {
      
      - returns:
      */
-    public func ch_heightWithConstrainedWidth(_ font: UIFont) -> CGSize {
+    public func ch_sizeWithConstrained(_ font: UIFont) -> CGSize {
         let constraintRect = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         let boundingBox = self.boundingRect(with: constraintRect, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil)
         return boundingBox.size
