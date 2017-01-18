@@ -93,15 +93,12 @@ func kLineChart(_ chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> S
 
 更详细集成方法，根据实际的例子请查看源代码中的demo
 
-###Donations
+## Donations
 
 为了让开发者更积极分享技术，开源程序代码，我们发起数字货币捐助计划，捐款只接收以下货币。
 
-- **BTC Address**:  1HvgRTi2CmaSHUkfWUCAqkYjF7AiBohzbB
+- **BTC Address**:  3G4NdQQyCJK1RS5URb4h5KogWEyR4Mk16A
 
-- **ETH/ETC Address**:  0xc312ed502fb57e0c42f9C7663CB7A3B0A6c4f6D2
-
-
-###License
+##License
 
 Released under [MIT License.](https://github.com/zhiquan911/CHKLineChart/blob/master/LICENSE) 
