@@ -12,6 +12,7 @@
 		C54926661D8923BB0074ACD2 /* CHChartAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */; };
 		C559F2591D80FC22002B1E57 /* CHExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C559F2581D80FC22002B1E57 /* CHExtension.swift */; };
 		C56F6E571D879941002320D2 /* CHSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56F6E561D879941002320D2 /* CHSeries.swift */; };
+		C57654D71E30AA480080A095 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = C57654D61E30AA480080A095 /* README.md */; };
 		C59B4D4C1D8F9E50007112EC /* ChartDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59B4D4B1D8F9E50007112EC /* ChartDemoViewController.swift */; };
 		C59DF3CE1D8FE3FD0085DA3D /* CHKLineChartStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59DF3CD1D8FE3FD0085DA3D /* CHKLineChartStyle.swift */; };
 		C5E4E05B1D76CC7E00C47F5A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E05A1D76CC7E00C47F5A /* AppDelegate.swift */; };
@@ -28,25 +29,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomStyleViewController.swift; sourceTree = "<group>"; };
-		C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleSettingViewController.swift; sourceTree = "<group>"; };
-		C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHChartAlgorithm.swift; path = Classes/CHChartAlgorithm.swift; sourceTree = "<group>"; };
-		C559F2581D80FC22002B1E57 /* CHExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHExtension.swift; path = Classes/CHExtension.swift; sourceTree = "<group>"; };
-		C56F6E561D879941002320D2 /* CHSeries.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHSeries.swift; path = Classes/CHSeries.swift; sourceTree = "<group>"; };
-		C59B4D4B1D8F9E50007112EC /* ChartDemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartDemoViewController.swift; sourceTree = "<group>"; };
-		C59DF3CD1D8FE3FD0085DA3D /* CHKLineChartStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHKLineChartStyle.swift; path = Classes/CHKLineChartStyle.swift; sourceTree = "<group>"; };
+		C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = CustomStyleViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = StyleSettingViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHChartAlgorithm.swift; path = Classes/CHChartAlgorithm.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C559F2581D80FC22002B1E57 /* CHExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHExtension.swift; path = Classes/CHExtension.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C56F6E561D879941002320D2 /* CHSeries.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHSeries.swift; path = Classes/CHSeries.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C57654D61E30AA480080A095 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
+		C59B4D4B1D8F9E50007112EC /* ChartDemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ChartDemoViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C59DF3CD1D8FE3FD0085DA3D /* CHKLineChartStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHKLineChartStyle.swift; path = Classes/CHKLineChartStyle.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C5E4E0571D76CC7E00C47F5A /* CHKLineChart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CHKLineChart.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C5E4E05A1D76CC7E00C47F5A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		C5E4E05C1D76CC7E00C47F5A /* DemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewController.swift; sourceTree = "<group>"; };
+		C5E4E05A1D76CC7E00C47F5A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AppDelegate.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C5E4E05C1D76CC7E00C47F5A /* DemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = DemoViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C5E4E05F1D76CC7E00C47F5A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C5E4E0611D76CC7E00C47F5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C5E4E0641D76CC7E00C47F5A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C5E4E0661D76CC7E00C47F5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C5E4E06E1D76CF6200C47F5A /* CHSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHSection.swift; path = Classes/CHSection.swift; sourceTree = "<group>"; };
-		C5E4E0701D76D7F800C47F5A /* CHAxisModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHAxisModel.swift; path = Classes/CHAxisModel.swift; sourceTree = "<group>"; };
+		C5E4E06E1D76CF6200C47F5A /* CHSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHSection.swift; path = Classes/CHSection.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C5E4E0701D76D7F800C47F5A /* CHAxisModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHAxisModel.swift; path = Classes/CHAxisModel.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C5F6766D1D84E6A600E65F6F /* data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = data.json; sourceTree = "<group>"; };
-		C5F700001D7EA94500622E60 /* CHChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHChartModel.swift; path = Classes/CHChartModel.swift; sourceTree = "<group>"; };
-		C5F7FFFA1D7EA57A00622E60 /* CHKLineChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHKLineChart.swift; path = Classes/CHKLineChart.swift; sourceTree = "<group>"; };
+		C5F700001D7EA94500622E60 /* CHChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHChartModel.swift; path = Classes/CHChartModel.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C5F7FFFA1D7EA57A00622E60 /* CHKLineChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHKLineChart.swift; path = Classes/CHKLineChart.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C5FA1F861D92400200271E36 /* CHKLineChart.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CHKLineChart.podspec; path = ../../CHKLineChart.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -80,6 +82,7 @@
 		C5E4E0591D76CC7E00C47F5A /* CHKLineChart */ = {
 			isa = PBXGroup;
 			children = (
+				C57654D61E30AA480080A095 /* README.md */,
 				C5FA1F861D92400200271E36 /* CHKLineChart.podspec */,
 				C5E4E06C1D76CCB400C47F5A /* Classes */,
 				C5E4E06D1D76CCF800C47F5A /* Demo */,
@@ -204,6 +207,7 @@
 				C5F700011D7EA94500622E60 /* CHChartModel.swift in Sources */,
 				C5E4E05B1D76CC7E00C47F5A /* AppDelegate.swift in Sources */,
 				C53B03581E1DEF8000174A7E /* StyleSettingViewController.swift in Sources */,
+				C57654D71E30AA480080A095 /* README.md in Sources */,
 				C5F7FFFB1D7EA57A00622E60 /* CHKLineChart.swift in Sources */,
 				C54926661D8923BB0074ACD2 /* CHChartAlgorithm.swift in Sources */,
 				C56F6E571D879941002320D2 /* CHSeries.swift in Sources */,

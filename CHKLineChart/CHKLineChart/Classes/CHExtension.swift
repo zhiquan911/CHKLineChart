@@ -3,7 +3,7 @@
 //  CHKLineChart
 //
 //  Created by Chance on 16/9/8.
-//  Copyright © 2016年 bitbank. All rights reserved.
+//  Copyright © 2016年 Chance. All rights reserved.
 //
 
 import Foundation

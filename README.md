@@ -14,7 +14,7 @@
 
 ##Requirements
 
-- iOS 9+
+- iOS 8+
 - Xcode 8+
 - Swift 3.0+
 - iPhone/iPad
@@ -41,7 +41,13 @@ pod 'CHKLineChart'
 
 ##Example
 
-把项目classes文件夹导入到项目中，在使用的viewController，导入框架
+把项目classes文件夹导入到项目或采用cocoaPos集成，在使用的viewController，导入框架
+
+```swift
+
+import CHKLineChart
+
+```
 
 ```swift
 var chartView: CHKLineChartView!
@@ -91,7 +97,16 @@ func kLineChart(_ chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> S
 }
 ```
 
+自定义样式例子，查看CustomStyleViewController里面的实现代码
+
 更详细集成方法，根据实际的例子请查看源代码中的demo
+
+## Author
+
+- Author:Chance 
+- Email:zhiquan911@qq.com
+- QQ:76405896
+- Wechat:zhiquan911
 
 ## Donations
 
