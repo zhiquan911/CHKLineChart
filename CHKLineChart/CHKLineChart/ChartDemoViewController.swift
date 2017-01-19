@@ -19,7 +19,7 @@ class ChartDemoViewController: UIViewController {
     
     var klineDatas = [AnyObject]()
     
-    let times: [String] = ["1min", "15min", "1day"] //选择时间
+    let times: [String] = ["1min", "15min", "1day", "1min"] //选择时间，最后一个时分
     let exPairs: [String] = ["btccny", "ethbtc"] //选择交易对
     var selectTime: String = ""
     var selectexPair: String = ""
@@ -133,6 +133,7 @@ class ChartDemoViewController: UIViewController {
     @IBAction func handleSegmentChange(sender: UISegmentedControl) {
         
         if sender === self.segPrice {
+            
             switch sender.selectedSegmentIndex {
             case 0:
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.ma)
@@ -146,6 +147,7 @@ class ChartDemoViewController: UIViewController {
             default:
                 break
             }
+            
         } else {
             switch sender.selectedSegmentIndex {
             case 0:
@@ -175,6 +177,20 @@ class ChartDemoViewController: UIViewController {
         let index = sender.selectedSegmentIndex
         self.selectTime = self.times[index]
         self.getRemoteServiceData(size: "800")
+        
+        //最后如果是选择了时分，就不显示蜡烛图，MA/EM等等
+        if index == self.times.count - 1 {
+            self.chartView.setSerie(hidden: false, by: CHSeriesKey.timeline)
+            self.chartView.setSerie(hidden: true, by: CHSeriesKey.candle)
+            self.chartView.setSerie(hidden: true, by: CHSeriesKey.ma)
+            self.chartView.setSerie(hidden: true, by: CHSeriesKey.ema)
+            self.segPrice.isEnabled = false
+        } else {
+            self.segPrice.isEnabled = true
+            self.chartView.setSerie(hidden: true, by: CHSeriesKey.timeline)
+            self.chartView.setSerie(hidden: false, by: CHSeriesKey.candle)
+            self.handleSegmentChange(sender: self.segPrice)
+        }
     }
     
     
@@ -258,7 +274,6 @@ extension ChartDemoViewController: CHKLineChartDelegate {
     }
     
 }
-
 
 // MARK: - 竖屏切换重载方法实现
 extension ChartDemoViewController {

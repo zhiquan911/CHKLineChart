@@ -24,7 +24,7 @@ open class CHKLineChartStyle {
      
      - returns:
      */
-    open var algorithms: [CHChartAlgorithm]!
+    open var algorithms: [CHChartAlgorithmProtocol]!
     
     /**
      背景颜色
@@ -53,6 +53,14 @@ open class CHKLineChartStyle {
     //文字颜色
     open var textColor: UIColor!
     
+    //选中点的显示的框背景颜色
+    open var selectedBGColor: UIColor!
+    
+    //选中点的显示的文字颜色
+    open var selectedTextColor: UIColor!
+    
+    //显示y的位置，默认右边
+    open var showYLabel = CHYAxisShowPosition.right
     
     public init() {
         
@@ -63,17 +71,20 @@ open class CHKLineChartStyle {
 public extension CHKLineChartStyle {
     
     //实现一个最基本的样式，开发者可以自由扩展配置样式
-    public static let base: CHKLineChartStyle = {
+    public static var base: CHKLineChartStyle {
         let style = CHKLineChartStyle()
         style.labelFont = UIFont.systemFont(ofSize: 10)
         style.lineColor = UIColor(white: 0.2, alpha: 1)
         style.dashColor = UIColor(white: 0.2, alpha: 1)
         style.textColor = UIColor(white: 0.8, alpha: 1)
+        style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
+        style.selectedTextColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
         style.padding = UIEdgeInsets(top: 16, left: 8, bottom: 20, right: 0)
         style.backgroundColor = UIColor.ch_hex(0x1D1C1C)
         
         //配置图表处理算法
         style.algorithms = [
+            CHChartAlgorithm.timeline,
             CHChartAlgorithm.ma(5),
             CHChartAlgorithm.ma(10),
             CHChartAlgorithm.ma(30),
@@ -95,7 +106,17 @@ public extension CHKLineChartStyle {
         priceSection.hidden = false
         priceSection.ratios = 3
         priceSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
-        let priceSeries = CHSeries.getDefaultPrice(upColor: upcolor, downColor: downcolor, section: priceSection)
+        
+        
+        /// 时分线
+        let timelineSeries = CHSeries.getTimelinePrice(color: UIColor.ch_hex(0xDDDDDD), section: priceSection)
+        timelineSeries.hidden = true
+        
+        /// 蜡烛线
+        let priceSeries = CHSeries.getCandlePrice(upColor: upcolor,
+                                                  downColor: downcolor,
+                                                  titleColor: UIColor(white: 0.8, alpha: 1),
+                                                  section: priceSection)
         
         let priceMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
                                            colors: [
@@ -111,7 +132,7 @@ public extension CHKLineChartStyle {
                                                 UIColor.ch_hex(0xF600FF),
                                                 ], section: priceSection)
         priceEMASeries.hidden = true
-        priceSection.series = [priceSeries, priceMASeries, priceEMASeries]
+        priceSection.series = [timelineSeries, priceSeries, priceMASeries, priceEMASeries]
         
         let volumeSection = CHSection()
         volumeSection.valueType = .volume
@@ -160,7 +181,8 @@ public extension CHKLineChartStyle {
             macdSeries]
         
         style.sections = [priceSection, volumeSection, trendSection]
+        style.showYLabel = .right
         
         return style
-    }()
+    }
 }

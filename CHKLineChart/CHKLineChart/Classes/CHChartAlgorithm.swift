@@ -8,12 +8,26 @@
 
 import UIKit
 
+
+
+/// 指标算法协议，用于日后开发者自由扩展编写自己的算法
+public protocol CHChartAlgorithmProtocol {
+    
+    /// 实现该算法的处理
+    /// 通过传入一个基本的K线数据模型集合给委托者，完成指标算法计算，
+    /// 并把结果记录到CHChartItem的extVal字典中
+    /// - Parameter datas: 传入K线数据模型集合
+    /// - Returns: 算法的结果记录到CHChartItem的extVal字典中，返回一个处理后的集合
+    func handleAlgorithm(_ datas: [CHChartItem]) -> [CHChartItem]
+}
+
 /**
- 技术指标算法
+ 常用技术指标算法
  */
-public enum CHChartAlgorithm {
+public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
     
     case none                                   //无算法
+    case timeline                               //时分
     case ma(Int)                                //简单移动平均数
     case ema(Int)                               //指数移动平均数
     case kdj(Int, Int, Int)                     //随机指标
@@ -30,6 +44,8 @@ public enum CHChartAlgorithm {
         switch self {
         case .none:
             return ""
+        case .timeline:
+            return "Timeline_\(name)"
         case let .ma(num):
             return "MA\(num)_\(name)"
         case let .ema(num):
@@ -53,6 +69,8 @@ public enum CHChartAlgorithm {
         switch self {
         case .none:
             return datas
+        case .timeline:
+            return self.handleTimeline(datas: datas)
         case let .ma(num):
             return self.handleMA(num, datas: datas)
         case let .ema(num):
@@ -65,6 +83,24 @@ public enum CHChartAlgorithm {
         }
     }
     
+    
+}
+
+// MARK: - 《时分价格》 处理算法
+extension CHChartAlgorithm {
+    
+    /**
+     处理时分价格运算
+     使用收盘价为时分价
+     - parameter datas: 数据集
+     */
+    fileprivate func handleTimeline(datas: [CHChartItem]) -> [CHChartItem] {
+        for (_, data) in datas.enumerated() {
+            data.extVal["\(self.key(CHSectionValueType.price.key))"] = data.closePrice
+            data.extVal["\(self.key(CHSectionValueType.volume.key))"] = data.vol
+        }
+        return datas
+    }
     
 }
 

@@ -177,9 +177,9 @@ open class CHCandleModel: CHChartModel {
         context?.setShouldAntialias(false)
         context?.setLineWidth(0.5)
         
-        var maxItem: CHChartItem?       //最大值的项
+        var maxValue: CGFloat = 0       //最大值的项
         var maxPoint: CGPoint?          //最大值所在坐标
-        var minItem: CHChartItem?       //最小值的项
+        var minValue: CGFloat = CGFloat.greatestFiniteMagnitude       //最小值的项
         var minPoint: CGPoint?          //最小值所在坐标
         
         //循环起始到终结
@@ -236,28 +236,28 @@ open class CHCandleModel: CHChartModel {
             
             
             //记录最大值信息
-            if item.highPrice == section.yAxis.max {
-                maxItem = item
+            if item.highPrice > maxValue {
+                maxValue = item.highPrice
                 maxPoint = CGPoint(x: ix + plotWidth / 2, y: iyh - section.padding.top / 2)
             }
             
             //记录最小值信息
-            if item.lowPrice == section.yAxis.min {
-                minItem = item
+            if item.lowPrice < minValue {
+                minValue = item.lowPrice
                 minPoint = CGPoint(x: ix + plotWidth / 2, y: iyl + section.padding.bottom / 2)
             }
             
         }
         
         //显示最大最小值
-        if self.showMaxVal && maxItem != nil {
-            let highPrice = maxItem!.highPrice.ch_toString(maxF: section.decimal)
+        if self.showMaxVal && maxValue != 0 {
+            let highPrice = maxValue.ch_toString(maxF: section.decimal)
             self.drawGuideValue(context!, value: highPrice, section: section, point: maxPoint!)
         }
         
         //显示最大最小值
-        if self.showMinVal && minItem != nil {
-            let lowPrice = minItem!.lowPrice.ch_toString(maxF: section.decimal)
+        if self.showMinVal && minValue != CGFloat.greatestFiniteMagnitude {
+            let lowPrice = minValue.ch_toString(maxF: section.decimal)
             self.drawGuideValue(context!, value: lowPrice, section: section, point: minPoint!)
         }
     }
@@ -451,9 +451,9 @@ extension CHChartModel {
     }
     
     //生成一个蜡烛样式
-    class func getCandle(upColor: UIColor, downColor: UIColor) -> CHCandleModel {
+    class func getCandle(upColor: UIColor, downColor: UIColor, titleColor: UIColor) -> CHCandleModel {
         let model = CHCandleModel(upColor: upColor, downColor: downColor,
-                                  titleColor: UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1))
+                                  titleColor: titleColor)
         model.key = "Candle"
         model.showMaxVal = true
         model.showMinVal = true

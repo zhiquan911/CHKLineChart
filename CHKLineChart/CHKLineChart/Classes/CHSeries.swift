@@ -21,9 +21,15 @@ public struct CHSeriesKey {
     public static let macd = "MACD"
 }
 
-/**
- 点线系列
- */
+
+/// 线段组
+/// 在图表中一个要显示的“线段”都是以一个CHSeries进行封装。
+/// 蜡烛图线段：包含一个蜡烛图点线模型（CHCandleModel）
+/// 时分线段：包含一个线点线模型（CHLineModel）
+/// 交易量线段：包含一个交易量点线模型（CHColumnModel）
+/// MA/EMA线段：包含一个线点线模型（CHLineModel）
+/// KDJ线段：包含3个线点线模型（CHLineModel），3个点线的数值根据KDJ指标算法计算所得
+/// MACD线段：包含2个线点线模型（CHLineModel），1个条形点线模型
 open class CHSeries: NSObject {
  
     open var key = ""
@@ -39,12 +45,25 @@ open class CHSeries: NSObject {
 extension CHSeries {
     
     /**
-     返回一个标准的价格系列样式
+     返回一个标准的时分价格系列样式
      */
-    public class func getDefaultPrice(upColor: UIColor, downColor: UIColor, section: CHSection) -> CHSeries {
+    public class func getTimelinePrice(color: UIColor, section: CHSection) -> CHSeries {
+        let series = CHSeries()
+        series.key = CHSeriesKey.timeline
+        let timeline = CHChartModel.getLine(color, title: NSLocalizedString("Price", comment: ""), key: "\(CHSeriesKey.timeline)_\(section.valueType.key)")
+        timeline.section = section
+        timeline.useTitleColor = false
+        series.chartModels = [timeline]
+        return series
+    }
+    
+    /**
+     返回一个标准的蜡烛柱价格系列样式
+     */
+    public class func getCandlePrice(upColor: UIColor, downColor: UIColor,titleColor: UIColor, section: CHSection) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.candle
-        let candle = CHChartModel.getCandle(upColor: upColor, downColor: downColor)
+        let candle = CHChartModel.getCandle(upColor: upColor, downColor: downColor, titleColor: titleColor)
         candle.section = section
         candle.useTitleColor = false
         series.chartModels = [candle]
@@ -115,7 +134,7 @@ extension CHSeries {
         dea.section = section
         let bar = CHChartModel.getBar(upColor: upColor, downColor: downColor, titleColor: barc, title: "BAR", key: "MACD_BAR")
         bar.section = section
-        series.chartModels = [dif, dea, bar]
+        series.chartModels = [bar, dif, dea]
         return series
     }
 }

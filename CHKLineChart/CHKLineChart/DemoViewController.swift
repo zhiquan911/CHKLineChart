@@ -25,6 +25,11 @@ class DemoViewController: UIViewController {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "ChartDemoViewController") as! ChartDemoViewController
         self.present(vc, animated: true, completion: nil)
     }
+    
+    @IBAction func handleShowCustomKLineView(sender: AnyObject?) {
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "CustomStyleViewController") as! CustomStyleViewController
+        self.present(vc, animated: true, completion: nil)
+    }
    
 }
 

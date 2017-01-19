@@ -52,6 +52,7 @@ open class CHSection: NSObject {
     open var tickInterval: Int = 0
     open var title: String = ""                                      //标题
     open var titleShowOutSide: Bool = false                          //标题是否显示在外面
+    open var showTitle: Bool = true                                 //是否显示标题文本
     open var decimal: Int = 2                                        //小数位的长度
     open var ratios: Int = 1                                         //所占区域比例
     open var frame: CGRect = CGRect.zero
@@ -255,9 +256,14 @@ open class CHSection: NSObject {
      */
     func drawTitle(_ chartSelectedIndex: Int) {
         
+        guard self.showTitle else {
+            return
+        }
+        
         if chartSelectedIndex == -1 {
             return      //没有数据返回
         }
+        
         var startX = self.frame.origin.x + self.padding.left + 2
         if self.paging {     //如果分页
             let series = self.series[self.selectedIndex]

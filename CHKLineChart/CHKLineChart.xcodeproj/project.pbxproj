@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C5382BEF1E178A67007CF836 /* CustomStyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */; };
+		C53B03581E1DEF8000174A7E /* StyleSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */; };
 		C54926661D8923BB0074ACD2 /* CHChartAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */; };
 		C559F2591D80FC22002B1E57 /* CHExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C559F2581D80FC22002B1E57 /* CHExtension.swift */; };
 		C56F6E571D879941002320D2 /* CHSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56F6E561D879941002320D2 /* CHSeries.swift */; };
@@ -26,6 +28,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomStyleViewController.swift; sourceTree = "<group>"; };
+		C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleSettingViewController.swift; sourceTree = "<group>"; };
 		C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHChartAlgorithm.swift; path = Classes/CHChartAlgorithm.swift; sourceTree = "<group>"; };
 		C559F2581D80FC22002B1E57 /* CHExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHExtension.swift; path = Classes/CHExtension.swift; sourceTree = "<group>"; };
 		C56F6E561D879941002320D2 /* CHSeries.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHSeries.swift; path = Classes/CHSeries.swift; sourceTree = "<group>"; };
@@ -108,6 +112,8 @@
 			children = (
 				C5E4E05C1D76CC7E00C47F5A /* DemoViewController.swift */,
 				C59B4D4B1D8F9E50007112EC /* ChartDemoViewController.swift */,
+				C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */,
+				C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */,
 				C5F6766D1D84E6A600E65F6F /* data.json */,
 			);
 			name = Demo;
@@ -193,9 +199,11 @@
 				C5E4E06F1D76CF6200C47F5A /* CHSection.swift in Sources */,
 				C59B4D4C1D8F9E50007112EC /* ChartDemoViewController.swift in Sources */,
 				C5E4E05D1D76CC7E00C47F5A /* DemoViewController.swift in Sources */,
+				C5382BEF1E178A67007CF836 /* CustomStyleViewController.swift in Sources */,
 				C559F2591D80FC22002B1E57 /* CHExtension.swift in Sources */,
 				C5F700011D7EA94500622E60 /* CHChartModel.swift in Sources */,
 				C5E4E05B1D76CC7E00C47F5A /* AppDelegate.swift in Sources */,
+				C53B03581E1DEF8000174A7E /* StyleSettingViewController.swift in Sources */,
 				C5F7FFFB1D7EA57A00622E60 /* CHKLineChart.swift in Sources */,
 				C54926661D8923BB0074ACD2 /* CHChartAlgorithm.swift in Sources */,
 				C56F6E571D879941002320D2 /* CHSeries.swift in Sources */,
