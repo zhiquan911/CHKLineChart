@@ -273,6 +273,13 @@ extension ChartDemoViewController: CHKLineChartDelegate {
         }
     }
     
+    
+    /// 点击图标返回点击的位置和数据对象
+    ///
+    /// - Parameters:
+    ///   - chart:
+    ///   - index:
+    ///   - item: 
     func kLineChart(chart: CHKLineChartView, didSelectAt index: Int, item: CHChartItem) {
         NSLog("selected index = \(index)")
         NSLog("selected item closePrice = \(item.closePrice)")

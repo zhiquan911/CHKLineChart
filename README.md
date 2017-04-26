@@ -1,10 +1,10 @@
-#CHKLineChart
+# CHKLineChart
 
 ![demo2.png](https://github.com/zhiquan911/CHKLineChart/blob/master/demo.png)
 
 > 纯Swift3.0代码编写的K线图表组件，支持：MA,EMA,KDJ,MACD等技术指标显示。集成使用简单，二次开发扩展强大。
 
-##Features
+## Features
 
 - 完美支持Swift3.0编译
 - 支持显示蜡烛图，交易量图，及MA,EMA,KDJ,MACD等技术指标图表
@@ -12,16 +12,16 @@
 - 集成使用简单，二次开发扩展强大
 
 
-##Requirements
+## Requirements
 
 - iOS 8+
 - Xcode 8+
 - Swift 3.0+
 - iPhone/iPad
 
-##Installation
+## Installation
 
-###CocoaPods
+### CocoaPods
 
 [CocoaPods](http://cocoapods.org/) is a dependency manager for Cocoa projects.
 
@@ -95,6 +95,18 @@ func kLineChart(_ chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> S
     let timestamp = Int(data[0])
     return Date.getTimeByStamp(timestamp, format: "HH:mm")
 }
+
+/// 点击图标返回点击的位置和数据对象
+///
+/// - Parameters:
+///   - chart:
+///   - index:
+///   - item: 
+func kLineChart(chart: CHKLineChartView, didSelectAt index: Int, item: CHChartItem) {
+    NSLog("selected index = \(index)")
+    NSLog("selected item closePrice = \(item.closePrice)")
+}
+
 ```
 
 自定义样式例子，查看CustomStyleViewController里面的实现代码
@@ -114,6 +126,6 @@ func kLineChart(_ chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> S
 
 - **BTC Address**:  3G4NdQQyCJK1RS5URb4h5KogWEyR4Mk16A
 
-##License
+## License
 
 Released under [MIT License.](https://github.com/zhiquan911/CHKLineChart/blob/master/LICENSE) 
