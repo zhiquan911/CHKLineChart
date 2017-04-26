@@ -97,6 +97,16 @@ public enum CHChartViewScrollPosition {
     /// - returns:
     @objc optional func widthForYAxisLabel(in chart: CHKLineChartView) -> CGFloat
     
+    
+    
+    /// 点击图表列响应方法
+    ///
+    /// - Parameters:
+    ///   - chart: 图标
+    ///   - index: 点击的位置
+    ///   - item: 数据对象
+    @objc optional func kLineChart(chart: CHKLineChartView, didSelectAt index: Int, item: CHChartItem)
+    
 }
 
 open class CHKLineChartView: UIView {
@@ -386,6 +396,9 @@ open class CHKLineChartView: UIView {
                 }
                 
                 self.selectedXAxisLabel?.frame = CGRect(x: x, y: self.frame.size.height - self.padding.bottom, width: size.width  + 6, height: self.labelSize.height)
+                
+                //回调给代理委托方法
+                self.delegate?.kLineChart?(chart: self, didSelectAt: i, item: item)
                 
                 break
             }

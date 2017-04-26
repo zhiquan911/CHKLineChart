@@ -273,6 +273,11 @@ extension ChartDemoViewController: CHKLineChartDelegate {
         }
     }
     
+    func kLineChart(chart: CHKLineChartView, didSelectAt index: Int, item: CHChartItem) {
+        NSLog("selected index = \(index)")
+        NSLog("selected item closePrice = \(item.closePrice)")
+    }
+    
 }
 
 // MARK: - 竖屏切换重载方法实现
