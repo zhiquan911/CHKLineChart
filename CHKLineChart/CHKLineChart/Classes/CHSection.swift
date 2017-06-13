@@ -10,9 +10,9 @@ import UIKit
 
 
 public enum CHSectionValueType {
-    case price          //价格
-    case volume         //交易量
-    case analysis         //指标
+    case price              //价格
+    case volume             //交易量
+    case analysis           //指标
     
     public var key: String {
         switch self {
@@ -43,21 +43,30 @@ open class CHSection: NSObject {
         }
     }
     open var key = ""
-    open var name: String = ""                           //区域的名称
+    open var name: String = ""                              //区域的名称
     open var hidden: Bool = false
     open var paging: Bool = false
     open var selectedIndex: Int = 0
     open var padding: UIEdgeInsets = UIEdgeInsets.zero
-    open var series = [CHSeries]()                  //每个分区包含多组系列，每个系列包含多个点线模型
+    open var series = [CHSeries]()                          //每个分区包含多组系列，每个系列包含多个点线模型
     open var tickInterval: Int = 0
     open var title: String = ""                                      //标题
     open var titleShowOutSide: Bool = false                          //标题是否显示在外面
     open var showTitle: Bool = true                                 //是否显示标题文本
     open var decimal: Int = 2                                        //小数位的长度
-    open var ratios: Int = 1                                         //所占区域比例
+    open var ratios: Int = 0                                         //所占区域比例
+    open var fixHeight: CGFloat = 0                                 //固定高度，为0则通过ratio计算高度
     open var frame: CGRect = CGRect.zero
     open var yAxis: CHYAxis = CHYAxis()                           //Y轴参数
     
+    
+    /// 初始化分区
+    ///
+    /// - Parameter valueType: 分区类型
+    convenience init(valueType: CHSectionValueType) {
+        self.init()
+        self.valueType = valueType
+    }
     
     func buildYAxis(startIndex: Int, endIndex: Int, datas: [CHChartItem]) {
         self.yAxis.isUsed = false

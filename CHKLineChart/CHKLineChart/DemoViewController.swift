@@ -31,5 +31,9 @@ class DemoViewController: UIViewController {
         self.present(vc, animated: true, completion: nil)
     }
    
+    @IBAction func handleShowStrangeKLineView(sender: AnyObject?) {
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ChartCustomSectionViewController") as! ChartCustomSectionViewController
+        self.present(vc, animated: true, completion: nil)
+    }
 }
 

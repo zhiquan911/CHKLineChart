@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C5158ED11EEE81850057A356 /* ChartStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5158ED01EEE81850057A356 /* ChartStyles.swift */; };
 		C5382BEF1E178A67007CF836 /* CustomStyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */; };
 		C53B03581E1DEF8000174A7E /* StyleSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */; };
 		C54926661D8923BB0074ACD2 /* CHChartAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */; };
@@ -15,6 +16,7 @@
 		C57654D71E30AA480080A095 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = C57654D61E30AA480080A095 /* README.md */; };
 		C59B4D4C1D8F9E50007112EC /* ChartDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59B4D4B1D8F9E50007112EC /* ChartDemoViewController.swift */; };
 		C59DF3CE1D8FE3FD0085DA3D /* CHKLineChartStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59DF3CD1D8FE3FD0085DA3D /* CHKLineChartStyle.swift */; };
+		C5C3C4CF1EEF96B000C1B696 /* ChartCustomSectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C3C4CE1EEF96B000C1B696 /* ChartCustomSectionViewController.swift */; };
 		C5E4E05B1D76CC7E00C47F5A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E05A1D76CC7E00C47F5A /* AppDelegate.swift */; };
 		C5E4E05D1D76CC7E00C47F5A /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E05C1D76CC7E00C47F5A /* DemoViewController.swift */; };
 		C5E4E0601D76CC7E00C47F5A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C5E4E05E1D76CC7E00C47F5A /* Main.storyboard */; };
@@ -29,6 +31,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C5158ED01EEE81850057A356 /* ChartStyles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartStyles.swift; sourceTree = "<group>"; };
 		C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = CustomStyleViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = StyleSettingViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHChartAlgorithm.swift; path = Classes/CHChartAlgorithm.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -37,6 +40,7 @@
 		C57654D61E30AA480080A095 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
 		C59B4D4B1D8F9E50007112EC /* ChartDemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ChartDemoViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C59DF3CD1D8FE3FD0085DA3D /* CHKLineChartStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHKLineChartStyle.swift; path = Classes/CHKLineChartStyle.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C5C3C4CE1EEF96B000C1B696 /* ChartCustomSectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartCustomSectionViewController.swift; sourceTree = "<group>"; };
 		C5E4E0571D76CC7E00C47F5A /* CHKLineChart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CHKLineChart.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5E4E05A1D76CC7E00C47F5A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AppDelegate.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C5E4E05C1D76CC7E00C47F5A /* DemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = DemoViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -117,7 +121,9 @@
 				C59B4D4B1D8F9E50007112EC /* ChartDemoViewController.swift */,
 				C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */,
 				C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */,
+				C5C3C4CE1EEF96B000C1B696 /* ChartCustomSectionViewController.swift */,
 				C5F6766D1D84E6A600E65F6F /* data.json */,
+				C5158ED01EEE81850057A356 /* ChartStyles.swift */,
 			);
 			name = Demo;
 			sourceTree = "<group>";
@@ -197,7 +203,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5158ED11EEE81850057A356 /* ChartStyles.swift in Sources */,
 				C5E4E0711D76D7F800C47F5A /* CHAxisModel.swift in Sources */,
+				C5C3C4CF1EEF96B000C1B696 /* ChartCustomSectionViewController.swift in Sources */,
 				C59DF3CE1D8FE3FD0085DA3D /* CHKLineChartStyle.swift in Sources */,
 				C5E4E06F1D76CF6200C47F5A /* CHSection.swift in Sources */,
 				C59B4D4C1D8F9E50007112EC /* ChartDemoViewController.swift in Sources */,

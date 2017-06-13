@@ -70,8 +70,10 @@ open class CHChartModel {
     open var title: String = ""                                   //标题
     open var useTitleColor = true
     open var key: String = ""                                     //key的名字
+    open var ultimateValueStyle: CHUltimateValueStyle = .none       // 最大最小值显示样式
     
     weak var section: CHSection!
+    
     
     convenience init(upColor: UIColor,
                      downColor: UIColor,
@@ -96,7 +98,7 @@ open class CHChartModel {
      - parameter endIndex:       结束索引
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
-    open func drawSerie(_ startIndex: Int, endIndex: Int, plotPaddingExt: CGFloat = 0.25) { }
+    open func drawSerie(_ startIndex: Int, endIndex: Int, plotPaddingExt: CGFloat = 0.15) { }
 }
 
 
@@ -167,7 +169,7 @@ open class CHCandleModel: CHChartModel {
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
     open override func drawSerie(_ startIndex: Int, endIndex: Int,
-                                   plotPaddingExt: CGFloat = 0.25) {
+                                   plotPaddingExt: CGFloat = 0.15) {
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
@@ -238,13 +240,13 @@ open class CHCandleModel: CHChartModel {
             //记录最大值信息
             if item.highPrice > maxValue {
                 maxValue = item.highPrice
-                maxPoint = CGPoint(x: ix + plotWidth / 2, y: iyh - section.padding.top / 2)
+                maxPoint = CGPoint(x: ix + plotWidth / 2, y: iyh)
             }
             
             //记录最小值信息
             if item.lowPrice < minValue {
                 minValue = item.lowPrice
-                minPoint = CGPoint(x: ix + plotWidth / 2, y: iyl + section.padding.bottom / 2)
+                minPoint = CGPoint(x: ix + plotWidth / 2, y: iyl)
             }
             
         }
@@ -252,48 +254,98 @@ open class CHCandleModel: CHChartModel {
         //显示最大最小值
         if self.showMaxVal && maxValue != 0 {
             let highPrice = maxValue.ch_toString(maxF: section.decimal)
-            self.drawGuideValue(context!, value: highPrice, section: section, point: maxPoint!)
+            self.drawGuideValue(context!, value: highPrice, section: section, point: maxPoint!, trend: CHChartItemTrend.up, padding: section.padding.top / 2)
         }
         
         //显示最大最小值
         if self.showMinVal && minValue != CGFloat.greatestFiniteMagnitude {
             let lowPrice = minValue.ch_toString(maxF: section.decimal)
-            self.drawGuideValue(context!, value: lowPrice, section: section, point: minPoint!)
+            self.drawGuideValue(context!, value: lowPrice, section: section, point: minPoint!, trend: CHChartItemTrend.down, padding: section.padding.bottom / 2)
         }
     }
     
     /**
      绘画最大值
      */
-    func drawGuideValue(_ context: CGContext, value: String, section: CHSection, point: CGPoint) {
+    func drawGuideValue(_ context: CGContext, value: String, section: CHSection, point: CGPoint, trend: CHChartItemTrend, padding: CGFloat) {
         
         let fontSize = value.ch_sizeWithConstrained(section.labelFont)
-        var arrowLineWidth: CGFloat = 4
-        
+        let arrowLineWidth: CGFloat = 4
+        var isUp: CGFloat = -1
+        var isLeft: CGFloat = -1
+        var tagStartY: CGFloat = 0
         //判断绘画完整时是否超过界限
-        var maxPriceStartX = point.x + arrowLineWidth * 5
+        var maxPriceStartX = point.x + arrowLineWidth * 2
+        var maxPriceStartY: CGFloat = 0
         if maxPriceStartX + fontSize.width > section.frame.origin.x + section.frame.size.width - section.padding.right {
             //超过了最右边界，则反方向画
-            arrowLineWidth = -4
-            maxPriceStartX = point.x + arrowLineWidth * 5 - fontSize.width
+            isLeft = -1
+            maxPriceStartX = point.x + arrowLineWidth * isLeft * 2 - fontSize.width
+        } else {
+            isLeft = 1
         }
+        
+        
         
         context.setShouldAntialias(true)
         context.setStrokeColor(self.titleColor.cgColor)
+        var fillColor: UIColor = self.upColor
+        switch trend {
+        case .up:
+            fillColor = self.upColor
+            isUp = -1
+            tagStartY = point.y - (fontSize.height + arrowLineWidth)
+            maxPriceStartY = point.y - (fontSize.height + arrowLineWidth / 2)
+        case .down:
+            fillColor = self.downColor
+            isUp = 1
+            tagStartY = point.y
+            maxPriceStartY = point.y + arrowLineWidth / 2
+        default:break
+        }
         
-        //画小箭头
-        context.move(to: CGPoint(x: point.x, y: point.y))
-        context.addLine(to: CGPoint(x: point.x + arrowLineWidth, y: point.y - arrowLineWidth))
-        context.strokePath()
+        /****** 根据样式类型绘制 ******/
         
-        context.move(to: CGPoint(x: point.x, y: point.y))
-        context.addLine(to: CGPoint(x: point.x + arrowLineWidth, y: point.y + arrowLineWidth))
-        context.strokePath()
+        switch self.ultimateValueStyle {
+        case .arrow:
+            
+            //画小箭头
+            context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
+            context.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft, y: point.y + arrowLineWidth * isUp))
+            context.strokePath()
+            
+            context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
+            context.addLine(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp * 2))
+            context.strokePath()
+            
+            context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
+            context.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft, y: point.y + arrowLineWidth * isUp * 2))
+            context.strokePath()
         
-        context.move(to: CGPoint(x: point.x, y: point.y))
-        context.addLine(to: CGPoint(x: point.x + arrowLineWidth * 4, y: point.y))
-        context.strokePath()
-        
+        case .tag:
+            
+            fillColor.set()
+            
+            let arrowPath = UIBezierPath()
+            arrowPath.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
+            arrowPath.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft * 2, y: point.y + arrowLineWidth * isUp))
+            arrowPath.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft * 2, y: point.y + arrowLineWidth * isUp * 3))
+            arrowPath.close()
+            arrowPath.fill()
+            
+            let tagPath = UIBezierPath(
+                roundedRect: CGRect(x: maxPriceStartX - arrowLineWidth, y: tagStartY, width: fontSize.width + arrowLineWidth * 2, height: fontSize.height + arrowLineWidth), cornerRadius: arrowLineWidth * 2)
+            tagPath.fill()
+            
+//        case let .circle(showPrice):
+            
+//            let circlePath = UIBezierPath()
+//            circlePath.addArc(withCenter: point, radius: , startAngle: <#T##CGFloat#>, endAngle: <#T##CGFloat#>, clockwise: <#T##Bool#>)
+            
+            
+        default:
+            break
+        }
         
         let fontAttributes = [
             NSFontAttributeName: section.labelFont,
@@ -301,7 +353,7 @@ open class CHCandleModel: CHChartModel {
         ] as [String : Any]
         
         //计算画文字的位置
-        let point = CGPoint(x: maxPriceStartX, y: point.y - fontSize.height / 2)
+        let point = CGPoint(x: maxPriceStartX, y: maxPriceStartY)
         
         //画最大值数字
         NSString(string: value)
@@ -311,8 +363,7 @@ open class CHCandleModel: CHChartModel {
         context.setShouldAntialias(false)
         
     }
-    
-    
+
 }
 
 /**
@@ -328,7 +379,7 @@ open class CHColumnModel: CHChartModel {
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
     open override func drawSerie(_ startIndex: Int, endIndex: Int,
-                                   plotPaddingExt: CGFloat = 0.25) {
+                                   plotPaddingExt: CGFloat = 0.15) {
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
@@ -388,7 +439,7 @@ open class CHBarModel: CHChartModel {
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
     open override func drawSerie(_ startIndex: Int, endIndex: Int,
-                                 plotPaddingExt: CGFloat = 0.25) {
+                                 plotPaddingExt: CGFloat = 0.15) {
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)

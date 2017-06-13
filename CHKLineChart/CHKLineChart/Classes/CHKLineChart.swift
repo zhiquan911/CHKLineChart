@@ -130,6 +130,7 @@ open class CHKLineChartView: UIView {
     open var handlerOfAlgorithms: [CHChartAlgorithmProtocol] = [CHChartAlgorithmProtocol]()
     open var padding: UIEdgeInsets = UIEdgeInsets.zero    //内边距
     open var showYLabel = CHYAxisShowPosition.right      //显示y的位置，默认右边
+    open var isInnerYAxis: Bool = false                     // 是否把y坐标内嵌到图表仲
     open var style: CHKLineChartStyle! {           //显示样式
         didSet {
             //重新配置样式
@@ -144,6 +145,7 @@ open class CHKLineChartView: UIView {
             self.showYLabel = self.style.showYLabel
             self.selectedBGColor = self.style.selectedBGColor
             self.selectedTextColor = self.style.selectedTextColor
+            self.isInnerYAxis = self.style.isInnerYAxis
         }
         
     }
@@ -191,6 +193,11 @@ open class CHKLineChartView: UIView {
     
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        //self.initUI()
+    }
+    
+    open override func awakeFromNib() {
+        super.awakeFromNib()
         self.initUI()
     }
     
@@ -375,7 +382,7 @@ open class CHKLineChartView: UIView {
                 case .left:
                     yAxisStartX = section!.frame.origin.x
                 case .right:
-                    yAxisStartX = section!.frame.origin.x + section!.frame.size.width - section!.padding.right
+                    yAxisStartX = section!.frame.maxX - self.yLabelWidth
                 case .none:
                     self.selectedYAxisLabel?.isHidden = true
                 }
@@ -434,10 +441,10 @@ extension CHKLineChartView {
                 self.drawSection(section)
                 //初始Y轴的数据
                 self.initYAxis(section)
-                //绘制Y轴坐标
-                self.drawYAxis(section)
                 //绘制图表的点线
                 self.drawChart(section)
+                //绘制Y轴坐标
+                self.drawYAxis(section)
                 
                 //显示范围最后一个点的内容
                 section.drawTitle(self.selectedIndex)
@@ -520,13 +527,17 @@ extension CHKLineChartView {
     fileprivate func buildSections(
         _ complete:(_ section: CHSection, _ index: Int) -> Void) {
         //计算实际的显示高度和宽度
-        let height = self.frame.size.height - (self.padding.top + self.padding.bottom)
+        var height = self.frame.size.height - (self.padding.top + self.padding.bottom)
         let width  = self.frame.size.width - (self.padding.left + self.padding.right)
         
         var total = 0
         for section in self.sections {
             if !section.hidden {
-                total = total + section.ratios
+                //如果使用fixHeight，ratios要设置为0
+                if section.ratios > 0 {
+                    total = total + section.ratios
+                }
+                
             }
             
         }
@@ -534,24 +545,32 @@ extension CHKLineChartView {
         var offsetY: CGFloat = self.padding.top
         //计算每个区域的高度，并绘制
         for (index, section) in self.sections.enumerated() {
+            
             var heightOfSection: CGFloat = 0
             let WidthOfSection = width
             if section.hidden {
                 continue
             }
             //计算每个区域的高度
-            heightOfSection = height * CGFloat(section.ratios) / CGFloat(total)
+            //如果fixHeight大于0，有限使用fixHeight设置高度，
+            if section.fixHeight > 0 {
+                heightOfSection = section.fixHeight
+                height = height - heightOfSection
+            } else {
+                heightOfSection = height * CGFloat(section.ratios) / CGFloat(total)
+            }
+            
             
             self.yLabelWidth = self.delegate?.widthForYAxisLabel?(in: self) ?? self.kYAxisLabelWidth 
             
             //y轴的标签显示方位
             switch self.showYLabel {
             case .left:         //左边显示
-                section.padding.left = self.yLabelWidth
+                section.padding.left = self.isInnerYAxis ? section.padding.left : self.yLabelWidth
                 section.padding.right = 0
             case .right:        //右边显示
                 section.padding.left = 0
-                section.padding.right = self.yLabelWidth
+                section.padding.right = self.isInnerYAxis ? section.padding.right : self.yLabelWidth
             case .none:         //都不显示
                 section.padding.left = 0
                 section.padding.right = 0
@@ -706,18 +725,18 @@ extension CHKLineChartView {
         
         
         let paragraphStyle = NSMutableParagraphStyle()
-        
+
         //分区中各个y轴虚线和y轴的label
         //控制y轴的label在左还是右显示
         switch self.showYLabel {
         case .left:
-            startX = section.frame.origin.x - 3
+            startX = section.frame.origin.x - 3 * (self.isInnerYAxis ? -1 : 1)
             extrude = section.frame.origin.x + section.padding.left - 2
-            paragraphStyle.alignment = .right
+            paragraphStyle.alignment = self.isInnerYAxis ? .left : .right
         case .right:
-            startX = section.frame.origin.x + section.frame.size.width - section.padding.right + 3
+            startX = section.frame.maxX - self.yLabelWidth + 3 * (self.isInnerYAxis ? -1 : 1)
             extrude = section.frame.origin.x + section.padding.left + section.frame.size.width - section.padding.right
-            paragraphStyle.alignment = .left
+            paragraphStyle.alignment = self.isInnerYAxis ? .right : .left
             
         case .none:
             showYAxisLabel = false
@@ -927,6 +946,7 @@ extension CHKLineChartView {
         }
         self.setNeedsDisplay()
     }
+    
 }
 
 
@@ -939,16 +959,24 @@ extension CHKLineChartView {
      *  @param sender
      */
     func doPanAciton(_ sender: UIPanGestureRecognizer) {
+        
+//        let plotWidth = (self.sections[0].frame.size.width - self.sections[0].padding.left - self.sections[0].padding.right) / CGFloat(self.range)
+        
         let translation = sender.translation(in: self)
-        let  velocity =  sender.velocity(in: self)
+        let velocity =  sender.velocity(in: self)
         
         var interval: Int = 0
         
         //处理滑动的幅度
         let panRange = fabs(velocity.x)    //滑动的力度
-        interval = Int(panRange / 70)              //力度大于100才移动
-        if (interval > 4) {                     //移动的间隔不超过5
-            interval = 4
+//        print("panRange = \(panRange)")
+//        print("translation = \(translation.x)")
+        
+//        interval = lroundf(fabs(Float(translation.x * panRange / plotWidth)))
+        
+        interval = Int(panRange / 50)              //力度大于x才移动
+        if (interval > 2) {                     //移动的间隔不超过interval
+            interval = 2
         }
         if (interval > 0) {                     //有移动间隔才移动
             if(translation.x > 0){
