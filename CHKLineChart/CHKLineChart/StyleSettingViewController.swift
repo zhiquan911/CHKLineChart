@@ -87,6 +87,10 @@ extension StyleSettingViewController {
             
         }
         
+        _ = style.sections.map {
+            $0.backgroundColor = style.backgroundColor
+        }
+        
         //更换价格分区的样式
         self.changePriceSeries(selectedStyle: sender.selectedSegmentIndex,
                                selectedCandleColor: self.segCandleColor.selectedSegmentIndex)

@@ -71,6 +71,8 @@ open class CHChartModel {
     open var useTitleColor = true
     open var key: String = ""                                     //key的名字
     open var ultimateValueStyle: CHUltimateValueStyle = .none       // 最大最小值显示样式
+    open var lineWidth: CGFloat = 1                                     //线段宽度
+    
     
     weak var section: CHSection!
     
@@ -107,6 +109,7 @@ open class CHChartModel {
  */
 open class CHLineModel: CHChartModel {
     
+ 
     /**
      画点线
      
@@ -122,37 +125,80 @@ open class CHLineModel: CHChartModel {
         
         let context = UIGraphicsGetCurrentContext()
         context?.setShouldAntialias(true)
-        context?.setLineWidth(0.5)
         
-        //循环起始到终结 - 1
-        for i in stride(from: startIndex, to: endIndex - 1, by: 1) {
+        //使用bezierPath画线段
+        let linePath = UIBezierPath()
+        linePath.lineWidth = self.lineWidth
+        linePath.lineCapStyle = .round
+        linePath.lineJoinStyle = .bevel
+        
+        var maxValue: CGFloat = 0       //最大值的项
+        var maxPoint: CGPoint?          //最大值所在坐标
+        var minValue: CGFloat = CGFloat.greatestFiniteMagnitude       //最小值的项
+        var minPoint: CGPoint?          //最小值所在坐标
+        
+        var isStartDraw = false
+        
+        //循环起始到终结
+        for i in stride(from: startIndex, to: endIndex, by: 1) {
             
-            let value = self[i].value           //开始的点
-            let valueNext = self[i + 1].value   //下一个点
-            
-            if value == nil || valueNext == nil {
-                continue  //无法计算的值不绘画
+            //开始的点
+            guard let value = self[i].value else {
+                continue //无法计算的值不绘画
             }
             
             //开始X
             let ix = self.section.frame.origin.x + self.section.padding.left + CGFloat(i - startIndex) * plotWidth
             //结束X
-            let iNx = self.section.frame.origin.x + self.section.padding.left + CGFloat(i + 1 - startIndex) * plotWidth
+//            let iNx = self.section.frame.origin.x + self.section.padding.left + CGFloat(i + 1 - startIndex) * plotWidth
             
             //把具体的数值转为坐标系的y值
-            let iys = self.section.getLocalY(value!)
-            let iye = self.section.getLocalY(valueNext!)
+            let iys = self.section.getLocalY(value)
+//            let iye = self.section.getLocalY(valueNext!)
+            let point = CGPoint(x: ix + plotWidth / 2, y: iys)
+            //第一个点移动路径起始
+            if !isStartDraw {
+                linePath.move(to: point)
+                isStartDraw = true
+            } else {
+                linePath.addLine(to: point)
+            }
+            
+            
             
 
-            context?.setStrokeColor(self.upColor.cgColor)
-            context?.move(to: CGPoint(x: ix + plotWidth / 2, y: iys))      //移动到当前点
-            context?.addLine(to: CGPoint(x: iNx + plotWidth / 2, y: iye)) //画一条直线到下一个点
             
-            context?.strokePath()
+            //记录最大值信息
+            if value > maxValue {
+                maxValue = value
+                maxPoint = point
+            }
             
-            
+            //记录最小值信息
+            if value < minValue {
+                minValue = value
+                minPoint = point
+            }
         }
+        
+        self.upColor.set()
+        linePath.stroke()
+        
+        
+        //显示最大最小值
+        if self.showMaxVal && maxValue != 0 {
+            let highPrice = maxValue.ch_toString(maxF: section.decimal)
+            self.drawGuideValue(context!, value: highPrice, section: section, point: maxPoint!, trend: CHChartItemTrend.up)
+        }
+        
+        //显示最大最小值
+        if self.showMinVal && minValue != CGFloat.greatestFiniteMagnitude {
+            let lowPrice = minValue.ch_toString(maxF: section.decimal)
+            self.drawGuideValue(context!, value: lowPrice, section: section, point: minPoint!, trend: CHChartItemTrend.down)
+        }
+        
     }
+    
     
 }
 
@@ -254,116 +300,16 @@ open class CHCandleModel: CHChartModel {
         //显示最大最小值
         if self.showMaxVal && maxValue != 0 {
             let highPrice = maxValue.ch_toString(maxF: section.decimal)
-            self.drawGuideValue(context!, value: highPrice, section: section, point: maxPoint!, trend: CHChartItemTrend.up, padding: section.padding.top / 2)
+            self.drawGuideValue(context!, value: highPrice, section: section, point: maxPoint!, trend: CHChartItemTrend.up)
         }
         
         //显示最大最小值
         if self.showMinVal && minValue != CGFloat.greatestFiniteMagnitude {
             let lowPrice = minValue.ch_toString(maxF: section.decimal)
-            self.drawGuideValue(context!, value: lowPrice, section: section, point: minPoint!, trend: CHChartItemTrend.down, padding: section.padding.bottom / 2)
+            self.drawGuideValue(context!, value: lowPrice, section: section, point: minPoint!, trend: CHChartItemTrend.down)
         }
     }
     
-    /**
-     绘画最大值
-     */
-    func drawGuideValue(_ context: CGContext, value: String, section: CHSection, point: CGPoint, trend: CHChartItemTrend, padding: CGFloat) {
-        
-        let fontSize = value.ch_sizeWithConstrained(section.labelFont)
-        let arrowLineWidth: CGFloat = 4
-        var isUp: CGFloat = -1
-        var isLeft: CGFloat = -1
-        var tagStartY: CGFloat = 0
-        //判断绘画完整时是否超过界限
-        var maxPriceStartX = point.x + arrowLineWidth * 2
-        var maxPriceStartY: CGFloat = 0
-        if maxPriceStartX + fontSize.width > section.frame.origin.x + section.frame.size.width - section.padding.right {
-            //超过了最右边界，则反方向画
-            isLeft = -1
-            maxPriceStartX = point.x + arrowLineWidth * isLeft * 2 - fontSize.width
-        } else {
-            isLeft = 1
-        }
-        
-        
-        
-        context.setShouldAntialias(true)
-        context.setStrokeColor(self.titleColor.cgColor)
-        var fillColor: UIColor = self.upColor
-        switch trend {
-        case .up:
-            fillColor = self.upColor
-            isUp = -1
-            tagStartY = point.y - (fontSize.height + arrowLineWidth)
-            maxPriceStartY = point.y - (fontSize.height + arrowLineWidth / 2)
-        case .down:
-            fillColor = self.downColor
-            isUp = 1
-            tagStartY = point.y
-            maxPriceStartY = point.y + arrowLineWidth / 2
-        default:break
-        }
-        
-        /****** 根据样式类型绘制 ******/
-        
-        switch self.ultimateValueStyle {
-        case .arrow:
-            
-            //画小箭头
-            context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
-            context.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft, y: point.y + arrowLineWidth * isUp))
-            context.strokePath()
-            
-            context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
-            context.addLine(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp * 2))
-            context.strokePath()
-            
-            context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
-            context.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft, y: point.y + arrowLineWidth * isUp * 2))
-            context.strokePath()
-        
-        case .tag:
-            
-            fillColor.set()
-            
-            let arrowPath = UIBezierPath()
-            arrowPath.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
-            arrowPath.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft * 2, y: point.y + arrowLineWidth * isUp))
-            arrowPath.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft * 2, y: point.y + arrowLineWidth * isUp * 3))
-            arrowPath.close()
-            arrowPath.fill()
-            
-            let tagPath = UIBezierPath(
-                roundedRect: CGRect(x: maxPriceStartX - arrowLineWidth, y: tagStartY, width: fontSize.width + arrowLineWidth * 2, height: fontSize.height + arrowLineWidth), cornerRadius: arrowLineWidth * 2)
-            tagPath.fill()
-            
-//        case let .circle(showPrice):
-            
-//            let circlePath = UIBezierPath()
-//            circlePath.addArc(withCenter: point, radius: , startAngle: <#T##CGFloat#>, endAngle: <#T##CGFloat#>, clockwise: <#T##Bool#>)
-            
-            
-        default:
-            break
-        }
-        
-        let fontAttributes = [
-            NSFontAttributeName: section.labelFont,
-            NSForegroundColorAttributeName: self.titleColor
-        ] as [String : Any]
-        
-        //计算画文字的位置
-        let point = CGPoint(x: maxPriceStartX, y: maxPriceStartY)
-        
-        //画最大值数字
-        NSString(string: value)
-            .draw(at: point,
-                         withAttributes: fontAttributes)
-        
-        context.setShouldAntialias(false)
-        
-    }
-
 }
 
 /**
@@ -485,6 +431,126 @@ open class CHBarModel: CHChartModel {
             
             
         }
+    }
+    
+}
+
+
+// MARK: - 扩展公共方法
+public extension CHChartModel {
+    
+    /**
+     绘画最大值
+     */
+    public func drawGuideValue(_ context: CGContext, value: String, section: CHSection, point: CGPoint, trend: CHChartItemTrend) {
+        
+        let fontSize = value.ch_sizeWithConstrained(section.labelFont)
+        let arrowLineWidth: CGFloat = 4
+        var isUp: CGFloat = -1
+        var isLeft: CGFloat = -1
+        var tagStartY: CGFloat = 0
+        var isShowValue: Bool = true        //是否显示值，圆形样式可以不显示值，只显示圆形
+        //判断绘画完整时是否超过界限
+        var maxPriceStartX = point.x + arrowLineWidth * 2
+        var maxPriceStartY: CGFloat = 0
+        if maxPriceStartX + fontSize.width > section.frame.origin.x + section.frame.size.width - section.padding.right {
+            //超过了最右边界，则反方向画
+            isLeft = -1
+            maxPriceStartX = point.x + arrowLineWidth * isLeft * 2 - fontSize.width
+        } else {
+            isLeft = 1
+        }
+        
+        
+        context.setShouldAntialias(true)
+        context.setStrokeColor(self.titleColor.cgColor)
+        var fillColor: UIColor = self.upColor
+        switch trend {
+        case .up:
+            fillColor = self.upColor
+            isUp = -1
+            tagStartY = point.y - (fontSize.height + arrowLineWidth)
+            maxPriceStartY = point.y - (fontSize.height + arrowLineWidth / 2)
+        case .down:
+            fillColor = self.downColor
+            isUp = 1
+            tagStartY = point.y
+            maxPriceStartY = point.y + arrowLineWidth / 2
+        default:break
+        }
+        
+        /****** 根据样式类型绘制 ******/
+        
+        switch self.ultimateValueStyle {
+        case .arrow:
+            
+            //画小箭头
+            context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
+            context.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft, y: point.y + arrowLineWidth * isUp))
+            context.strokePath()
+            
+            context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
+            context.addLine(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp * 2))
+            context.strokePath()
+            
+            context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
+            context.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft, y: point.y + arrowLineWidth * isUp * 2))
+            context.strokePath()
+            
+        case .tag:
+            
+            fillColor.set()
+            
+            let arrowPath = UIBezierPath()
+            arrowPath.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
+            arrowPath.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft * 2, y: point.y + arrowLineWidth * isUp))
+            arrowPath.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft * 2, y: point.y + arrowLineWidth * isUp * 3))
+            arrowPath.close()
+            arrowPath.fill()
+            
+            let tagPath = UIBezierPath(
+                roundedRect: CGRect(x: maxPriceStartX - arrowLineWidth, y: tagStartY, width: fontSize.width + arrowLineWidth * 2, height: fontSize.height + arrowLineWidth), cornerRadius: arrowLineWidth * 2)
+            tagPath.fill()
+            
+        case let .circle(show):
+            isShowValue = show
+            let circleWidth: CGFloat = 6
+            let circlePoint = CGPoint(x: point.x - circleWidth / 2, y: point.y - circleWidth / 2)
+            let circleSize = CGSize(width: circleWidth, height: circleWidth)
+            let circlePath = UIBezierPath(ovalIn: CGRect(origin: circlePoint, size: circleSize))
+            circlePath.lineWidth = self.lineWidth * 2
+            
+            fillColor.set()
+            circlePath.stroke()
+            
+            self.section.backgroundColor.set()
+            circlePath.fill()
+            
+        default:
+            break
+        }
+        
+        if isShowValue {
+            
+            let fontAttributes = [
+                NSFontAttributeName: section.labelFont,
+                NSForegroundColorAttributeName: self.titleColor
+                ] as [String : Any]
+            
+            //计算画文字的位置
+            let point = CGPoint(x: maxPriceStartX, y: maxPriceStartY)
+            
+            //画最大值数字
+            NSString(string: value)
+                .draw(at: point,
+                      withAttributes: fontAttributes)
+            
+        }
+        
+        
+        
+        context.setShouldAntialias(false)
+        
     }
     
 }

@@ -131,26 +131,7 @@ open class CHKLineChartView: UIView {
     open var padding: UIEdgeInsets = UIEdgeInsets.zero    //内边距
     open var showYLabel = CHYAxisShowPosition.right      //显示y的位置，默认右边
     open var isInnerYAxis: Bool = false                     // 是否把y坐标内嵌到图表仲
-    open var style: CHKLineChartStyle! {           //显示样式
-        didSet {
-            //重新配置样式
-            self.sections = self.style.sections
-            self.backgroundColor = self.style.backgroundColor
-            self.padding = self.style.padding
-            self.handlerOfAlgorithms = self.style.algorithms
-            self.lineColor = self.style.lineColor
-            self.textColor = self.style.textColor
-            self.dashColor = self.style.dashColor
-            self.labelFont = self.style.labelFont
-            self.showYLabel = self.style.showYLabel
-            self.selectedBGColor = self.style.selectedBGColor
-            self.selectedTextColor = self.style.selectedTextColor
-            self.isInnerYAxis = self.style.isInnerYAxis
-        }
-        
-    }
-    
-    
+
     @IBOutlet open weak var delegate: CHKLineChartDelegate?             //代理
     
     open var sections = [CHSection]()
@@ -158,8 +139,19 @@ open class CHKLineChartView: UIView {
     open var scrollToPosition: CHChartViewScrollPosition = .none  //图表刷新后开始显示位置
     var selectedPoint: CGPoint = CGPoint.zero
     
+    //是否可缩放
+    open var enablePinch: Bool = true
+    //是否可滑动
+    open var enablePan: Bool = true
     //是否可点选
-    open var enableTap = true {
+    open var enableTap: Bool = true {
+        didSet {
+            self.showSelection = false
+        }
+    }
+    
+    /// 是否显示选中的内容
+    open var showSelection: Bool = true {
         didSet {
             self.selectedXAxisLabel?.isHidden = true
             self.selectedYAxisLabel?.isHidden = true
@@ -167,6 +159,9 @@ open class CHKLineChartView: UIView {
             self.horizontalLineView?.isHidden = true
         }
     }
+    
+    /// 自动把X坐标内容显示到最后的分区上
+    open var autoShowXAxisOnLastSection: Bool = true
     
     var borderWidth: CGFloat = 0.5
     var lineWidth: CGFloat = 0.5
@@ -185,6 +180,30 @@ open class CHKLineChartView: UIView {
     var horizontalLineView: UIView?
     var selectedXAxisLabel: UILabel?
     var selectedYAxisLabel: UILabel?
+    
+    open var style: CHKLineChartStyle! {           //显示样式
+        didSet {
+            //重新配置样式
+            self.sections = self.style.sections
+            self.backgroundColor = self.style.backgroundColor
+            self.padding = self.style.padding
+            self.handlerOfAlgorithms = self.style.algorithms
+            self.lineColor = self.style.lineColor
+            self.textColor = self.style.textColor
+            self.dashColor = self.style.dashColor
+            self.labelFont = self.style.labelFont
+            self.showYLabel = self.style.showYLabel
+            self.selectedBGColor = self.style.selectedBGColor
+            self.selectedTextColor = self.style.selectedTextColor
+            self.isInnerYAxis = self.style.isInnerYAxis
+            self.enableTap = self.style.enableTap
+            self.enablePinch = self.style.enablePinch
+            self.enablePan = self.style.enablePan
+            self.showSelection = self.style.showSelection
+            self.autoShowXAxisOnLastSection = self.style.autoShowXAxisOnLastSection
+        }
+        
+    }
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -314,12 +333,13 @@ open class CHKLineChartView: UIView {
         
         
         guard self.enableTap else {
-            self.selectedXAxisLabel?.isHidden = true
-            self.selectedYAxisLabel?.isHidden = true
-            self.verticalLineView?.isHidden = true
-            self.horizontalLineView?.isHidden = true
             return
         }
+        
+        self.selectedXAxisLabel?.isHidden = !self.showSelection
+        self.selectedYAxisLabel?.isHidden = !self.showSelection
+        self.verticalLineView?.isHidden = !self.showSelection
+        self.horizontalLineView?.isHidden = !self.showSelection
         
         
         if point.equalTo(CGPoint.zero) {
@@ -364,20 +384,20 @@ open class CHKLineChartView: UIView {
                 let hheight = self.frame.size.height - self.padding.bottom - self.padding.top
                 //显示辅助线
                 self.horizontalLineView?.frame = CGRect(x: hx, y: hy, width: self.lineWidth, height: hheight)
-                self.horizontalLineView?.isHidden = false
+//                self.horizontalLineView?.isHidden = false
                 
                 let vx = section!.frame.origin.x + section!.padding.left
                 let vy = point.y
                 let hwidth = section!.frame.size.width - section!.padding.left - section!.padding.right
                 //显示辅助线
                 self.verticalLineView?.frame = CGRect(x: vx, y: vy, width: hwidth, height: self.lineWidth)
-                self.verticalLineView?.isHidden = false
+//                self.verticalLineView?.isHidden = false
                 
                 //显示y轴辅助内容
                 //控制y轴的label在左还是右显示
                 var yAxisStartX: CGFloat = 0
-                self.selectedYAxisLabel?.isHidden = false
-                self.selectedXAxisLabel?.isHidden = false
+//                self.selectedYAxisLabel?.isHidden = false
+//                self.selectedXAxisLabel?.isHidden = false
                 switch self.showYLabel {
                 case .left:
                     yAxisStartX = section!.frame.origin.x
@@ -441,21 +461,30 @@ extension CHKLineChartView {
                 self.drawSection(section)
                 //初始Y轴的数据
                 self.initYAxis(section)
+                //绘制Y轴坐标系，但最后的y轴标签放到绘制完线段才做
+                let yAxisToDraw = self.drawYAxis(section)
                 //绘制图表的点线
                 self.drawChart(section)
-                //绘制Y轴坐标
-                self.drawYAxis(section)
+                //绘制Y轴坐标上的标签
+                self.drawYAxisLabel(yAxisToDraw)
+
+                //分区下面绘制X轴坐标
+                if section.showXAxis {
+                    self.drawXAxis(section)
+                }
                 
                 //显示范围最后一个点的内容
                 section.drawTitle(self.selectedIndex)
-                
+            
                 //记录最后一个分区
                 lastSection = section
                 
             }
             
             //最后一个分区下面绘制X轴坐标
-            self.drawXAxis(lastSection)
+            if self.autoShowXAxisOnLastSection && !lastSection.showXAxis {
+                self.drawXAxis(lastSection)
+            }
             
             //重新显示点击选中的坐标
             self.setSelectedIndexByPoint(self.selectedPoint)
@@ -596,13 +625,13 @@ extension CHKLineChartView {
      - parameter padding: 内边距
      - parameter width:   总宽度
      */
-    fileprivate func drawXAxis(_ lastSection: CHSection) {
+    fileprivate func drawXAxis(_ section: CHSection) {
         
-        var startX: CGFloat = lastSection.frame.origin.x + lastSection.padding.left
-        let endX: CGFloat = lastSection.frame.origin.x + lastSection.frame.size.width - lastSection.padding.right
-        let secWidth: CGFloat = lastSection.frame.size.width
-        let secPaddingLeft: CGFloat = lastSection.padding.left
-        let secPaddingRight: CGFloat = lastSection.padding.right
+        var startX: CGFloat = section.frame.origin.x + section.padding.left
+        let endX: CGFloat = section.frame.origin.x + section.frame.size.width - section.padding.right
+        let secWidth: CGFloat = section.frame.size.width
+        let secPaddingLeft: CGFloat = section.padding.left
+        let secPaddingRight: CGFloat = section.padding.right
         
         let context = UIGraphicsGetCurrentContext()
         context?.setShouldAntialias(false)
@@ -671,6 +700,9 @@ extension CHKLineChartView {
         context?.setLineWidth(self.lineWidth)
         context?.setStrokeColor(self.lineColor.cgColor)
         
+        context?.setFillColor(section.backgroundColor.cgColor)
+        context?.fill(section.frame)
+        
         //画低部边线
         context?.move(to: CGPoint(x: section.frame.origin.x + section.padding.left, y: section.frame.size.height + section.frame.origin.y))
         context?.addLine(to: CGPoint(x: section.frame.origin.x + section.frame.size.width, y: section.frame.size.height + section.frame.origin.y))
@@ -707,7 +739,9 @@ extension CHKLineChartView {
      
      - parameter section: 分区
      */
-    fileprivate func drawYAxis(_ section: CHSection) {
+    fileprivate func drawYAxis(_ section: CHSection) -> [(CGRect, String)] {
+        
+        var yAxisToDraw = [(CGRect, String)]()
         
         let context = UIGraphicsGetCurrentContext()
         
@@ -724,7 +758,7 @@ extension CHKLineChartView {
         context?.setLineDash(phase: 0, lengths: dash)
         
         
-        let paragraphStyle = NSMutableParagraphStyle()
+//        let paragraphStyle = NSMutableParagraphStyle()
 
         //分区中各个y轴虚线和y轴的label
         //控制y轴的label在左还是右显示
@@ -732,22 +766,22 @@ extension CHKLineChartView {
         case .left:
             startX = section.frame.origin.x - 3 * (self.isInnerYAxis ? -1 : 1)
             extrude = section.frame.origin.x + section.padding.left - 2
-            paragraphStyle.alignment = self.isInnerYAxis ? .left : .right
+//            paragraphStyle.alignment = self.isInnerYAxis ? .left : .right
         case .right:
             startX = section.frame.maxX - self.yLabelWidth + 3 * (self.isInnerYAxis ? -1 : 1)
             extrude = section.frame.origin.x + section.padding.left + section.frame.size.width - section.padding.right
-            paragraphStyle.alignment = self.isInnerYAxis ? .right : .left
+//            paragraphStyle.alignment = self.isInnerYAxis ? .right : .left
             
         case .none:
             showYAxisLabel = false
-            paragraphStyle.alignment = .left
+//            paragraphStyle.alignment = .left
         }
         
-        let fontAttributes = [
-            NSFontAttributeName: self.labelFont,
-            NSForegroundColorAttributeName: self.textColor,
-            NSParagraphStyleAttributeName: paragraphStyle
-        ] as [String : Any]
+//        let fontAttributes = [
+//            NSFontAttributeName: self.labelFont,
+//            NSForegroundColorAttributeName: self.textColor,
+//            NSParagraphStyleAttributeName: paragraphStyle
+//        ] as [String : Any]
         
         var yaxis = section.yAxis
 //        let format = NSString(string: "%.".appendingFormat("%df", yaxis.decimal))
@@ -786,8 +820,9 @@ extension CHKLineChartView {
                                         height: 12
                 )
                 
-                NSString(string: strValue).draw(in: yLabelRect, withAttributes: fontAttributes)
+                //NSString(string: strValue).draw(in: yLabelRect, withAttributes: fontAttributes)
                 
+                yAxisToDraw.append((yLabelRect, strValue))
 //                NSString(string: strValue).draw(
 //                    at: CGPoint(x: startX, y: iy - 7), withAttributes: fontAttributes)
             }
@@ -828,7 +863,10 @@ extension CHKLineChartView {
                                         height: 14
                                         )
                 
-                NSString(string: strValue).draw(in: yLabelRect, withAttributes: fontAttributes)
+                //NSString(string: strValue).draw(in: yLabelRect, withAttributes: fontAttributes)
+                
+                yAxisToDraw.append((yLabelRect, strValue))
+                
 //                NSString(string: strValue).draw(
 //                    at: CGPoint(x: startX, y: iy - 7), withAttributes: fontAttributes)
             }
@@ -846,6 +884,38 @@ extension CHKLineChartView {
         }
         
         context?.setLineDash(phase: 0, lengths: [])
+        
+        return yAxisToDraw
+    }
+    
+    
+    /// 绘制y轴坐标上的标签
+    ///
+    /// - Parameter yAxisToDraw:
+    fileprivate func drawYAxisLabel(_ yAxisToDraw: [(CGRect, String)]) {
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        
+        //分区中各个y轴虚线和y轴的label
+        //控制y轴的label在左还是右显示
+        switch self.showYLabel {
+        case .left:
+            paragraphStyle.alignment = self.isInnerYAxis ? .left : .right
+        case .right:
+            paragraphStyle.alignment = self.isInnerYAxis ? .right : .left
+        case .none:
+            paragraphStyle.alignment = .left
+        }
+        
+        let fontAttributes = [
+            NSFontAttributeName: self.labelFont,
+            NSForegroundColorAttributeName: self.textColor,
+            NSParagraphStyleAttributeName: paragraphStyle
+            ] as [String : Any]
+        
+        for (yLabelRect, strValue) in yAxisToDraw {
+            NSString(string: strValue).draw(in: yLabelRect, withAttributes: fontAttributes)
+        }
     }
     
     /**
@@ -960,6 +1030,10 @@ extension CHKLineChartView {
      */
     func doPanAciton(_ sender: UIPanGestureRecognizer) {
         
+        guard self.enablePan else {
+            return
+        }
+        
 //        let plotWidth = (self.sections[0].frame.size.width - self.sections[0].padding.left - self.sections[0].padding.right) / CGFloat(self.range)
         
         let translation = sender.translation(in: self)
@@ -971,8 +1045,8 @@ extension CHKLineChartView {
         let panRange = fabs(velocity.x)    //滑动的力度
 //        print("panRange = \(panRange)")
 //        print("translation = \(translation.x)")
-        
-//        interval = lroundf(fabs(Float(translation.x * panRange / plotWidth)))
+//        print("plotWidth = \(plotWidth)")
+//        interval = lroundf(fabs(Float(translation.x / plotWidth)))
         
         interval = Int(panRange / 50)              //力度大于x才移动
         if (interval > 2) {                     //移动的间隔不超过interval
@@ -1045,6 +1119,11 @@ extension CHKLineChartView {
      *  双指缩放操作
      */
     func doPinchAction(_ sender: UIPinchGestureRecognizer) {
+        
+        guard self.enablePinch else {
+            return
+        }
+        
         //双指合拢或张开
         let interval = self.kPerInterval / 2
         let scale = sender.scale

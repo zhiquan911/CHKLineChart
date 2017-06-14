@@ -17,7 +17,7 @@ class ChartCustomSectionViewController: UIViewController {
     
     var klineDatas = [AnyObject]()
     
-    let times: [String] = ["15min", "60min", "1day", "1min"] //选择时间，最后一个时分
+    let times: [String] = ["15min", "1min", "1day", "15min"] //选择时间，最后一个时分
     let exPairs: [String] = ["btccny", "ethbtc"] //选择交易对
     var selectTime: String = ""
     var selectexPair: String = ""
@@ -26,7 +26,6 @@ class ChartCustomSectionViewController: UIViewController {
         super.viewDidLoad()
         self.chartView.delegate = self
         self.chartView.style = .strange
-        self.chartView.enableTap = false
         //使用代码创建K线图表
         //self.createChartView()
         
@@ -143,10 +142,10 @@ class ChartCustomSectionViewController: UIViewController {
             self.chartView.setSerie(hidden: false, by: CHSeriesKey.timeline)
             self.chartView.setSerie(hidden: true, by: CHSeriesKey.candle)
             self.chartView.setSerie(hidden: true, by: CHSeriesKey.ma)
-            self.chartView.setSerie(hidden: true, by: CHSeriesKey.ema)
         } else {
             self.chartView.setSerie(hidden: true, by: CHSeriesKey.timeline)
             self.chartView.setSerie(hidden: false, by: CHSeriesKey.candle)
+            self.chartView.setSerie(hidden: false, by: CHSeriesKey.ma)
         }
     }
     

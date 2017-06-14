@@ -23,6 +23,11 @@ public extension CHKLineChartStyle {
         style.padding = UIEdgeInsets(top: 0, left: 2, bottom: 20, right: 2)
         style.backgroundColor = UIColor.ch_hex(0x1D1C1C)
         style.isInnerYAxis = true
+        style.autoShowXAxisOnLastSection = false
+//        style.showSelection = false
+//        style.enablePan = false
+//        style.enablePinch = false
+        
         
         
         //配置图表处理算法
@@ -44,17 +49,23 @@ public extension CHKLineChartStyle {
         let upcolor = UIColor.ch_hex(0xF80D1F)
         let downcolor = UIColor.ch_hex(0x1E932B)
         let priceSection = CHSection()
+        priceSection.backgroundColor = UIColor.ch_hex(0x1D1C1C)
         priceSection.titleShowOutSide = false
         priceSection.showTitle = false
+        priceSection.showXAxis = true
         priceSection.valueType = .price
         priceSection.hidden = false
         priceSection.ratios = 0
-        priceSection.fixHeight = 220
-        priceSection.padding = UIEdgeInsets(top: 20, left: 0, bottom: 64, right: 0)
+        priceSection.fixHeight = 236
+        priceSection.padding = UIEdgeInsets(top: 20, left: 0, bottom: 80, right: 0)
         
         /// 时分线
-        let timelineSeries = CHSeries.getTimelinePrice(color: UIColor.ch_hex(0xDDDDDD), section: priceSection)
+        let timelineSeries = CHSeries.getTimelinePrice(color: UIColor.ch_hex(0xAE475C), section: priceSection)
         timelineSeries.hidden = true
+        timelineSeries.chartModels.first?.ultimateValueStyle = .circle(true)
+        timelineSeries.chartModels.first?.showMaxVal = true
+        timelineSeries.chartModels.first?.showMinVal = true
+        timelineSeries.chartModels.first?.lineWidth = 2
         
         /// 蜡烛线
         let priceSeries = CHSeries.getCandlePrice(upColor: upcolor,
@@ -80,6 +91,7 @@ public extension CHKLineChartStyle {
         priceSection.series = [timelineSeries, priceSeries, priceMASeries, priceEMASeries]
         
         let volumeSection = CHSection()
+        volumeSection.backgroundColor = UIColor.ch_hex(0x1D1C1C)
         volumeSection.valueType = .volume
         volumeSection.hidden = false
         volumeSection.showTitle = false
@@ -103,6 +115,7 @@ public extension CHKLineChartStyle {
         volumeSection.series = [volumeSeries, volumeMASeries, volumeEMASeries]
         
         let trendSection = CHSection()
+        trendSection.backgroundColor = UIColor.ch_hex(0x1D1C1C)
         trendSection.valueType = .analysis
         trendSection.hidden = false
         trendSection.showTitle = false

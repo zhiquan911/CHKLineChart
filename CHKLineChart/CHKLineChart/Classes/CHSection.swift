@@ -58,6 +58,8 @@ open class CHSection: NSObject {
     open var fixHeight: CGFloat = 0                                 //固定高度，为0则通过ratio计算高度
     open var frame: CGRect = CGRect.zero
     open var yAxis: CHYAxis = CHYAxis()                           //Y轴参数
+    open var backgroundColor: UIColor = UIColor.black
+    open var showXAxis: Bool = false
     
     
     /// 初始化分区

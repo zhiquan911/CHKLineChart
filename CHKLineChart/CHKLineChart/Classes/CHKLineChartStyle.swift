@@ -80,6 +80,19 @@ open class CHKLineChartStyle {
     /// 是否把y坐标内嵌到图表仲
     open var isInnerYAxis: Bool = false
     
+    //是否可缩放
+    open var enablePinch: Bool = true
+    //是否可滑动
+    open var enablePan: Bool = true
+    //是否可点选
+    open var enableTap: Bool = true
+    
+    /// 是否显示选中的内容
+    open var showSelection: Bool = true
+    
+    /// 自动把X坐标内容显示到最后的分区上
+    open var autoShowXAxisOnLastSection: Bool = true
+    
     public init() {
         
     }
