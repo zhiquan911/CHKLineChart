@@ -59,7 +59,7 @@ open class CHSection: NSObject {
     open var frame: CGRect = CGRect.zero
     open var yAxis: CHYAxis = CHYAxis()                           //Y轴参数
     open var backgroundColor: UIColor = UIColor.black
-    open var showXAxis: Bool = false
+    open var index: Int = 0
     
     
     /// 初始化分区

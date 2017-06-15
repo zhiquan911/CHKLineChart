@@ -98,15 +98,20 @@ public enum CHChartViewScrollPosition {
     @objc optional func widthForYAxisLabel(in chart: CHKLineChartView) -> CGFloat
     
     
-    
     /// 点击图表列响应方法
     ///
     /// - Parameters:
-    ///   - chart: 图标
+    ///   - chart: 图表
     ///   - index: 点击的位置
     ///   - item: 数据对象
     @objc optional func kLineChart(chart: CHKLineChartView, didSelectAt index: Int, item: CHChartItem)
     
+    
+    /// X轴的布局高度
+    ///
+    /// - Parameter chart: 图表
+    /// - Returns: 返回自定义的高度
+    @objc optional func hegihtForXAxis(in chart: CHKLineChartView) -> CGFloat
 }
 
 open class CHKLineChartView: UIView {
@@ -116,6 +121,7 @@ open class CHKLineChartView: UIView {
     let kMaxRange = 133     //最大缩放范围
     let kPerInterval = 4    //缩放的每段间隔
     open let kYAxisLabelWidth: CGFloat = 46        //默认宽度
+    open let kXAxisHegiht: CGFloat = 16        //默认X坐标的高度
     
     /// MARK: - 成员变量
     @IBInspectable open var upColor: UIColor = UIColor.green     //升的颜色
@@ -160,8 +166,8 @@ open class CHKLineChartView: UIView {
         }
     }
     
-    /// 自动把X坐标内容显示到最后的分区上
-    open var autoShowXAxisOnLastSection: Bool = true
+    /// 把X坐标内容显示到哪个索引分区上，默认为-1，表示最后一个，如果用户设置溢出的数值，也以最后一个
+    open var showXAxisOnSection: Int = -1
     
     var borderWidth: CGFloat = 0.5
     var lineWidth: CGFloat = 0.5
@@ -200,7 +206,7 @@ open class CHKLineChartView: UIView {
             self.enablePinch = self.style.enablePinch
             self.enablePan = self.style.enablePan
             self.showSelection = self.style.showSelection
-            self.autoShowXAxisOnLastSection = self.style.autoShowXAxisOnLastSection
+            self.showXAxisOnSection = self.style.showXAxisOnSection
         }
         
     }
@@ -324,6 +330,27 @@ open class CHKLineChartView: UIView {
         return (-1, nil)
     }
     
+    
+    /// 取显示X轴坐标的分区
+    ///
+    /// - Returns:
+    func getSecionWhichShowXAxis() -> CHSection {
+        let visiableSection = self.sections.filter { !$0.hidden }
+        var showSection: CHSection?
+        for (i, section) in visiableSection.enumerated() {
+            //用户自定义显示X轴的分区
+            if section.index == self.showXAxisOnSection {
+                showSection = section
+            }
+            //如果最后都没有找到，取最后一个做显示
+            if i == visiableSection.count - 1 && showSection == nil{
+                showSection = section
+            }
+        }
+        
+        return showSection!
+    }
+    
     /**
      设置选中的数据点
      
@@ -350,6 +377,13 @@ open class CHKLineChartView: UIView {
         if section == nil {
             return
         }
+        
+        let visiableSections = self.sections.filter { !$0.hidden }
+        guard let lastSection = visiableSections.last else {
+            return
+        }
+        
+        let showXAxisSection = self.getSecionWhichShowXAxis()
         
         //重置文字颜色和字体
         self.selectedYAxisLabel?.font = self.labelFont
@@ -381,7 +415,7 @@ open class CHKLineChartView: UIView {
                 var hx = section!.frame.origin.x + section!.padding.left
                 hx = hx + plotWidth * CGFloat(i - self.rangeFrom) + plotWidth / 2
                 let hy = self.padding.top
-                let hheight = self.frame.size.height - self.padding.bottom - self.padding.top
+                let hheight = lastSection.frame.maxY
                 //显示辅助线
                 self.horizontalLineView?.frame = CGRect(x: hx, y: hy, width: self.lineWidth, height: hheight)
 //                self.horizontalLineView?.isHidden = false
@@ -422,7 +456,7 @@ open class CHKLineChartView: UIView {
                     x = section!.frame.origin.x + section!.frame.size.width - labelWidth
                 }
                 
-                self.selectedXAxisLabel?.frame = CGRect(x: x, y: self.frame.size.height - self.padding.bottom, width: size.width  + 6, height: self.labelSize.height)
+                self.selectedXAxisLabel?.frame = CGRect(x: x, y: showXAxisSection.frame.maxY, width: size.width  + 6, height: self.labelSize.height)
                 
                 //回调给代理委托方法
                 self.delegate?.kLineChart?(chart: self, didSelectAt: i, item: item)
@@ -445,7 +479,6 @@ extension CHKLineChartView {
      */
     override open func draw(_ rect: CGRect) {
         
-        var lastSection: CHSection!
         //初始化数据
         if self.initChart() {
             
@@ -468,23 +501,14 @@ extension CHKLineChartView {
                 //绘制Y轴坐标上的标签
                 self.drawYAxisLabel(yAxisToDraw)
 
-                //分区下面绘制X轴坐标
-                if section.showXAxis {
-                    self.drawXAxis(section)
-                }
-                
                 //显示范围最后一个点的内容
                 section.drawTitle(self.selectedIndex)
-            
-                //记录最后一个分区
-                lastSection = section
                 
             }
             
-            //最后一个分区下面绘制X轴坐标
-            if self.autoShowXAxisOnLastSection && !lastSection.showXAxis {
-                self.drawXAxis(lastSection)
-            }
+            let showXAxisSection = self.getSecionWhichShowXAxis()
+            //显示在分区下面绘制X轴坐标
+            self.drawXAxis(showXAxisSection)
             
             //重新显示点击选中的坐标
             self.setSelectedIndexByPoint(self.selectedPoint)
@@ -559,14 +583,17 @@ extension CHKLineChartView {
         var height = self.frame.size.height - (self.padding.top + self.padding.bottom)
         let width  = self.frame.size.width - (self.padding.left + self.padding.right)
         
+        let xAxisHeight = self.delegate?.hegihtForXAxis?(in: self) ?? self.kXAxisHegiht
+        height = height - xAxisHeight
+        
         var total = 0
-        for section in self.sections {
+        for (index, section) in self.sections.enumerated() {
+            section.index = index
             if !section.hidden {
                 //如果使用fixHeight，ratios要设置为0
                 if section.ratios > 0 {
                     total = total + section.ratios
                 }
-                
             }
             
         }
@@ -574,7 +601,7 @@ extension CHKLineChartView {
         var offsetY: CGFloat = self.padding.top
         //计算每个区域的高度，并绘制
         for (index, section) in self.sections.enumerated() {
-            
+
             var heightOfSection: CGFloat = 0
             let WidthOfSection = width
             if section.hidden {
@@ -590,7 +617,7 @@ extension CHKLineChartView {
             }
             
             
-            self.yLabelWidth = self.delegate?.widthForYAxisLabel?(in: self) ?? self.kYAxisLabelWidth 
+            self.yLabelWidth = self.delegate?.widthForYAxisLabel?(in: self) ?? self.kYAxisLabelWidth
             
             //y轴的标签显示方位
             switch self.showYLabel {
@@ -609,6 +636,11 @@ extension CHKLineChartView {
             section.frame = CGRect(x: 0 + self.padding.left,
                                        y: offsetY, width: WidthOfSection, height: heightOfSection)
             offsetY = offsetY + section.frame.height
+            
+            //如果这个分区设置为显示X轴，下一个分区的Y起始位要加上X轴高度
+            if self.showXAxisOnSection == index {
+                offsetY = offsetY + xAxisHeight
+            }
             
             complete(section, index)
             
@@ -645,7 +677,8 @@ extension CHKLineChartView {
         //绘制x轴标签
         //每个点的间隔宽度
         let perPlotWidth: CGFloat = (secWidth - secPaddingLeft - secPaddingRight) / CGFloat(self.rangeTo - self.rangeFrom)
-        let startY = self.frame.size.height - self.padding.bottom
+//        let startY = self.frame.size.height - self.padding.bottom
+        let startY = section.frame.maxY
         var k: Int = 0
         
         //X轴标签的字体样式
@@ -1084,7 +1117,7 @@ extension CHKLineChartView {
                 }
             }
         }
-        
+        self.range = self.rangeTo - self.rangeFrom
         sender.setTranslation(CGPoint(x: 0, y: 0), in: self)
     }
     
@@ -1152,6 +1185,7 @@ extension CHKLineChartView {
                             self.rangeTo = newRangeTo
                         }
                     }
+                    self.range = self.rangeTo - self.rangeFrom
                     self.setNeedsDisplay()
                 }
                 
@@ -1180,7 +1214,7 @@ extension CHKLineChartView {
                             self.rangeFrom = newRangeFrom
                         }
                     }
-                    
+                    self.range = self.rangeTo - self.rangeFrom
                     self.setNeedsDisplay()
                 }
             }

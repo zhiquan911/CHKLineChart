@@ -20,10 +20,10 @@ public extension CHKLineChartStyle {
         style.textColor = UIColor(white: 0.8, alpha: 1)
         style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
         style.selectedTextColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
-        style.padding = UIEdgeInsets(top: 0, left: 2, bottom: 20, right: 2)
+        style.padding = UIEdgeInsets(top: 0, left: 2, bottom: 0, right: 2)
         style.backgroundColor = UIColor.ch_hex(0x1D1C1C)
         style.isInnerYAxis = true
-        style.autoShowXAxisOnLastSection = false
+        style.showXAxisOnSection = 0
 //        style.showSelection = false
 //        style.enablePan = false
 //        style.enablePinch = false
@@ -52,12 +52,11 @@ public extension CHKLineChartStyle {
         priceSection.backgroundColor = UIColor.ch_hex(0x1D1C1C)
         priceSection.titleShowOutSide = false
         priceSection.showTitle = false
-        priceSection.showXAxis = true
         priceSection.valueType = .price
         priceSection.hidden = false
         priceSection.ratios = 0
-        priceSection.fixHeight = 236
-        priceSection.padding = UIEdgeInsets(top: 20, left: 0, bottom: 80, right: 0)
+        priceSection.fixHeight = 176
+        priceSection.padding = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
         
         /// 时分线
         let timelineSeries = CHSeries.getTimelinePrice(color: UIColor.ch_hex(0xAE475C), section: priceSection)
@@ -122,7 +121,7 @@ public extension CHKLineChartStyle {
         trendSection.ratios = 1
         trendSection.paging = true
         trendSection.yAxis.tickInterval = 2
-        trendSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 4, right: 0)
+        trendSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 8, right: 0)
         let kdjSeries = CHSeries.getKDJ(UIColor.ch_hex(0xDDDDDD),
                                         dc: UIColor.ch_hex(0xF9EE30),
                                         jc: UIColor.ch_hex(0xF600FF),

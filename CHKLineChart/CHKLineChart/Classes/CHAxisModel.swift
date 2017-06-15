@@ -31,4 +31,5 @@ public struct CHYAxis {
 public struct CHXAxis {
     
     public var tickInterval: Int = 6           //间断显示个数
+    
 }

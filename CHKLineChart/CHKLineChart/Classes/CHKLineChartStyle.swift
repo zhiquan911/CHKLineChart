@@ -90,8 +90,8 @@ open class CHKLineChartStyle {
     /// 是否显示选中的内容
     open var showSelection: Bool = true
     
-    /// 自动把X坐标内容显示到最后的分区上
-    open var autoShowXAxisOnLastSection: Bool = true
+    /// 把X坐标内容显示到哪个索引分区上，默认为-1，表示最后一个，如果用户设置溢出的数值，也以最后一个
+    open var showXAxisOnSection: Int = -1
     
     public init() {
         
@@ -110,7 +110,7 @@ public extension CHKLineChartStyle {
         style.textColor = UIColor(white: 0.8, alpha: 1)
         style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
         style.selectedTextColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
-        style.padding = UIEdgeInsets(top: 16, left: 8, bottom: 20, right: 0)
+        style.padding = UIEdgeInsets(top: 16, left: 8, bottom: 4, right: 0)
         style.backgroundColor = UIColor.ch_hex(0x1D1C1C)
         
         //配置图表处理算法

@@ -237,6 +237,10 @@ extension ChartCustomSectionViewController: CHKLineChartDelegate {
         }
     }
     
+    func hegihtForXAxis(in chart: CHKLineChartView) -> CGFloat {
+        return 60
+    }
+    
     
     /// 点击图标返回点击的位置和数据对象
     ///

@@ -547,7 +547,7 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="15M"/>
-                                                <segment title="1H"/>
+                                                <segment title="1M"/>
                                                 <segment title="1D"/>
                                                 <segment title="T"/>
                                             </segments>
