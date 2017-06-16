@@ -19,9 +19,9 @@ import UIKit
 public enum CHUltimateValueStyle {
     
     case none
-    case arrow
-    case circle(Bool)
-    case tag
+    case arrow(UIColor)
+    case circle(UIColor, Bool)
+    case tag(UIColor)
 }
 
 // MARK: - 图表样式配置类
@@ -112,6 +112,7 @@ public extension CHKLineChartStyle {
         style.selectedTextColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
         style.padding = UIEdgeInsets(top: 16, left: 8, bottom: 4, right: 0)
         style.backgroundColor = UIColor.ch_hex(0x1D1C1C)
+        style.showYLabel = .right
         
         //配置图表处理算法
         style.algorithms = [
@@ -139,29 +140,47 @@ public extension CHKLineChartStyle {
         priceSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
         
         /// 时分线
-        let timelineSeries = CHSeries.getTimelinePrice(color: UIColor.ch_hex(0xDDDDDD), section: priceSection)
+        let timelineSeries = CHSeries.getTimelinePrice(
+            color: UIColor.ch_hex(0xAE475C),
+            section: priceSection,
+            showGuide: true,
+            ultimateValueStyle: .circle(UIColor.ch_hex(0xAE475C), true),
+            lineWidth: 2)
+        
         timelineSeries.hidden = true
         
         /// 蜡烛线
-        let priceSeries = CHSeries.getCandlePrice(upColor: upcolor,
-                                                  downColor: downcolor,
-                                                  titleColor: UIColor(white: 0.8, alpha: 1),
-                                                  section: priceSection)
-        priceSeries.chartModels.first?.ultimateValueStyle = .arrow
+        let priceSeries = CHSeries.getCandlePrice(
+            upColor: upcolor,
+            downColor: downcolor,
+            titleColor: UIColor(white: 0.8, alpha: 1),
+            section: priceSection,
+            showGuide: true,
+            ultimateValueStyle: .arrow(UIColor(white: 0.8, alpha: 1)))
         
-        let priceMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
-                                           colors: [
-                                            UIColor.ch_hex(0xDDDDDD),
-                                            UIColor.ch_hex(0xF9EE30),
-                                            UIColor.ch_hex(0xF600FF),
-                                            ], section: priceSection)
+        priceSeries.chartModels.first?.ultimateValueStyle = .arrow(UIColor(white: 0.8, alpha: 1))
+        
+        let priceMASeries = CHSeries.getMA(
+            isEMA: false,
+            num: [5,10,30],
+            colors: [
+                UIColor.ch_hex(0xDDDDDD),
+                UIColor.ch_hex(0xF9EE30),
+                UIColor.ch_hex(0xF600FF),
+                ],
+            section: priceSection)
         priceMASeries.hidden = false
-        let priceEMASeries = CHSeries.getMA(isEMA: true, num: [5,10,30],
-                                            colors: [
-                                                UIColor.ch_hex(0xDDDDDD),
-                                                UIColor.ch_hex(0xF9EE30),
-                                                UIColor.ch_hex(0xF600FF),
-                                                ], section: priceSection)
+        
+        let priceEMASeries = CHSeries.getMA(
+            isEMA: true,
+            num: [5,10,30],
+            colors: [
+                UIColor.ch_hex(0xDDDDDD),
+                UIColor.ch_hex(0xF9EE30),
+                UIColor.ch_hex(0xF600FF),
+                ],
+            section: priceSection)
+        
         priceEMASeries.hidden = true
         priceSection.series = [timelineSeries, priceSeries, priceMASeries, priceEMASeries]
         
@@ -172,18 +191,27 @@ public extension CHKLineChartStyle {
         volumeSection.yAxis.tickInterval = 3
         volumeSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
         let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
-        let volumeMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
-                                            colors: [
-                                                UIColor.ch_hex(0xDDDDDD),
-                                                UIColor.ch_hex(0xF9EE30),
-                                                UIColor.ch_hex(0xF600FF),
-                                                ], section: volumeSection)
-        let volumeEMASeries = CHSeries.getMA(isEMA: true, num: [5,10,30],
-                                             colors: [
-                                                UIColor.ch_hex(0xDDDDDD),
-                                                UIColor.ch_hex(0xF9EE30),
-                                                UIColor.ch_hex(0xF600FF),
-                                                ], section: volumeSection)
+        
+        let volumeMASeries = CHSeries.getMA(
+            isEMA: false,
+            num: [5,10,30],
+            colors: [
+                UIColor.ch_hex(0xDDDDDD),
+                UIColor.ch_hex(0xF9EE30),
+                UIColor.ch_hex(0xF600FF),
+                ],
+            section: volumeSection)
+        
+        let volumeEMASeries = CHSeries.getMA(
+            isEMA: true,
+            num: [5,10,30],
+            colors: [
+                UIColor.ch_hex(0xDDDDDD),
+                UIColor.ch_hex(0xF9EE30),
+                UIColor.ch_hex(0xF600FF),
+                ],
+            section: volumeSection)
+        
         volumeEMASeries.hidden = true
         volumeSection.series = [volumeSeries, volumeMASeries, volumeEMASeries]
         
@@ -194,17 +222,19 @@ public extension CHKLineChartStyle {
         trendSection.paging = true
         trendSection.yAxis.tickInterval = 3
         trendSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
-        let kdjSeries = CHSeries.getKDJ(UIColor.ch_hex(0xDDDDDD),
-                                        dc: UIColor.ch_hex(0xF9EE30),
-                                        jc: UIColor.ch_hex(0xF600FF),
-                                        section: trendSection)
+        let kdjSeries = CHSeries.getKDJ(
+            UIColor.ch_hex(0xDDDDDD),
+            dc: UIColor.ch_hex(0xF9EE30),
+            jc: UIColor.ch_hex(0xF600FF),
+            section: trendSection)
         kdjSeries.title = "KDJ(9,3,3)"
         
-        let macdSeries = CHSeries.getMACD(UIColor.ch_hex(0xDDDDDD),
-                                          deac: UIColor.ch_hex(0xF9EE30),
-                                          barc: UIColor.ch_hex(0xF600FF),
-                                          upColor: upcolor, downColor: downcolor,
-                                          section: trendSection)
+        let macdSeries = CHSeries.getMACD(
+            UIColor.ch_hex(0xDDDDDD),
+            deac: UIColor.ch_hex(0xF9EE30),
+            barc: UIColor.ch_hex(0xF600FF),
+            upColor: upcolor, downColor: downcolor,
+            section: trendSection)
         macdSeries.title = "MACD(12,26,9)"
         macdSeries.symmetrical = true
         trendSection.series = [
@@ -212,7 +242,7 @@ public extension CHKLineChartStyle {
             macdSeries]
         
         style.sections = [priceSection, volumeSection, trendSection]
-        style.showYLabel = .right
+        
         
         return style
     }

@@ -202,6 +202,10 @@ class ChartDemoViewController: UIViewController {
         self.selectexPair = self.exPairs[index]
         self.getRemoteServiceData(size: "800")
     }
+    
+    @IBAction func handleClosePress(sender: AnyObject?) {
+        self.dismiss(animated: true, completion: nil)
+    }
 }
 
 

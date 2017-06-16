@@ -363,7 +363,8 @@ extension StyleSettingViewController {
     ///
     /// - Parameter sender:
     @IBAction func handleEnableTouchChange(sender: UISwitch) {
-        self.chartView?.enableTap = sender.isOn
+        let style = self.cusStyle
+        style.enableTap = sender.isOn
     }
     
     

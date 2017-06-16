@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ChartCustomSectionViewController: UIViewController {
+class ChartCustomDesignViewController: UIViewController {
 
     @IBOutlet var chartView: CHKLineChartView!
     @IBOutlet var contentView: UIView!
@@ -25,7 +25,7 @@ class ChartCustomSectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.chartView.delegate = self
-        self.chartView.style = .strange
+        self.chartView.style = .customDark
         //使用代码创建K线图表
         //self.createChartView()
         
@@ -47,7 +47,7 @@ class ChartCustomSectionViewController: UIViewController {
         self.chartView = CHKLineChartView()
         self.chartView.translatesAutoresizingMaskIntoConstraints = false
         self.chartView.delegate = self
-        self.chartView.style = CHKLineChartStyle.strange
+        self.chartView.style = CHKLineChartStyle.customDark
         self.chartView.enableTap = false
         self.contentView.addSubview(self.chartView)
         
@@ -139,24 +139,29 @@ class ChartCustomSectionViewController: UIViewController {
         
         //最后如果是选择了时分，就不显示蜡烛图，MA/EM等等
         if index == self.times.count - 1 {
-            self.chartView.setSerie(hidden: false, by: CHSeriesKey.timeline)
-            self.chartView.setSerie(hidden: true, by: CHSeriesKey.candle)
-            self.chartView.setSerie(hidden: true, by: CHSeriesKey.ma)
+            self.chartView.setSerie(hidden: false, by: CHSeriesKey.timeline, inSection: 0)
+            self.chartView.setSerie(hidden: true, by: CHSeriesKey.candle, inSection: 0)
+            self.chartView.setSerie(hidden: true, by: CHSeriesKey.ma, inSection: 0)
         } else {
-            self.chartView.setSerie(hidden: true, by: CHSeriesKey.timeline)
-            self.chartView.setSerie(hidden: false, by: CHSeriesKey.candle)
-            self.chartView.setSerie(hidden: false, by: CHSeriesKey.ma)
+            self.chartView.setSerie(hidden: true, by: CHSeriesKey.timeline, inSection: 0)
+            self.chartView.setSerie(hidden: false, by: CHSeriesKey.candle, inSection: 0)
+            self.chartView.setSerie(hidden: false, by: CHSeriesKey.ma, inSection: 0)
         }
     }
     
     
-    /// 选择叫一对
+    /// 切换图表风格
     ///
-    /// - parameter sender:
-    @IBAction func handleExPairsSegmentChange(sender: UISegmentedControl) {
+    /// - Parameter sender: 
+    @IBAction func handleStylesSegmentChange(sender: UISegmentedControl) {
         let index = sender.selectedSegmentIndex
-        self.selectexPair = self.exPairs[index]
-        self.getRemoteServiceData(size: "800")
+
+        //最后如果是选择了时分，就不显示蜡烛图，MA/EM等等
+        if index == 0 {
+            self.chartView.resetStyle(style: .customDark)
+        } else {
+            self.chartView.resetStyle(style: .customLight)
+        }
     }
     
     @IBAction func handleClosePress(sender: AnyObject?) {
@@ -166,7 +171,7 @@ class ChartCustomSectionViewController: UIViewController {
 
 
 // MARK: - 实现K线图表的委托方法
-extension ChartCustomSectionViewController: CHKLineChartDelegate {
+extension ChartCustomDesignViewController: CHKLineChartDelegate {
     
     func numberOfPointsInKLineChart(chart: CHKLineChartView) -> Int {
         return self.klineDatas.count
@@ -256,7 +261,7 @@ extension ChartCustomSectionViewController: CHKLineChartDelegate {
 }
 
 // MARK: - 竖屏切换重载方法实现
-extension ChartCustomSectionViewController {
+extension ChartCustomDesignViewController {
     
     
     override func willAnimateRotation(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {

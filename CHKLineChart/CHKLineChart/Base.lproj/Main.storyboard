@@ -48,10 +48,9 @@
                                             </connections>
                                         </segmentedControl>
                                     </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="WwJ-XV-ZhO"/>
                                     <barButtonItem style="plain" id="wal-UK-a0X">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="1" id="Avt-ge-BGH">
-                                            <rect key="frame" x="219" y="7" width="140" height="30"/>
+                                            <rect key="frame" x="156" y="7" width="139" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="N/A"/>
@@ -62,6 +61,17 @@
                                                 <action selector="handleSegmentChangeWithSender:" destination="BYZ-38-t0r" eventType="valueChanged" id="Cep-bW-koc"/>
                                             </connections>
                                         </segmentedControl>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="ZDC-4f-VT5"/>
+                                    <barButtonItem style="plain" id="3mU-M6-osR">
+                                        <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="SKL-Qu-Dqd">
+                                            <rect key="frame" x="313" y="7" width="46" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" title="Close"/>
+                                            <connections>
+                                                <action selector="handleClosePressWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="QQS-1X-x8c"/>
+                                            </connections>
+                                        </button>
                                     </barButtonItem>
                                 </items>
                             </toolbar>
@@ -398,10 +408,10 @@
             </objects>
             <point key="canvasLocation" x="1721" y="1113"/>
         </scene>
-        <!--Demo View Controller-->
+        <!--Demo Select View Controller-->
         <scene sceneID="LTC-y6-SMR">
             <objects>
-                <viewController id="hJF-XE-bqk" customClass="DemoViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DemoSelectViewController" id="hJF-XE-bqk" customClass="DemoSelectViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="oSl-MZ-p4W"/>
                         <viewControllerLayoutGuide type="bottom" id="ZPk-yi-ItV"/>
@@ -410,55 +420,35 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x26-DJ-CqR">
-                                <rect key="frame" x="127.5" y="318.5" width="120" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="dsb-3x-Vf5"/>
-                                    <constraint firstAttribute="width" constant="120" id="l3n-Md-Zga"/>
-                                </constraints>
-                                <state key="normal" title="打开K线"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="woY-9j-mj4">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
-                                    <action selector="handleShowKLineViewWithSender:" destination="hJF-XE-bqk" eventType="touchUpInside" id="Q9c-mn-qKs"/>
+                                    <outlet property="dataSource" destination="hJF-XE-bqk" id="JnX-nx-5WE"/>
+                                    <outlet property="delegate" destination="hJF-XE-bqk" id="ao1-ta-O0I"/>
                                 </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YmR-Su-Jbc">
-                                <rect key="frame" x="136" y="388.5" width="102" height="30"/>
-                                <state key="normal" title="自定义样式K线"/>
-                                <connections>
-                                    <action selector="handleShowCustomKLineViewWithSender:" destination="hJF-XE-bqk" eventType="touchUpInside" id="Ic6-QC-QW0"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CON-hl-83L">
-                                <rect key="frame" x="127" y="248.5" width="120" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="120" id="HzR-99-vWP"/>
-                                    <constraint firstAttribute="height" constant="30" id="WJR-m8-Igy"/>
-                                </constraints>
-                                <state key="normal" title="还可以这样"/>
-                                <connections>
-                                    <action selector="handleShowStrangeKLineViewWithSender:" destination="hJF-XE-bqk" eventType="touchUpInside" id="H9J-r6-LbW"/>
-                                </connections>
-                            </button>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="x26-DJ-CqR" firstAttribute="centerY" secondItem="sV5-tA-c6O" secondAttribute="centerY" id="4VO-wE-eFm"/>
-                            <constraint firstItem="CON-hl-83L" firstAttribute="centerX" secondItem="sV5-tA-c6O" secondAttribute="centerX" id="4eq-Fg-Pgn"/>
-                            <constraint firstItem="x26-DJ-CqR" firstAttribute="centerX" secondItem="sV5-tA-c6O" secondAttribute="centerX" id="NEK-QA-XVA"/>
-                            <constraint firstItem="x26-DJ-CqR" firstAttribute="top" secondItem="CON-hl-83L" secondAttribute="bottom" constant="40" id="kc8-oM-aNz"/>
-                            <constraint firstItem="YmR-Su-Jbc" firstAttribute="centerX" secondItem="sV5-tA-c6O" secondAttribute="centerX" id="nIA-dN-YOH"/>
-                            <constraint firstItem="YmR-Su-Jbc" firstAttribute="top" secondItem="x26-DJ-CqR" secondAttribute="bottom" constant="40" id="q9R-cZ-DUk"/>
+                            <constraint firstItem="ZPk-yi-ItV" firstAttribute="top" secondItem="woY-9j-mj4" secondAttribute="bottom" id="GtG-lC-D7C"/>
+                            <constraint firstAttribute="trailing" secondItem="woY-9j-mj4" secondAttribute="trailing" id="GuC-9h-s65"/>
+                            <constraint firstItem="woY-9j-mj4" firstAttribute="top" secondItem="oSl-MZ-p4W" secondAttribute="bottom" id="ejJ-x7-bA2"/>
+                            <constraint firstItem="woY-9j-mj4" firstAttribute="leading" secondItem="sV5-tA-c6O" secondAttribute="leading" id="fY3-Gr-I1D"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="tableView" destination="woY-9j-mj4" id="bQC-he-ZEP"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OfI-93-DeR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="143" y="399"/>
         </scene>
-        <!--Chart Custom Section View Controller-->
+        <!--Chart Custom Design View Controller-->
         <scene sceneID="bXY-3M-hzd">
             <objects>
-                <viewController storyboardIdentifier="ChartCustomSectionViewController" id="Vle-XT-tBM" customClass="ChartCustomSectionViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChartCustomDesignViewController" id="Vle-XT-tBM" customClass="ChartCustomDesignViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="atF-tf-3ZT"/>
                         <viewControllerLayoutGuide type="bottom" id="QIx-Os-B7Z"/>
@@ -506,7 +496,7 @@
                                         </state>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstItem="rAp-L7-X3E" firstAttribute="centerX" secondItem="r7t-6m-E91" secondAttribute="centerX" id="6fF-6X-zXc"/>
                                     <constraint firstItem="rAp-L7-X3E" firstAttribute="centerY" secondItem="r7t-6m-E91" secondAttribute="centerY" id="8gv-3d-R2A"/>
@@ -519,6 +509,7 @@
                             </view>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="c2N-mI-QM6">
                                 <rect key="frame" x="169" y="133.5" width="37" height="37"/>
+                                <color key="color" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                             </activityIndicatorView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4ka-dC-7sf">
                                 <rect key="frame" x="0.0" y="20" width="375" height="44"/>
@@ -540,10 +531,9 @@
                                     <constraint firstAttribute="height" constant="44" id="M2M-Jg-ADy"/>
                                 </constraints>
                                 <items>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="rLc-TC-KHb"/>
                                     <barButtonItem style="plain" id="64N-wz-DxZ">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="T0j-ny-Exo">
-                                            <rect key="frame" x="44" y="7" width="287" height="30"/>
+                                            <rect key="frame" x="16" y="7" width="215" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="15M"/>
@@ -557,6 +547,19 @@
                                         </segmentedControl>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="oG8-Bl-Lyv"/>
+                                    <barButtonItem style="plain" id="2d3-ww-ade">
+                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="gL2-9r-lnd">
+                                            <rect key="frame" x="258" y="7" width="101" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <segments>
+                                                <segment title="Dark"/>
+                                                <segment title="Light"/>
+                                            </segments>
+                                            <connections>
+                                                <action selector="handleStylesSegmentChangeWithSender:" destination="Vle-XT-tBM" eventType="valueChanged" id="pIG-LK-yuk"/>
+                                            </connections>
+                                        </segmentedControl>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                         </subviews>

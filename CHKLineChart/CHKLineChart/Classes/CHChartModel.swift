@@ -73,7 +73,6 @@ open class CHChartModel {
     open var ultimateValueStyle: CHUltimateValueStyle = .none       // 最大最小值显示样式
     open var lineWidth: CGFloat = 1                                     //线段宽度
     
-    
     weak var section: CHSection!
     
     
@@ -450,6 +449,7 @@ public extension CHChartModel {
         var isLeft: CGFloat = -1
         var tagStartY: CGFloat = 0
         var isShowValue: Bool = true        //是否显示值，圆形样式可以不显示值，只显示圆形
+        var guideValueTextColor: UIColor = UIColor.white              //显示最大最小的文字颜色
         //判断绘画完整时是否超过界限
         var maxPriceStartX = point.x + arrowLineWidth * 2
         var maxPriceStartY: CGFloat = 0
@@ -482,8 +482,8 @@ public extension CHChartModel {
         /****** 根据样式类型绘制 ******/
         
         switch self.ultimateValueStyle {
-        case .arrow:
-            
+        case let .arrow(color):
+            guideValueTextColor = color
             //画小箭头
             context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
             context.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft, y: point.y + arrowLineWidth * isUp))
@@ -497,7 +497,9 @@ public extension CHChartModel {
             context.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft, y: point.y + arrowLineWidth * isUp * 2))
             context.strokePath()
             
-        case .tag:
+        case let .tag(color):
+            
+            guideValueTextColor = color
             
             fillColor.set()
             
@@ -512,8 +514,10 @@ public extension CHChartModel {
                 roundedRect: CGRect(x: maxPriceStartX - arrowLineWidth, y: tagStartY, width: fontSize.width + arrowLineWidth * 2, height: fontSize.height + arrowLineWidth), cornerRadius: arrowLineWidth * 2)
             tagPath.fill()
             
-        case let .circle(show):
+        case let .circle(color, show):
+            guideValueTextColor = color
             isShowValue = show
+            
             let circleWidth: CGFloat = 6
             let circlePoint = CGPoint(x: point.x - circleWidth / 2, y: point.y - circleWidth / 2)
             let circleSize = CGSize(width: circleWidth, height: circleWidth)
@@ -534,7 +538,7 @@ public extension CHChartModel {
             
             let fontAttributes = [
                 NSFontAttributeName: section.labelFont,
-                NSForegroundColorAttributeName: self.titleColor
+                NSForegroundColorAttributeName: guideValueTextColor
                 ] as [String : Any]
             
             //计算画文字的位置
@@ -572,8 +576,6 @@ extension CHChartModel {
         let model = CHCandleModel(upColor: upColor, downColor: downColor,
                                   titleColor: titleColor)
         model.key = "Candle"
-        model.showMaxVal = true
-        model.showMinVal = true
         return model
     }
     

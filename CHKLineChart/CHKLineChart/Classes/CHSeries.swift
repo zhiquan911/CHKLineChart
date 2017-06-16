@@ -44,15 +44,24 @@ open class CHSeries: NSObject {
 // MARK: - 工厂方法
 extension CHSeries {
     
-    /**
-     返回一个标准的时分价格系列样式
-     */
-    public class func getTimelinePrice(color: UIColor, section: CHSection) -> CHSeries {
+    
+    /// 返回一个标准的时分价格系列样式
+    ///
+    /// - Parameters:
+    ///   - color: 线段颜色
+    ///   - section: 分区
+    ///   - showGuide: 是否显示最大最小值
+    /// - Returns: 线系列模型
+    public class func getTimelinePrice(color: UIColor, section: CHSection, showGuide: Bool = false, ultimateValueStyle: CHUltimateValueStyle = .none, lineWidth: CGFloat = 1) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.timeline
         let timeline = CHChartModel.getLine(color, title: NSLocalizedString("Price", comment: ""), key: "\(CHSeriesKey.timeline)_\(section.valueType.key)")
         timeline.section = section
         timeline.useTitleColor = false
+        timeline.ultimateValueStyle = ultimateValueStyle
+        timeline.showMaxVal = showGuide
+        timeline.showMinVal = showGuide
+        timeline.lineWidth = lineWidth
         series.chartModels = [timeline]
         return series
     }
@@ -60,12 +69,15 @@ extension CHSeries {
     /**
      返回一个标准的蜡烛柱价格系列样式
      */
-    public class func getCandlePrice(upColor: UIColor, downColor: UIColor,titleColor: UIColor, section: CHSection) -> CHSeries {
+    public class func getCandlePrice(upColor: UIColor, downColor: UIColor,titleColor: UIColor, section: CHSection, showGuide: Bool = false, ultimateValueStyle: CHUltimateValueStyle = .none) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.candle
         let candle = CHChartModel.getCandle(upColor: upColor, downColor: downColor, titleColor: titleColor)
         candle.section = section
         candle.useTitleColor = false
+        candle.showMaxVal = showGuide
+        candle.showMinVal = showGuide
+        candle.ultimateValueStyle = ultimateValueStyle
         series.chartModels = [candle]
         return series
     }

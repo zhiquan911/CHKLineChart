@@ -1018,7 +1018,7 @@ extension CHKLineChartView {
             }
             hideSections.append(self.sections[inSection])
         }
-        for section in self.sections {
+        for section in hideSections {
             for (index, serie)  in section.series.enumerated() {
                 if serie.key == key {
                     
