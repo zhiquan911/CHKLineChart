@@ -352,4 +352,78 @@ public extension CHKLineChartStyle {
         return style
     }
     
+    
+    
+    //实现一个暗黑风格的点线简单图表
+    public static var simpleLineDark: CHKLineChartStyle {
+        
+        /*** 暗黑风格 ***/
+        
+        let style = CHKLineChartStyle()
+        //字体大小
+        style.labelFont = UIFont.systemFont(ofSize: 10)
+        //分区框线颜色
+        style.lineColor = UIColor.clear
+        //Y轴上虚线颜色
+        style.dashColor = UIColor.clear
+        //选中价格显示的背景颜色
+        style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
+        //文字颜色
+        style.textColor = UIColor.ch_hex(0x8D7B62)
+        //背景颜色
+        style.backgroundColor = UIColor.ch_hex(0x1D1C1C)
+        //选中点的显示的文字颜色
+        style.selectedTextColor = UIColor(white: 0.8, alpha: 1)
+        //整个图表的内边距
+        style.padding = UIEdgeInsets(top: 0, left: 2, bottom: 0, right: 2)
+        //Y轴是否内嵌式
+        style.isInnerYAxis = true
+        //显示X轴坐标内容在哪个分区仲
+        style.showXAxisOnSection = 0
+        //Y轴显示在右边
+        style.showYLabel = .left
+        //是否把所有点都显示
+        style.isShowAll = true
+        //禁止所有手势操作
+        style.enablePan = false
+        style.enableTap = false
+        style.enablePinch = false
+        
+        
+        //配置图表处理算法
+        style.algorithms = [
+            CHChartAlgorithm.timeline
+        ]
+        
+        let priceSection = CHSection()
+        priceSection.backgroundColor = style.backgroundColor
+        //分区上显示选中点的数据文字是否在分区外显示
+        priceSection.titleShowOutSide = false
+        //是否显示选中点的数据文字
+        priceSection.showTitle = false
+        //分区的数值类型
+        priceSection.valueType = .price
+        //是否隐藏分区
+        priceSection.hidden = false
+        //分区所占图表的比重，0代表不使用比重，采用固定高度
+        priceSection.ratios = 1
+        //分区内边距
+        priceSection.padding = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
+        
+        /// 时分线
+        let timelineSeries = CHSeries.getTimelinePrice(
+            color: UIColor.ch_hex(0xAE475C),
+            section: priceSection,
+            showGuide: true,
+            ultimateValueStyle: .circle(UIColor.ch_hex(0xAE475C), true),
+            lineWidth: 2)
+        
+        priceSection.series = [timelineSeries]
+        
+        style.sections = [priceSection]
+        
+        
+        return style
+    }
+    
 }

@@ -11,6 +11,7 @@
 		C5382BEF1E178A67007CF836 /* CustomStyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */; };
 		C53B03581E1DEF8000174A7E /* StyleSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */; };
 		C54926661D8923BB0074ACD2 /* CHChartAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */; };
+		C55355FD1EF7C84C00731DE8 /* ChartFullViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55355FC1EF7C84C00731DE8 /* ChartFullViewController.swift */; };
 		C559F2591D80FC22002B1E57 /* CHExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C559F2581D80FC22002B1E57 /* CHExtension.swift */; };
 		C56F6E571D879941002320D2 /* CHSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56F6E561D879941002320D2 /* CHSeries.swift */; };
 		C57654D71E30AA480080A095 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = C57654D61E30AA480080A095 /* README.md */; };
@@ -35,6 +36,7 @@
 		C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = CustomStyleViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = StyleSettingViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHChartAlgorithm.swift; path = Classes/CHChartAlgorithm.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C55355FC1EF7C84C00731DE8 /* ChartFullViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartFullViewController.swift; sourceTree = "<group>"; };
 		C559F2581D80FC22002B1E57 /* CHExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHExtension.swift; path = Classes/CHExtension.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C56F6E561D879941002320D2 /* CHSeries.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHSeries.swift; path = Classes/CHSeries.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C57654D61E30AA480080A095 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */,
 				C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */,
 				C5C3C4CE1EEF96B000C1B696 /* ChartCustomDesignViewController.swift */,
+				C55355FC1EF7C84C00731DE8 /* ChartFullViewController.swift */,
 				C5158ED01EEE81850057A356 /* ChartStyles.swift */,
 				C5F6766D1D84E6A600E65F6F /* data.json */,
 			);
@@ -213,6 +216,7 @@
 				C5382BEF1E178A67007CF836 /* CustomStyleViewController.swift in Sources */,
 				C559F2591D80FC22002B1E57 /* CHExtension.swift in Sources */,
 				C5F700011D7EA94500622E60 /* CHChartModel.swift in Sources */,
+				C55355FD1EF7C84C00731DE8 /* ChartFullViewController.swift in Sources */,
 				C5E4E05B1D76CC7E00C47F5A /* AppDelegate.swift in Sources */,
 				C53B03581E1DEF8000174A7E /* StyleSettingViewController.swift in Sources */,
 				C57654D71E30AA480080A095 /* README.md in Sources */,

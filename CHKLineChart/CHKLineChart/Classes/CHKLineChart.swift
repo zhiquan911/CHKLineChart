@@ -169,6 +169,9 @@ open class CHKLineChartView: UIView {
     /// 把X坐标内容显示到哪个索引分区上，默认为-1，表示最后一个，如果用户设置溢出的数值，也以最后一个
     open var showXAxisOnSection: Int = -1
     
+    /// 是否显示所有内容
+    open var isShowAll: Bool = false
+    
     var borderWidth: CGFloat = 0.5
     var lineWidth: CGFloat = 0.5
     var plotCount: Int = 0
@@ -207,6 +210,7 @@ open class CHKLineChartView: UIView {
             self.enablePan = self.style.enablePan
             self.showSelection = self.style.showSelection
             self.showXAxisOnSection = self.style.showXAxisOnSection
+            self.isShowAll = self.style.isShowAll
         }
         
     }
@@ -527,6 +531,11 @@ extension CHKLineChartView {
         self.plotCount = self.delegate?.numberOfPointsInKLineChart(chart: self) ?? 0
         
         if plotCount > 0 {
+            
+            //如果显示全部，显示范围为全部数据量
+            if self.isShowAll {
+                self.range = self.plotCount
+            }
             
             //图表刷新滚动为默认时，如果第一次初始化，就默认滚动到最后显示
             if self.scrollToPosition == .none {
@@ -885,8 +894,6 @@ extension CHKLineChartView {
                 context?.addLine(to: CGPoint(x: section.frame.origin.x + section.padding.left + section.frame.size.width - section.padding.right + 2, y: iy))
                 context?.strokePath()
                 
-                //把Y轴标签文字画上去
-                context?.setShouldAntialias(true)  //抗锯齿开启，解决字体发虚
                 
                 let strValue = self.delegate?.kLineChart(chart: self, labelOnYAxisForValue: yVal, section: section) ?? ""
                 
@@ -926,6 +933,11 @@ extension CHKLineChartView {
     ///
     /// - Parameter yAxisToDraw:
     fileprivate func drawYAxisLabel(_ yAxisToDraw: [(CGRect, String)]) {
+        
+        let context = UIGraphicsGetCurrentContext()
+        
+        //把Y轴标签文字画上去
+        context?.setShouldAntialias(true)  //抗锯齿开启，解决字体发虚
         
         let paragraphStyle = NSMutableParagraphStyle()
         

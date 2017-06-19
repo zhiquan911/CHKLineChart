@@ -203,6 +203,64 @@
             </objects>
             <point key="canvasLocation" x="960.79999999999995" y="1113.1934032983509"/>
         </scene>
+        <!--Chart Full View Controller-->
+        <scene sceneID="SjF-wu-FkP">
+            <objects>
+                <viewController storyboardIdentifier="ChartFullViewController" id="TcM-lo-9I2" customClass="ChartFullViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="9pj-m6-mdc"/>
+                        <viewControllerLayoutGuide type="bottom" id="IqS-wK-Bj7"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="AUK-Ic-k2X">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fEc-AO-iYx" customClass="CHKLineChartView" customModule="CHKLineChart" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="64" width="375" height="160"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="160" id="xMB-6y-VM6"/>
+                                </constraints>
+                            </view>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EP2-ab-PR5">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="5mg-7C-ULG"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="1Nk-hf-fcV"/>
+                                    <barButtonItem title="Close" id="Fkc-S9-NDG">
+                                        <connections>
+                                            <action selector="handleClosePressWithSender:" destination="TcM-lo-9I2" id="d4a-Ad-W3d"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="cvQ-Ba-Qzt">
+                                <rect key="frame" x="169" y="125.5" width="37" height="37"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="fEc-AO-iYx" firstAttribute="top" secondItem="EP2-ab-PR5" secondAttribute="bottom" id="Hw1-es-nN3"/>
+                            <constraint firstItem="EP2-ab-PR5" firstAttribute="leading" secondItem="AUK-Ic-k2X" secondAttribute="leading" id="IYV-Jc-JnN"/>
+                            <constraint firstItem="cvQ-Ba-Qzt" firstAttribute="centerY" secondItem="fEc-AO-iYx" secondAttribute="centerY" id="MCW-MM-RMH"/>
+                            <constraint firstItem="EP2-ab-PR5" firstAttribute="top" secondItem="9pj-m6-mdc" secondAttribute="bottom" id="W3j-aY-6NW"/>
+                            <constraint firstItem="fEc-AO-iYx" firstAttribute="leading" secondItem="AUK-Ic-k2X" secondAttribute="leading" id="WPc-oL-pW2"/>
+                            <constraint firstItem="cvQ-Ba-Qzt" firstAttribute="centerX" secondItem="fEc-AO-iYx" secondAttribute="centerX" id="YC4-6I-uMI"/>
+                            <constraint firstAttribute="trailing" secondItem="EP2-ab-PR5" secondAttribute="trailing" id="c0W-HX-LX2"/>
+                            <constraint firstAttribute="trailing" secondItem="fEc-AO-iYx" secondAttribute="trailing" id="lMc-z9-fhE"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="chartView" destination="fEc-AO-iYx" id="KdY-DZ-o4Y"/>
+                        <outlet property="loadingView" destination="cvQ-Ba-Qzt" id="iJa-qk-9ws"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Z2b-z0-0bC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="960.79999999999995" y="1850.824587706147"/>
+        </scene>
         <!--Style Setting View Controller-->
         <scene sceneID="vCm-1V-VM2">
             <objects>
