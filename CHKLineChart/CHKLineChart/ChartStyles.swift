@@ -365,13 +365,13 @@ public extension CHKLineChartStyle {
         //分区框线颜色
         style.lineColor = UIColor.clear
         //Y轴上虚线颜色
-        style.dashColor = UIColor.clear
+        style.dashColor = UIColor.ch_hex(0x8D7B62, alpha: 0.44)
         //选中价格显示的背景颜色
         style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
         //文字颜色
-        style.textColor = UIColor.ch_hex(0x8D7B62)
+        style.textColor = UIColor.ch_hex(0x8D7B62, alpha: 0.44)
         //背景颜色
-        style.backgroundColor = UIColor.ch_hex(0x1D1C1C)
+        style.backgroundColor = UIColor.ch_hex(0x383D49)
         //选中点的显示的文字颜色
         style.selectedTextColor = UIColor(white: 0.8, alpha: 1)
         //整个图表的内边距
@@ -407,6 +407,8 @@ public extension CHKLineChartStyle {
         priceSection.hidden = false
         //分区所占图表的比重，0代表不使用比重，采用固定高度
         priceSection.ratios = 1
+        //Y轴隔间数
+        priceSection.yAxis.tickInterval = 2
         //分区内边距
         priceSection.padding = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
         

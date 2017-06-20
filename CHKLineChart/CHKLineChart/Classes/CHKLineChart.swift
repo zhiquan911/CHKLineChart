@@ -275,19 +275,26 @@ open class CHKLineChartView: UIView {
         self.addSubview(self.selectedXAxisLabel!)
         
         //添加手势操作
-        self.addGestureRecognizer(UIPanGestureRecognizer(
+        let pan = UIPanGestureRecognizer(
             target: self,
-            action: #selector(doPanAciton(_:))))
+            action: #selector(doPanAciton(_:)))
+        pan.delegate = self
+        
+        self.addGestureRecognizer(pan)
         
         //点击手势操作
-        self.addGestureRecognizer(UITapGestureRecognizer(target: self,
-            action: #selector(doTapAction(_:))))
+        let tap = UITapGestureRecognizer(target: self,
+                                         action: #selector(doTapAction(_:)))
+        tap.delegate = self
+        self.addGestureRecognizer(tap)
         
         
         //双指缩放操作
-        self.addGestureRecognizer(UIPinchGestureRecognizer(
+        let pinch = UIPinchGestureRecognizer(
             target: self,
-            action: #selector(doPinchAction(_:))))
+            action: #selector(doPinchAction(_:)))
+        pinch.delegate = self
+        self.addGestureRecognizer(pinch)
         
         //初始数据
         self.resetData()
@@ -890,8 +897,8 @@ extension CHKLineChartView {
                 //突出的线段
                 context?.setShouldAntialias(false)
                 context?.setStrokeColor(self.dashColor.cgColor)
-                context?.move(to: CGPoint(x: section.frame.origin.x + section.padding.left + section.frame.size.width - section.padding.right, y: iy))
-                context?.addLine(to: CGPoint(x: section.frame.origin.x + section.padding.left + section.frame.size.width - section.padding.right + 2, y: iy))
+                context?.move(to: CGPoint(x: extrude, y: iy))
+                context?.addLine(to: CGPoint(x: extrude + 2, y: iy))
                 context?.strokePath()
                 
                 
@@ -1066,7 +1073,20 @@ extension CHKLineChartView {
 
 
 // MARK: - 手势操作
-extension CHKLineChartView {
+extension CHKLineChartView: UIGestureRecognizerDelegate {
+    
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        switch gestureRecognizer {
+        case is UITapGestureRecognizer:
+            return self.enableTap
+        case is UIPanGestureRecognizer:
+            return self.enablePan
+        case is UIPinchGestureRecognizer:
+            return self.enablePinch
+        default:
+            return false
+        }
+    }
     
     /**
      *  拖动操作
