@@ -190,6 +190,21 @@ open class CHKLineChartView: UIView {
     var selectedXAxisLabel: UILabel?
     var selectedYAxisLabel: UILabel?
     
+    //动力学引擎
+    lazy var animator: UIDynamicAnimator = UIDynamicAnimator(referenceView: self)
+    
+    //动力的作用点
+    lazy var dynamicItem = CHDynamicItem()
+    
+    //滚动图表时用于处理线性减速
+    weak var decelerationBehavior: UIDynamicItemBehavior?
+    
+    //滚动释放后用于反弹回来
+    weak var springBehavior: UIAttachmentBehavior?
+    
+    //减速开始x
+    var decelerationStartX: CGFloat = 0
+    
     open var style: CHKLineChartStyle! {           //显示样式
         didSet {
             //重新配置样式
@@ -274,10 +289,13 @@ open class CHKLineChartView: UIView {
         self.selectedXAxisLabel?.textAlignment = NSTextAlignment.center
         self.addSubview(self.selectedXAxisLabel!)
         
+        //添加动力引擎
+        
+        
         //添加手势操作
         let pan = UIPanGestureRecognizer(
             target: self,
-            action: #selector(doPanAciton(_:)))
+            action: #selector(doPanAction(_:)))
         pan.delegate = self
         
         self.addGestureRecognizer(pan)
@@ -1075,6 +1093,9 @@ extension CHKLineChartView {
 // MARK: - 手势操作
 extension CHKLineChartView: UIGestureRecognizerDelegate {
     
+    
+    /// 控制手势开关
+    ///
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         switch gestureRecognizer {
         case is UITapGestureRecognizer:
@@ -1088,37 +1109,14 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         }
     }
     
-    /**
-     *  拖动操作
-     *
-     *  @param sender
-     */
-    func doPanAciton(_ sender: UIPanGestureRecognizer) {
-        
-        guard self.enablePan else {
-            return
-        }
-        
-//        let plotWidth = (self.sections[0].frame.size.width - self.sections[0].padding.left - self.sections[0].padding.right) / CGFloat(self.range)
-        
-        let translation = sender.translation(in: self)
-        let velocity =  sender.velocity(in: self)
-        
-        var interval: Int = 0
-        
-        //处理滑动的幅度
-        let panRange = fabs(velocity.x)    //滑动的力度
-//        print("panRange = \(panRange)")
-//        print("translation = \(translation.x)")
-//        print("plotWidth = \(plotWidth)")
-//        interval = lroundf(fabs(Float(translation.x / plotWidth)))
-        
-        interval = Int(panRange / 50)              //力度大于x才移动
-        if (interval > 2) {                     //移动的间隔不超过interval
-            interval = 2
-        }
+    /// 左右平移图表
+    ///
+    /// - Parameters:
+    ///   - interval: 移动列数
+    ///   - direction: 方向，true：右滑操作，fasle：左滑操作
+    func moveChart(by interval: Int, direction: Bool) {
         if (interval > 0) {                     //有移动间隔才移动
-            if(translation.x > 0){
+            if direction {
                 //单指向右拖，往后查看数据
                 if self.plotCount > (self.rangeTo-self.rangeFrom) {
                     if self.rangeFrom - interval >= 0 {
@@ -1132,7 +1130,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
                     }
                     self.setNeedsDisplay()
                 }
-            } else if translation.x < 0 {
+            } else {
                 //单指向左拖，往前查看数据
                 if self.plotCount > (self.rangeTo-self.rangeFrom) {
                     if self.rangeTo + interval <= self.plotCount {
@@ -1150,7 +1148,89 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
             }
         }
         self.range = self.rangeTo - self.rangeFrom
-        sender.setTranslation(CGPoint(x: 0, y: 0), in: self)
+    }
+    
+    
+    /// 平移拖动操作
+    ///
+    /// - Parameter sender: 手势
+    func doPanAction(_ sender: UIPanGestureRecognizer) {
+        
+        guard self.enablePan else {
+            return
+        }
+        
+        //手指滑动总平移量
+        let translation = sender.translation(in: self)
+        //滑动力度，用于释放手指时完成惯性滚动的效果
+        let velocity =  sender.velocity(in: self)
+        
+        //获取可见的其中一个分区
+        let visiableSection = self.sections.filter { !$0.hidden }
+        guard let section = visiableSection.first else {
+            return
+        }
+        
+        //该分区每个点的间隔宽度
+        let plotWidth = (section.frame.size.width - section.padding.left - section.padding.right) / CGFloat(self.rangeTo - self.rangeFrom)
+        
+        switch sender.state {
+        case .began:
+            self.animator.removeAllBehaviors()
+        case .changed:
+            
+            //计算移动距离的绝对值，距离满足超过线条宽度就进行图表平移刷新
+            let distance = fabs(translation.x)
+//            print("translation.x = \(translation.x)")
+//            print("distance = \(distance)")
+            if distance > plotWidth {
+                let isRight = translation.x > 0 ? true : false
+                let interval = lroundf(fabs(Float(distance / plotWidth)))
+                self.moveChart(by: interval, direction: isRight)
+                //重新计算起始位
+                sender.setTranslation(CGPoint(x: 0, y: 0), in: self)
+            }
+            
+        case .ended, .cancelled:
+            
+            //重置减速开始
+            self.decelerationStartX = 0
+            //添加减速行为
+            self.dynamicItem.center = self.bounds.origin
+            let decelerationBehavior = UIDynamicItemBehavior(items: [self.dynamicItem])
+            decelerationBehavior.addLinearVelocity(velocity, for: self.dynamicItem)
+            decelerationBehavior.resistance = 2.0
+            decelerationBehavior.action = {
+                [weak self]() -> Void in
+                //print("self.dynamicItem.x = \(self?.dynamicItem.center.x ?? 0)")
+                
+                //到边界不执行移动
+                if self?.rangeFrom == 0 || self?.rangeTo == self?.plotCount{
+                    return
+                }
+                
+                let itemX = self?.dynamicItem.center.x ?? 0
+                let startX = self?.decelerationStartX ?? 0
+                //计算移动距离的绝对值，距离满足超过线条宽度就进行图表平移刷新
+                let distance = fabs(itemX - startX)
+                //            print("distance = \(distance)")
+                if distance > plotWidth {
+                    let isRight = itemX > 0 ? true : false
+                    let interval = lroundf(fabs(Float(distance / plotWidth)))
+                    self?.moveChart(by: interval, direction: isRight)
+                    //重新计算起始位
+                    self?.decelerationStartX = itemX
+                }
+            }
+            
+            //添加动力行为
+            self.animator.addBehavior(decelerationBehavior)
+            self.decelerationBehavior = decelerationBehavior
+
+            
+        default:
+            break
+        }
     }
     
     /**
@@ -1182,7 +1262,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
     
     /**
      *  双指缩放操作
-     */
+ 
     func doPinchAction(_ sender: UIPinchGestureRecognizer) {
         
         guard self.enablePinch else {
@@ -1193,6 +1273,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         let interval = self.kPerInterval / 2
         let scale = sender.scale
         let velocity = sender.velocity
+        print("scale = \(scale)")
         
         var newRangeTo = 0
         var newRangeFrom = 0
@@ -1254,5 +1335,113 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         
         sender.scale = 1
     }
+    */
     
+    /// 缩放图表
+    ///
+    /// - Parameters:
+    ///   - interval: 偏移量
+    ///   - enlarge: 是否放大操作
+    func zoomChart(by interval: Int, enlarge: Bool) {
+        
+        var newRangeTo = 0
+        var newRangeFrom = 0
+        var newRange = 0
+        
+        if enlarge {
+            //双指张开
+            newRangeTo = self.rangeTo - interval
+            newRangeFrom = self.rangeFrom + interval
+            newRange = self.rangeTo - self.rangeFrom
+            if newRange >= kMinRange {
+                
+                if self.plotCount > self.rangeTo - self.rangeFrom {
+                    if newRangeFrom < self.rangeTo {
+                        self.rangeFrom = newRangeFrom
+                    }
+                    if newRangeTo > self.rangeFrom {
+                        self.rangeTo = newRangeTo
+                    }
+                }else{
+                    if newRangeTo > self.rangeFrom {
+                        self.rangeTo = newRangeTo
+                    }
+                }
+                self.range = self.rangeTo - self.rangeFrom
+                self.setNeedsDisplay()
+            }
+            
+        } else {
+            //双指合拢
+            newRangeTo = self.rangeTo + interval
+            newRangeFrom = self.rangeFrom - interval
+            newRange = self.rangeTo - self.rangeFrom
+            if newRange <= kMaxRange {
+                
+                if newRangeFrom >= 0 {
+                    self.rangeFrom = newRangeFrom
+                } else {
+                    self.rangeFrom = 0
+                    newRangeTo = newRangeTo - newRangeFrom //补充负数位到头部
+                }
+                if newRangeTo <= self.plotCount {
+                    self.rangeTo = newRangeTo
+                    
+                } else {
+                    self.rangeTo = self.plotCount
+                    newRangeFrom = newRangeFrom - (newRangeTo - self.plotCount)
+                    if newRangeFrom < 0 {
+                        self.rangeFrom = 0
+                    } else {
+                        self.rangeFrom = newRangeFrom
+                    }
+                }
+                self.range = self.rangeTo - self.rangeFrom
+                self.setNeedsDisplay()
+            }
+        }
+        
+    }
+    
+    
+    /// 双指手势缩放图表
+    ///
+    /// - Parameter sender: 手势
+    func doPinchAction(_ sender: UIPinchGestureRecognizer) {
+        
+        guard self.enablePinch else {
+            return
+        }
+        
+        //获取可见的其中一个分区
+        let visiableSection = self.sections.filter { !$0.hidden }
+        guard let section = visiableSection.first else {
+            return
+        }
+        
+        //该分区每个点的间隔宽度
+        let plotWidth = (section.frame.size.width - section.padding.left - section.padding.right) / CGFloat(self.rangeTo - self.rangeFrom)
+        
+        
+        //双指合拢或张开
+        let scale = sender.scale
+        var newRange = 0
+        
+        
+        
+        //根据放大比例计算一个新的列宽
+        let newPlotWidth = plotWidth * scale
+        
+        let newRangeF = (section.frame.size.width - section.padding.left - section.padding.right) / newPlotWidth
+        newRange = scale > 1 ? Int(newRangeF + 1) : Int(newRangeF)
+        let distance = abs(self.range - newRange)
+        //放大缩小的距离为偶数
+        if distance % 2 == 0 && distance > 0 {
+            print("scale = \(scale)")
+            let enlarge = scale > 1 ? true : false
+            self.zoomChart(by: distance / 2, enlarge: enlarge)
+            sender.scale = 1    //恢复比例
+        }
+        
+    }
 }
