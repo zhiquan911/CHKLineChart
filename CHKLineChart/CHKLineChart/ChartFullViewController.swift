@@ -92,16 +92,16 @@ extension ChartFullViewController: CHKLineChartDelegate {
         let data = self.klineDatas[index] as! [Double]
         let item = CHChartItem()
         item.time = Int(data[0] / 1000)
-        item.openPrice = CGFloat(data[1])
-        item.highPrice = CGFloat(data[2])
-        item.lowPrice = CGFloat(data[3])
+//        item.openPrice = CGFloat(data[1])
+//        item.highPrice = CGFloat(data[2])
+//        item.lowPrice = CGFloat(data[3])
         item.closePrice = CGFloat(data[4])
-        item.vol = CGFloat(data[5])
+//        item.vol = CGFloat(data[5])
         return item
     }
     
     func kLineChart(chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, section: CHSection) -> String {
-        var strValue = value.ch_toString(maxF: section.decimal)
+        let strValue = value.ch_toString(maxF: section.decimal)
         return strValue
     }
     

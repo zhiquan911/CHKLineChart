@@ -17,6 +17,8 @@ class DemoSelectViewController: UIViewController {
         1: ("K线风格设置演示", "CustomStyleViewController"),
         2: ("K线商业定制例子", "ChartCustomDesignViewController"),
         3: ("K线简单线段例子", "ChartFullViewController"),
+        4: ("K线静态图片例子", "ChartImageViewController"),
+        
     ]
     
     override func viewDidLoad() {

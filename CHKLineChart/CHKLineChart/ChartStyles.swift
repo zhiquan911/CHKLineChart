@@ -38,7 +38,7 @@ public extension CHKLineChartStyle {
         //显示X轴坐标内容在哪个分区仲
         style.showXAxisOnSection = 0
         //Y轴显示在右边
-        style.showYLabel = .right
+        style.showYAxisLabel = .right
         
         
         //配置图表处理算法
@@ -208,7 +208,7 @@ public extension CHKLineChartStyle {
         //显示X轴坐标内容在哪个分区仲
         style.showXAxisOnSection = 0
         //Y轴显示在右边
-        style.showYLabel = .right
+        style.showYAxisLabel = .right
         
         
         //配置图表处理算法
@@ -381,7 +381,7 @@ public extension CHKLineChartStyle {
         //显示X轴坐标内容在哪个分区仲
         style.showXAxisOnSection = 0
         //Y轴显示在右边
-        style.showYLabel = .left
+        style.showYAxisLabel = .left
         //是否把所有点都显示
         style.isShowAll = true
         //禁止所有手势操作

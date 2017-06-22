@@ -323,13 +323,13 @@ extension StyleSettingViewController {
         
         if sender.selectedSegmentIndex == 0 {
             
-            style.showYLabel = .left
+            style.showYAxisLabel = .left
             
             style.padding = UIEdgeInsets(top: 16, left: 0, bottom: 20, right: 8)
             
         } else {
             
-            style.showYLabel = .right
+            style.showYAxisLabel = .right
             
             style.padding = UIEdgeInsets(top: 16, left: 8, bottom: 20, right: 0)
             

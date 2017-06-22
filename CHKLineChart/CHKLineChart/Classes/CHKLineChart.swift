@@ -132,10 +132,10 @@ open class CHKLineChartView: UIView {
     @IBInspectable open var textColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1) //文字颜色
     @IBInspectable open var xAxisPerInterval: Int = 4                        //x轴的间断个数
     
-    open var yLabelWidth: CGFloat = 0                    //Y轴的宽度
+    open var yAxisLabelWidth: CGFloat = 0                    //Y轴的宽度
     open var handlerOfAlgorithms: [CHChartAlgorithmProtocol] = [CHChartAlgorithmProtocol]()
     open var padding: UIEdgeInsets = UIEdgeInsets.zero    //内边距
-    open var showYLabel = CHYAxisShowPosition.right      //显示y的位置，默认右边
+    open var showYAxisLabel = CHYAxisShowPosition.right      //显示y的位置，默认右边
     open var isInnerYAxis: Bool = false                     // 是否把y坐标内嵌到图表仲
 
     @IBOutlet open weak var delegate: CHKLineChartDelegate?             //代理
@@ -168,6 +168,9 @@ open class CHKLineChartView: UIView {
     
     /// 把X坐标内容显示到哪个索引分区上，默认为-1，表示最后一个，如果用户设置溢出的数值，也以最后一个
     open var showXAxisOnSection: Int = -1
+    
+    /// 是否显示X轴标签
+    open var showXAxisLabel: Bool = true
     
     /// 是否显示所有内容
     open var isShowAll: Bool = false
@@ -216,7 +219,7 @@ open class CHKLineChartView: UIView {
             self.textColor = self.style.textColor
             self.dashColor = self.style.dashColor
             self.labelFont = self.style.labelFont
-            self.showYLabel = self.style.showYLabel
+            self.showYAxisLabel = self.style.showYAxisLabel
             self.selectedBGColor = self.style.selectedBGColor
             self.selectedTextColor = self.style.selectedTextColor
             self.isInnerYAxis = self.style.isInnerYAxis
@@ -226,6 +229,7 @@ open class CHKLineChartView: UIView {
             self.showSelection = self.style.showSelection
             self.showXAxisOnSection = self.style.showXAxisOnSection
             self.isShowAll = self.style.isShowAll
+            self.showXAxisLabel = self.style.showXAxisLabel
         }
         
     }
@@ -461,16 +465,16 @@ open class CHKLineChartView: UIView {
                 var yAxisStartX: CGFloat = 0
 //                self.selectedYAxisLabel?.isHidden = false
 //                self.selectedXAxisLabel?.isHidden = false
-                switch self.showYLabel {
+                switch self.showYAxisLabel {
                 case .left:
                     yAxisStartX = section!.frame.origin.x
                 case .right:
-                    yAxisStartX = section!.frame.maxX - self.yLabelWidth
+                    yAxisStartX = section!.frame.maxX - self.yAxisLabelWidth
                 case .none:
                     self.selectedYAxisLabel?.isHidden = true
                 }
                 self.selectedYAxisLabel?.text = String(format: format, yVal)     //显示实际值
-                self.selectedYAxisLabel?.frame = CGRect(x: yAxisStartX, y: point.y - self.labelSize.height / 2, width: self.yLabelWidth, height: self.labelSize.height)
+                self.selectedYAxisLabel?.frame = CGRect(x: yAxisStartX, y: point.y - self.labelSize.height / 2, width: self.yAxisLabelWidth, height: self.labelSize.height)
                 let time = Date.ch_getTimeByStamp(item.time, format: "yyyy-MM-dd HH:mm") //显示实际值
                 let size = time.ch_sizeWithConstrained(self.labelFont)
                 self.selectedXAxisLabel?.text = time
@@ -651,16 +655,16 @@ extension CHKLineChartView {
             }
             
             
-            self.yLabelWidth = self.delegate?.widthForYAxisLabel?(in: self) ?? self.kYAxisLabelWidth
+            self.yAxisLabelWidth = self.delegate?.widthForYAxisLabel?(in: self) ?? self.kYAxisLabelWidth
             
             //y轴的标签显示方位
-            switch self.showYLabel {
+            switch self.showYAxisLabel {
             case .left:         //左边显示
-                section.padding.left = self.isInnerYAxis ? section.padding.left : self.yLabelWidth
+                section.padding.left = self.isInnerYAxis ? section.padding.left : self.yAxisLabelWidth
                 section.padding.right = 0
             case .right:        //右边显示
                 section.padding.left = 0
-                section.padding.right = self.isInnerYAxis ? section.padding.right : self.yLabelWidth
+                section.padding.right = self.isInnerYAxis ? section.padding.right : self.yAxisLabelWidth
             case .none:         //都不显示
                 section.padding.left = 0
                 section.padding.right = 0
@@ -692,6 +696,10 @@ extension CHKLineChartView {
      - parameter width:   总宽度
      */
     fileprivate func drawXAxis(_ section: CHSection) {
+        
+        guard self.showXAxisLabel else {
+            return
+        }
         
         var startX: CGFloat = section.frame.origin.x + section.padding.left
         let endX: CGFloat = section.frame.origin.x + section.frame.size.width - section.padding.right
@@ -829,13 +837,13 @@ extension CHKLineChartView {
 
         //分区中各个y轴虚线和y轴的label
         //控制y轴的label在左还是右显示
-        switch self.showYLabel {
+        switch self.showYAxisLabel {
         case .left:
             startX = section.frame.origin.x - 3 * (self.isInnerYAxis ? -1 : 1)
             extrude = section.frame.origin.x + section.padding.left - 2
 //            paragraphStyle.alignment = self.isInnerYAxis ? .left : .right
         case .right:
-            startX = section.frame.maxX - self.yLabelWidth + 3 * (self.isInnerYAxis ? -1 : 1)
+            startX = section.frame.maxX - self.yAxisLabelWidth + 3 * (self.isInnerYAxis ? -1 : 1)
             extrude = section.frame.origin.x + section.padding.left + section.frame.size.width - section.padding.right
 //            paragraphStyle.alignment = self.isInnerYAxis ? .right : .left
             
@@ -883,7 +891,7 @@ extension CHKLineChartView {
                 
                 let yLabelRect = CGRect(x: startX,
                                         y: iy - 7,
-                                        width: yLabelWidth,
+                                        width: yAxisLabelWidth,
                                         height: 12
                 )
                 
@@ -924,7 +932,7 @@ extension CHKLineChartView {
                 
                 let yLabelRect = CGRect(x: startX,
                                         y: iy - 7,
-                                        width: yLabelWidth,
+                                        width: yAxisLabelWidth,
                                         height: 14
                                         )
                 
@@ -968,7 +976,7 @@ extension CHKLineChartView {
         
         //分区中各个y轴虚线和y轴的label
         //控制y轴的label在左还是右显示
-        switch self.showYLabel {
+        switch self.showYAxisLabel {
         case .left:
             paragraphStyle.alignment = self.isInnerYAxis ? .left : .right
         case .right:
@@ -1087,34 +1095,81 @@ extension CHKLineChartView {
         self.setNeedsDisplay()
     }
     
-}
-
-
-// MARK: - 手势操作
-extension CHKLineChartView: UIGestureRecognizerDelegate {
     
     
-    /// 控制手势开关
+    /// 缩放图表
     ///
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        switch gestureRecognizer {
-        case is UITapGestureRecognizer:
-            return self.enableTap
-        case is UIPanGestureRecognizer:
-            return self.enablePan
-        case is UIPinchGestureRecognizer:
-            return self.enablePinch
-        default:
-            return false
+    /// - Parameters:
+    ///   - interval: 偏移量
+    ///   - enlarge: 是否放大操作
+    public func zoomChart(by interval: Int, enlarge: Bool) {
+        
+        var newRangeTo = 0
+        var newRangeFrom = 0
+        var newRange = 0
+        
+        if enlarge {
+            //双指张开
+            newRangeTo = self.rangeTo - interval
+            newRangeFrom = self.rangeFrom + interval
+            newRange = self.rangeTo - self.rangeFrom
+            if newRange >= kMinRange {
+                
+                if self.plotCount > self.rangeTo - self.rangeFrom {
+                    if newRangeFrom < self.rangeTo {
+                        self.rangeFrom = newRangeFrom
+                    }
+                    if newRangeTo > self.rangeFrom {
+                        self.rangeTo = newRangeTo
+                    }
+                }else{
+                    if newRangeTo > self.rangeFrom {
+                        self.rangeTo = newRangeTo
+                    }
+                }
+                self.range = self.rangeTo - self.rangeFrom
+                self.setNeedsDisplay()
+            }
+            
+        } else {
+            //双指合拢
+            newRangeTo = self.rangeTo + interval
+            newRangeFrom = self.rangeFrom - interval
+            newRange = self.rangeTo - self.rangeFrom
+            if newRange <= kMaxRange {
+                
+                if newRangeFrom >= 0 {
+                    self.rangeFrom = newRangeFrom
+                } else {
+                    self.rangeFrom = 0
+                    newRangeTo = newRangeTo - newRangeFrom //补充负数位到头部
+                }
+                if newRangeTo <= self.plotCount {
+                    self.rangeTo = newRangeTo
+                    
+                } else {
+                    self.rangeTo = self.plotCount
+                    newRangeFrom = newRangeFrom - (newRangeTo - self.plotCount)
+                    if newRangeFrom < 0 {
+                        self.rangeFrom = 0
+                    } else {
+                        self.rangeFrom = newRangeFrom
+                    }
+                }
+                self.range = self.rangeTo - self.rangeFrom
+                self.setNeedsDisplay()
+            }
         }
+        
     }
+    
     
     /// 左右平移图表
     ///
     /// - Parameters:
     ///   - interval: 移动列数
     ///   - direction: 方向，true：右滑操作，fasle：左滑操作
-    func moveChart(by interval: Int, direction: Bool) {
+    public func moveChart(by interval: Int, direction: Bool) {
         if (interval > 0) {                     //有移动间隔才移动
             if direction {
                 //单指向右拖，往后查看数据
@@ -1149,6 +1204,37 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         }
         self.range = self.rangeTo - self.rangeFrom
     }
+    
+    /// 生成截图
+    var image: UIImage {
+        UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
+        self.layer.render(in: UIGraphicsGetCurrentContext()!)
+        let capturedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return capturedImage!
+    }
+}
+
+
+// MARK: - 手势操作
+extension CHKLineChartView: UIGestureRecognizerDelegate {
+    
+    
+    /// 控制手势开关
+    ///
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        switch gestureRecognizer {
+        case is UITapGestureRecognizer:
+            return self.enableTap
+        case is UIPanGestureRecognizer:
+            return self.enablePan
+        case is UIPinchGestureRecognizer:
+            return self.enablePinch
+        default:
+            return false
+        }
+    }
+   
     
     
     /// 平移拖动操作
@@ -1260,149 +1346,6 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
     }
     
     
-    /**
-     *  双指缩放操作
- 
-    func doPinchAction(_ sender: UIPinchGestureRecognizer) {
-        
-        guard self.enablePinch else {
-            return
-        }
-        
-        //双指合拢或张开
-        let interval = self.kPerInterval / 2
-        let scale = sender.scale
-        let velocity = sender.velocity
-        print("scale = \(scale)")
-        
-        var newRangeTo = 0
-        var newRangeFrom = 0
-        var newRange = 0
-        if fabs(velocity) > 0.1 {   //力度的绝对值大于0.1才起作用
-            if scale > 1 {
-                //双指张开
-                newRangeTo = self.rangeTo - interval
-                newRangeFrom = self.rangeFrom + interval
-                newRange = self.rangeTo - self.rangeFrom
-                if newRange >= kMinRange {
-                    
-                    if self.plotCount > self.rangeTo - self.rangeFrom {
-                        if newRangeFrom < self.rangeTo {
-                            self.rangeFrom = newRangeFrom
-                        }
-                        if newRangeTo > self.rangeFrom {
-                            self.rangeTo = newRangeTo
-                        }
-                    }else{
-                        if newRangeTo > self.rangeFrom {
-                            self.rangeTo = newRangeTo
-                        }
-                    }
-                    self.range = self.rangeTo - self.rangeFrom
-                    self.setNeedsDisplay()
-                }
-                
-            } else {
-                //双指合拢
-                newRangeTo = self.rangeTo + interval
-                newRangeFrom = self.rangeFrom - interval
-                newRange = self.rangeTo - self.rangeFrom
-                if newRange <= kMaxRange {
-                    
-                    if newRangeFrom >= 0 {
-                        self.rangeFrom = newRangeFrom
-                    } else {
-                        self.rangeFrom = 0
-                        newRangeTo = newRangeTo - newRangeFrom //补充负数位到头部
-                    }
-                    if newRangeTo <= self.plotCount {
-                        self.rangeTo = newRangeTo
-                        
-                    } else {
-                        self.rangeTo = self.plotCount
-                        newRangeFrom = newRangeFrom - (newRangeTo - self.plotCount)
-                        if newRangeFrom < 0 {
-                            self.rangeFrom = 0
-                        } else {
-                            self.rangeFrom = newRangeFrom
-                        }
-                    }
-                    self.range = self.rangeTo - self.rangeFrom
-                    self.setNeedsDisplay()
-                }
-            }
-        }
-        
-        sender.scale = 1
-    }
-    */
-    
-    /// 缩放图表
-    ///
-    /// - Parameters:
-    ///   - interval: 偏移量
-    ///   - enlarge: 是否放大操作
-    func zoomChart(by interval: Int, enlarge: Bool) {
-        
-        var newRangeTo = 0
-        var newRangeFrom = 0
-        var newRange = 0
-        
-        if enlarge {
-            //双指张开
-            newRangeTo = self.rangeTo - interval
-            newRangeFrom = self.rangeFrom + interval
-            newRange = self.rangeTo - self.rangeFrom
-            if newRange >= kMinRange {
-                
-                if self.plotCount > self.rangeTo - self.rangeFrom {
-                    if newRangeFrom < self.rangeTo {
-                        self.rangeFrom = newRangeFrom
-                    }
-                    if newRangeTo > self.rangeFrom {
-                        self.rangeTo = newRangeTo
-                    }
-                }else{
-                    if newRangeTo > self.rangeFrom {
-                        self.rangeTo = newRangeTo
-                    }
-                }
-                self.range = self.rangeTo - self.rangeFrom
-                self.setNeedsDisplay()
-            }
-            
-        } else {
-            //双指合拢
-            newRangeTo = self.rangeTo + interval
-            newRangeFrom = self.rangeFrom - interval
-            newRange = self.rangeTo - self.rangeFrom
-            if newRange <= kMaxRange {
-                
-                if newRangeFrom >= 0 {
-                    self.rangeFrom = newRangeFrom
-                } else {
-                    self.rangeFrom = 0
-                    newRangeTo = newRangeTo - newRangeFrom //补充负数位到头部
-                }
-                if newRangeTo <= self.plotCount {
-                    self.rangeTo = newRangeTo
-                    
-                } else {
-                    self.rangeTo = self.plotCount
-                    newRangeFrom = newRangeFrom - (newRangeTo - self.plotCount)
-                    if newRangeFrom < 0 {
-                        self.rangeFrom = 0
-                    } else {
-                        self.rangeFrom = newRangeFrom
-                    }
-                }
-                self.range = self.rangeTo - self.rangeFrom
-                self.setNeedsDisplay()
-            }
-        }
-        
-    }
-    
     
     /// 双指手势缩放图表
     ///
@@ -1437,7 +1380,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         let distance = abs(self.range - newRange)
         //放大缩小的距离为偶数
         if distance % 2 == 0 && distance > 0 {
-            print("scale = \(scale)")
+//            print("scale = \(scale)")
             let enlarge = scale > 1 ? true : false
             self.zoomChart(by: distance / 2, enlarge: enlarge)
             sender.scale = 1    //恢复比例

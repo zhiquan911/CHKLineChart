@@ -46,7 +46,7 @@ open class CHKLineChartStyle {
      
      - returns:
      */
-    open var backgroundColor: UIColor!
+    open var backgroundColor: UIColor = UIColor.white
     
     /**
      边距
@@ -59,23 +59,23 @@ open class CHKLineChartStyle {
     open var labelFont: UIFont!
     
     //线条颜色
-    open var lineColor: UIColor!
+    open var lineColor: UIColor = UIColor.clear
     
     //线条颜色
-    open var dashColor: UIColor!
+    open var dashColor: UIColor = UIColor.clear
     
     
     //文字颜色
-    open var textColor: UIColor!
+    open var textColor: UIColor = UIColor.clear
     
     //选中点的显示的框背景颜色
-    open var selectedBGColor: UIColor!
+    open var selectedBGColor: UIColor = UIColor.clear
     
     //选中点的显示的文字颜色
-    open var selectedTextColor: UIColor!
+    open var selectedTextColor: UIColor = UIColor.clear
     
     //显示y的位置，默认右边
-    open var showYLabel = CHYAxisShowPosition.right
+    open var showYAxisLabel = CHYAxisShowPosition.right
     
     /// 是否把y坐标内嵌到图表仲
     open var isInnerYAxis: Bool = false
@@ -92,6 +92,9 @@ open class CHKLineChartStyle {
     
     /// 把X坐标内容显示到哪个索引分区上，默认为-1，表示最后一个，如果用户设置溢出的数值，也以最后一个
     open var showXAxisOnSection: Int = -1
+    
+    /// 是否显示X轴标签
+    open var showXAxisLabel: Bool = true
     
     /// 是否显示所有内容
     open var isShowAll: Bool = false
@@ -115,7 +118,7 @@ public extension CHKLineChartStyle {
         style.selectedTextColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
         style.padding = UIEdgeInsets(top: 16, left: 8, bottom: 4, right: 0)
         style.backgroundColor = UIColor.ch_hex(0x1D1C1C)
-        style.showYLabel = .right
+        style.showYAxisLabel = .right
         
         //配置图表处理算法
         style.algorithms = [

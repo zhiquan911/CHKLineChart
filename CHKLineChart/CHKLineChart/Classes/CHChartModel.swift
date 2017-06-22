@@ -531,6 +531,7 @@ public extension CHChartModel {
             circlePath.fill()
             
         default:
+            isShowValue = false
             break
         }
         
