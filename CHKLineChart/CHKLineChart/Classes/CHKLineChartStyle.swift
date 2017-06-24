@@ -27,26 +27,18 @@ public enum CHUltimateValueStyle {
 // MARK: - 图表样式配置类
 open class CHKLineChartStyle {
     
-    /**
-     分区样式配置
-     
-     - returns:
-     */
+    /// 分区样式配置
     open var sections: [CHSection]!
     
-    /**
-     要处理的算法
-     
-     - returns:
-     */
+    /// 要处理的算法
     open var algorithms: [CHChartAlgorithmProtocol]!
     
-    /**
-     背景颜色
-     
-     - returns:
-     */
+    
+    /// 背景颜色
     open var backgroundColor: UIColor = UIColor.white
+    
+    /// 显示边线上左下有
+    open var borderWidth: (top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) = (0.5, 0.5, 0.5, 0.5)
     
     /**
      边距
@@ -60,10 +52,6 @@ open class CHKLineChartStyle {
     
     //线条颜色
     open var lineColor: UIColor = UIColor.clear
-    
-    //线条颜色
-    open var dashColor: UIColor = UIColor.clear
-    
     
     //文字颜色
     open var textColor: UIColor = UIColor.clear
@@ -112,7 +100,6 @@ public extension CHKLineChartStyle {
         let style = CHKLineChartStyle()
         style.labelFont = UIFont.systemFont(ofSize: 10)
         style.lineColor = UIColor(white: 0.2, alpha: 1)
-        style.dashColor = UIColor(white: 0.2, alpha: 1)
         style.textColor = UIColor(white: 0.8, alpha: 1)
         style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
         style.selectedTextColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)

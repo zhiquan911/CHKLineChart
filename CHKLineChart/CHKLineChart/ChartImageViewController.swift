@@ -11,13 +11,12 @@ import UIKit
 class ChartImageViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
-    @IBOutlet var headerView: UIView!
     var klineDatas = [(Int, Double)]()
-    
+    let imageSize: CGSize = CGSize(width: 80, height: 30)
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.getRemoteServiceData(size: "20")
+        self.getRemoteServiceData(size: "800")
     }
 
     override func didReceiveMemoryWarning() {
@@ -49,9 +48,7 @@ class ChartImageViewController: UIViewController {
                             self.klineDatas = datas.map {
                                 (Int($0[0] / 1000), Double($0[4]))
                             }
-                             let generator = self.getGenerator()
-                            self.headerView.addSubview(generator.chartView)
-                            generator.chartView.reloadData()
+                            NSLog("chart.datas = \(datas.count)")
                             self.tableView.reloadData()
                         }
                         
@@ -69,10 +66,6 @@ class ChartImageViewController: UIViewController {
         task.resume()
     }
     
-    func getGenerator() -> CHImageGenerator {
-        let generator = CHImageGenerator(values: self.klineDatas, color: UIColor.gray, lineWidth: 1, size: CGSize(width: 500, height: 300))
-        return generator
-    }
     
     @IBAction func handleClosePress(sender: AnyObject?) {
         self.dismiss(animated: true, completion: nil)
@@ -87,22 +80,33 @@ extension ChartImageViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if self.klineDatas.count > 0 {
-            return 7
+            return 20
         } else {
             return 0
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCell(withIdentifier: "DemoCell")
-        if cell == nil {
-            cell = UITableViewCell(style: .default, reuseIdentifier: "DemoCell")
-        }
-        let generator = self.getGenerator()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "DemoCell")
+        cell?.selectionStyle = .none
+        
         let imageView = cell?.contentView.viewWithTag(100) as? UIImageView
-//        imageView?.image = generator.image
-        let view = cell?.contentView.viewWithTag(200)
-//        view?.addSubview(generator.chartView)
+        let start = indexPath.row * 40
+        var end = start + 40 - 1
+        if end >= self.klineDatas.count {
+            end = self.klineDatas.count - 1
+        }
+        let data = self.klineDatas[start...end]
+        let time = Date.ch_getTimeByStamp(data[start].0, format: "HH:mm") + "~" + Date.ch_getTimeByStamp(data[end].0, format: "HH:mm")
+        cell?.textLabel?.text = time
+        //生成图表图片
+        imageView?.image = CHChartImageGenerator.share.getImage(
+            by: Array(data),
+            lineWidth: 1,
+            backgroundColor: UIColor.white,
+            lineColor: UIColor.lightGray,
+            size: imageSize)
+        
         return cell!
     }
     

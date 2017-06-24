@@ -60,8 +60,6 @@ extension StyleSettingViewController {
             //边线颜色
             style.lineColor = UIColor(white: 0.2, alpha: 1)
             
-            //虚线颜色
-            style.dashColor = UIColor(white: 0.2, alpha: 1)
             
             //选中点的显示的文字颜色
             style.selectedTextColor = UIColor(white: 0.8, alpha: 1)
@@ -79,8 +77,6 @@ extension StyleSettingViewController {
             //边线颜色
             style.lineColor = UIColor(white: 0.8, alpha: 1)
             
-            //虚线颜色
-            style.dashColor = UIColor(white: 0.8, alpha: 1)
             
             //选中点的显示的文字颜色
             style.selectedTextColor = UIColor(white: 0.8, alpha: 1)
@@ -126,7 +122,11 @@ extension StyleSettingViewController {
         
         let priceSection = self.cusStyle.sections[0]
         
+        
         if selectedStyle == 0 {
+            
+            //虚线颜色
+            priceSection.yAxis.referenceStyle = .dash(color: UIColor(white: 0.2, alpha: 1), pattern: [5])
             
             /// 时分线
             let timelineSeries = CHSeries.getTimelinePrice(color: UIColor.ch_hex(0xDDDDDD), section: priceSection)
@@ -155,6 +155,9 @@ extension StyleSettingViewController {
             priceSection.series = [timelineSeries, priceSeries, priceMASeries, priceEMASeries]
             
         } else {
+            
+            //虚线颜色
+            priceSection.yAxis.referenceStyle = .dash(color: UIColor(white: 0.8, alpha: 1), pattern: [5])
             
             /// 时分线
             let timelineSeries = CHSeries.getTimelinePrice(color: UIColor(white: 0.5, alpha: 1), section: priceSection)
@@ -210,6 +213,9 @@ extension StyleSettingViewController {
         
         if selectedStyle == 0 {
             
+            //虚线颜色
+            volumeSection.yAxis.referenceStyle = .dash(color: UIColor(white: 0.2, alpha: 1), pattern: [5])
+            
             let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
             let volumeMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
                                                 colors: [
@@ -227,6 +233,9 @@ extension StyleSettingViewController {
             volumeSection.series = [volumeSeries, volumeMASeries, volumeEMASeries]
             
         } else {
+            
+            //虚线颜色
+            volumeSection.yAxis.referenceStyle = .dash(color: UIColor(white: 0.8, alpha: 1), pattern: [5])
             
             let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
             let volumeMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
@@ -271,6 +280,9 @@ extension StyleSettingViewController {
         
         if selectedStyle == 0 {
             
+            //虚线颜色
+            trendSection.yAxis.referenceStyle = .dash(color: UIColor(white: 0.2, alpha: 1), pattern: [5])
+            
             let kdjSeries = CHSeries.getKDJ(UIColor.ch_hex(0xDDDDDD),
                                             dc: UIColor.ch_hex(0xF9EE30),
                                             jc: UIColor.ch_hex(0xF600FF),
@@ -291,6 +303,9 @@ extension StyleSettingViewController {
             trendSection.titleColor = UIColor(white: 0.8, alpha: 1)
             
         } else {
+            
+            //虚线颜色
+            trendSection.yAxis.referenceStyle = .dash(color: UIColor(white: 0.8, alpha: 1), pattern: [5])
             
             let kdjSeries = CHSeries.getKDJ(UIColor.ch_hex(0x4E9CC1),
                                             dc: UIColor.ch_hex(0xF7A23B),

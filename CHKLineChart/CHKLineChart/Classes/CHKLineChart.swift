@@ -8,16 +8,7 @@
 
 import UIKit
 
-/**
- Y轴显示的位置
- 
- - Left:  左边
- - Right: 右边
- - None:  不显示
- */
-public enum CHYAxisShowPosition {
-    case left, right, none
-}
+
 
 /**
  图表滚动到那个位置
@@ -127,9 +118,8 @@ open class CHKLineChartView: UIView {
     @IBInspectable open var upColor: UIColor = UIColor.green     //升的颜色
     @IBInspectable open var downColor: UIColor = UIColor.red     //跌的颜色
     @IBInspectable open var labelFont = UIFont.systemFont(ofSize: 10) 
-    @IBInspectable open var lineColor: UIColor = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1) //线条颜色
-    @IBInspectable open var dashColor: UIColor = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1) //线条颜色
-    @IBInspectable open var textColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1) //文字颜色
+    @IBInspectable open var lineColor: UIColor = UIColor(white: 0.2, alpha: 1) //线条颜色
+    @IBInspectable open var textColor: UIColor = UIColor(white: 0.8, alpha: 1) //文字颜色
     @IBInspectable open var xAxisPerInterval: Int = 4                        //x轴的间断个数
     
     open var yAxisLabelWidth: CGFloat = 0                    //Y轴的宽度
@@ -175,7 +165,9 @@ open class CHKLineChartView: UIView {
     /// 是否显示所有内容
     open var isShowAll: Bool = false
     
-    var borderWidth: CGFloat = 0.5
+    /// 显示边线上左下有
+    open var borderWidth: (top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) = (0.25, 0.25, 0.25, 0.25)
+    
     var lineWidth: CGFloat = 0.5
     var plotCount: Int = 0
     var rangeFrom: Int = 0                          //可见区域的开始索引位
@@ -208,6 +200,12 @@ open class CHKLineChartView: UIView {
     //减速开始x
     var decelerationStartX: CGFloat = 0
     
+    /// 用于图表的图层
+    var drawLayer: CHShapeLayer = CHShapeLayer()
+    
+    /// 点线图层
+    var chartModelLayer: CHShapeLayer = CHShapeLayer()
+    
     open var style: CHKLineChartStyle! {           //显示样式
         didSet {
             //重新配置样式
@@ -217,7 +215,6 @@ open class CHKLineChartView: UIView {
             self.handlerOfAlgorithms = self.style.algorithms
             self.lineColor = self.style.lineColor
             self.textColor = self.style.textColor
-            self.dashColor = self.style.dashColor
             self.labelFont = self.style.labelFont
             self.showYAxisLabel = self.style.showYAxisLabel
             self.selectedBGColor = self.style.selectedBGColor
@@ -230,6 +227,7 @@ open class CHKLineChartView: UIView {
             self.showXAxisOnSection = self.style.showXAxisOnSection
             self.isShowAll = self.style.isShowAll
             self.showXAxisLabel = self.style.showXAxisLabel
+            self.borderWidth = self.style.borderWidth
         }
         
     }
@@ -293,7 +291,8 @@ open class CHKLineChartView: UIView {
         self.selectedXAxisLabel?.textAlignment = NSTextAlignment.center
         self.addSubview(self.selectedXAxisLabel!)
         
-        //添加动力引擎
+        //绘画图层
+        self.layer.addSublayer(self.drawLayer)
         
         
         //添加手势操作
@@ -321,6 +320,12 @@ open class CHKLineChartView: UIView {
         //初始数据
         self.resetData()
         
+    }
+    
+    open override func layoutSubviews() {
+        super.layoutSubviews()
+        //布局完成重绘
+        self.drawLayerView()
     }
     
     /**
@@ -491,6 +496,11 @@ open class CHKLineChartView: UIView {
                 
                 self.selectedXAxisLabel?.frame = CGRect(x: x, y: showXAxisSection.frame.maxY, width: size.width  + 6, height: self.labelSize.height)
                 
+                self.bringSubview(toFront: self.verticalLineView!)
+                self.bringSubview(toFront: self.horizontalLineView!)
+                self.bringSubview(toFront: self.selectedXAxisLabel!)
+                self.bringSubview(toFront: self.selectedYAxisLabel!)
+                
                 //回调给代理委托方法
                 self.delegate?.kLineChart?(chart: self, didSelectAt: i, item: item)
                 
@@ -505,12 +515,20 @@ open class CHKLineChartView: UIView {
 // MARK: - 绘图相关方法
 extension CHKLineChartView {
     
-    /**
-     绘制图表
-     
-     - parameter rect:
-     */
-    override open func draw(_ rect: CGRect) {
+    
+    /// 清空图表的子图层
+    func removeLayerView() {
+        _ = self.drawLayer.sublayers?.map { $0.removeFromSuperlayer() }
+        self.drawLayer.sublayers?.removeAll()
+        _ = self.chartModelLayer.sublayers?.map { $0.removeFromSuperlayer() }
+        self.chartModelLayer.sublayers?.removeAll()
+    }
+    
+    /// 通过CALayer方式画图表
+    func drawLayerView() {
+        
+        //先清空图层
+        self.removeLayerView()
         
         //初始化数据
         if self.initChart() {
@@ -523,19 +541,23 @@ extension CHKLineChartView {
                 let decimal = self.delegate?.kLineChart?(chart: self, decimalAt: index) ?? 2
                 section.decimal = decimal
                 
-                //绘制每个区域
-                self.drawSection(section)
                 //初始Y轴的数据
                 self.initYAxis(section)
+                
+                //绘制每个区域
+                self.drawSection(section)
+                
                 //绘制Y轴坐标系，但最后的y轴标签放到绘制完线段才做
                 let yAxisToDraw = self.drawYAxis(section)
                 //绘制图表的点线
                 self.drawChart(section)
                 //绘制Y轴坐标上的标签
                 self.drawYAxisLabel(yAxisToDraw)
-
+                
                 //显示范围最后一个点的内容
-                section.drawTitle(self.selectedIndex)
+                if let sectionTitleLayer = section.drawTitle(self.selectedIndex) {
+                    self.drawLayer.addSublayer(sectionTitleLayer)
+                }
                 
             }
             
@@ -548,7 +570,18 @@ extension CHKLineChartView {
             
             self.delegate?.didFinishKLineChartRefresh?(chart: self)
         }
+        
     }
+    
+    /**
+     绘制图表
+     
+     - parameter rect:
+ 
+    override open func draw(_ rect: CGRect) {
+        
+    }
+    */
     
     /**
      初始化图表结构
@@ -603,10 +636,14 @@ extension CHKLineChartView {
             self.selectedIndex = self.rangeTo - 1
         }
         
-        
-        let context = UIGraphicsGetCurrentContext()
-        context?.setFillColor(self.backgroundColor!.cgColor)
-        context?.fill (CGRect (x: 0, y: 0, width: self.bounds.size.width,height: self.bounds.size.height))
+        let backgroundLayer = CHShapeLayer()
+        let backgroundPath = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: self.bounds.size.width,height: self.bounds.size.height), cornerRadius: 0)
+        backgroundLayer.path = backgroundPath.cgPath
+        backgroundLayer.fillColor = self.backgroundColor?.cgColor
+        self.drawLayer.addSublayer(backgroundLayer)
+//        let context = UIGraphicsGetCurrentContext()
+//        context?.setFillColor(self.backgroundColor!.cgColor)
+//        context?.fill (CGRect (x: 0, y: 0, width: self.bounds.size.width,height: self.bounds.size.height))
         return self.datas.count > 0 ? true : false
     }
     
@@ -701,16 +738,13 @@ extension CHKLineChartView {
             return
         }
         
+        let xAxis = CHShapeLayer()
+        
         var startX: CGFloat = section.frame.origin.x + section.padding.left
         let endX: CGFloat = section.frame.origin.x + section.frame.size.width - section.padding.right
         let secWidth: CGFloat = section.frame.size.width
         let secPaddingLeft: CGFloat = section.padding.left
         let secPaddingRight: CGFloat = section.padding.right
-        
-        let context = UIGraphicsGetCurrentContext()
-        context?.setShouldAntialias(false)
-        context?.setLineWidth(self.lineWidth)
-        context?.setStrokeColor(self.lineColor.cgColor)
         
         //x轴分平均分4个间断，显示5个x轴坐标，按照图表的值个数，计算每个间断的个数
         let dataRange = self.rangeTo - self.rangeFrom
@@ -719,25 +753,12 @@ extension CHKLineChartView {
         //绘制x轴标签
         //每个点的间隔宽度
         let perPlotWidth: CGFloat = (secWidth - secPaddingLeft - secPaddingRight) / CGFloat(self.rangeTo - self.rangeFrom)
-//        let startY = self.frame.size.height - self.padding.bottom
         let startY = section.frame.maxY
         var k: Int = 0
-        
-        //X轴标签的字体样式
-        let textStyle = NSMutableParagraphStyle()
-        textStyle.alignment = NSTextAlignment.center
-        textStyle.lineBreakMode = NSLineBreakMode.byClipping
-        
-        let fontAttributes = [
-            NSFontAttributeName: self.labelFont,
-            NSParagraphStyleAttributeName: textStyle,
-            NSForegroundColorAttributeName: self.textColor
-        ] as [String : Any]
-        
+        var showXAxisReference = false
         //相当 for var i = self.rangeFrom; i < self.rangeTo; i = i + xTickInterval
         for i in stride(from: self.rangeFrom, to: self.rangeTo, by: xTickInterval) {
-            context?.setFillColor(self.textColor.cgColor)
-            context?.setShouldAntialias(true)  //抗锯齿开启，解决字体发虚
+            
             let xLabel = self.delegate?.kLineChart?(chart: self, labelOnXAxisForIndex: i) ?? ""
             var textSize = xLabel.ch_sizeWithConstrained(self.labelFont)
             textSize.width = textSize.width + 4
@@ -751,15 +772,52 @@ extension CHKLineChartView {
             //        NSLog(@"xPox = %f", xPox)
             //        NSLog(@"textSize.width = %f", textSize.width)
             let barLabelRect = CGRect(x: xPox, y: startY, width: textSize.width, height: textSize.height)
-            NSString(string: xLabel).draw(in: barLabelRect,
-                                                withAttributes: fontAttributes)
+            
+            //绘制文本
+            let xLabelText = CHTextLayer()
+            xLabelText.frame = barLabelRect
+            xLabelText.string = xLabel
+            xLabelText.alignmentMode = kCAAlignmentCenter
+            xLabelText.fontSize = self.labelFont.pointSize
+            xLabelText.foregroundColor =  self.textColor.cgColor
+            xLabelText.backgroundColor = UIColor.clear.cgColor
+            xLabelText.contentsScale = UIScreen.main.scale
+            
+            xAxis.addSublayer(xLabelText)
+            
+            //绘制辅助线
+            let referencePath = UIBezierPath()
+            let referenceLayer = CHShapeLayer()
+            referenceLayer.lineWidth = self.lineWidth
+            
+            //处理辅助线样式
+            switch section.xAxis.referenceStyle {
+            case let .dash(color: dashColor, pattern: pattern):
+                referenceLayer.strokeColor = dashColor.cgColor
+                referenceLayer.lineDashPattern = pattern
+                showXAxisReference = true
+            case let .solid(color: solidColor):
+                referenceLayer.strokeColor = solidColor.cgColor
+                showXAxisReference = true
+            default:
+                showXAxisReference = false
+            }
+            
+            //需要画x轴上的辅助线
+            if showXAxisReference {
+                referencePath.move(to: CGPoint(x: xPox + textSize.width / 2, y: section.frame.minY))
+                referencePath.addLine(to: CGPoint(x: xPox + textSize.width / 2, y: section.frame.maxY))
+                referenceLayer.path = referencePath.cgPath
+                xAxis.addSublayer(referenceLayer)
+            }
             
             
             k = k + xTickInterval
             startX = perPlotWidth * CGFloat(k)
         }
         
-        context?.strokePath()
+        self.drawLayer.insertSublayer(xAxis, below: self.chartModelLayer)
+//        context?.strokePath()
     }
     
     
@@ -770,30 +828,51 @@ extension CHKLineChartView {
      */
     fileprivate func drawSection(_ section: CHSection) {
         
-        let context = UIGraphicsGetCurrentContext()
-        context?.setShouldAntialias(false)
-        context?.setLineWidth(self.lineWidth)
-        context?.setStrokeColor(self.lineColor.cgColor)
+        //画分区的背景
+        let sectionPath = UIBezierPath(rect: section.frame)
+        let sectionLayer = CHShapeLayer()
+        sectionLayer.fillColor = section.backgroundColor.cgColor
+        sectionLayer.path = sectionPath.cgPath
+        self.drawLayer.addSublayer(sectionLayer)
         
-        context?.setFillColor(section.backgroundColor.cgColor)
-        context?.fill(section.frame)
+        let borderPath = UIBezierPath()
         
         //画低部边线
-        context?.move(to: CGPoint(x: section.frame.origin.x + section.padding.left, y: section.frame.size.height + section.frame.origin.y))
-        context?.addLine(to: CGPoint(x: section.frame.origin.x + section.frame.size.width, y: section.frame.size.height + section.frame.origin.y))
+        if self.borderWidth.bottom > 0 {
+            
+            borderPath.append(UIBezierPath(rect: CGRect(x: section.frame.origin.x + section.padding.left, y: section.frame.size.height + section.frame.origin.y, width: section.frame.size.width - section.padding.left, height: self.borderWidth.bottom)))
+        
+        }
+        
         //画顶部边线
-        context?.move(to: CGPoint(x: section.frame.origin.x + section.padding.left, y: section.frame.origin.y))
-        context?.addLine(to: CGPoint(x: section.frame.origin.x + section.frame.size.width, y: section.frame.origin.y))
+        if self.borderWidth.top > 0 {
+            
+            borderPath.append(UIBezierPath(rect: CGRect(x: section.frame.origin.x + section.padding.left, y: section.frame.origin.y, width: section.frame.size.width - section.padding.left, height: self.borderWidth.top)))
+            
+        }
+        
         
         //画左边线
-        context?.move(to: CGPoint(x: section.frame.origin.x + section.padding.left, y: section.frame.origin.y))
-        context?.addLine(to: CGPoint(x: section.frame.origin.x + section.padding.left, y: section.frame.size.height + section.frame.origin.y))
+        if self.borderWidth.left > 0 {
+            
+            borderPath.append(UIBezierPath(rect: CGRect(x: section.frame.origin.x + section.padding.left, y: section.frame.origin.y, width: self.borderWidth.left, height: section.frame.size.height)))
+        
+        }
+        
         
         //画右边线
-        context?.move(to: CGPoint(x: section.frame.origin.x + section.frame.size.width - section.padding.right, y: section.frame.origin.y))
-        context?.addLine(to: CGPoint(x: section.frame.origin.x + section.frame.size.width - section.padding.right, y: section.frame.size.height + section.frame.origin.y))
+        if self.borderWidth.right > 0 {
+            
+            borderPath.append(UIBezierPath(rect: CGRect(x: section.frame.origin.x + section.frame.size.width - section.padding.right, y: section.frame.origin.y, width: self.borderWidth.left, height: section.frame.size.height)))
+            
+        }
         
-        context?.strokePath()
+        //添加到图层
+        let borderLayer = CHShapeLayer()
+        borderLayer.lineWidth = self.lineWidth
+        borderLayer.path = borderPath.cgPath  // 从贝塞尔曲线获取到形状
+        borderLayer.fillColor = self.lineColor.cgColor // 闭环填充的颜色
+        self.drawLayer.addSublayer(borderLayer)
         
     }
     
@@ -817,23 +896,11 @@ extension CHKLineChartView {
     fileprivate func drawYAxis(_ section: CHSection) -> [(CGRect, String)] {
         
         var yAxisToDraw = [(CGRect, String)]()
-        
-        let context = UIGraphicsGetCurrentContext()
-        
-        //设置画笔颜色
-        context?.setShouldAntialias(false)
-        context?.setLineWidth(0.5)
-        context?.setStrokeColor(self.lineColor.cgColor)
-        
-        var startX: CGFloat = 0, extrude: CGFloat = 0
+        var valueToDraw = Set<CGFloat>()
+ 
+        var startX: CGFloat = 0, startY: CGFloat = 0, extrude: CGFloat = 0
         var showYAxisLabel: Bool = true
-        
-        context?.setFillColor(self.textColor.cgColor)      //文字填充颜色
-        let dash:[CGFloat] = [5]
-        context?.setLineDash(phase: 0, lengths: dash)
-        
-        
-//        let paragraphStyle = NSMutableParagraphStyle()
+        var showYAxisReference: Bool = true
 
         //分区中各个y轴虚线和y轴的label
         //控制y轴的label在左还是右显示
@@ -841,25 +908,16 @@ extension CHKLineChartView {
         case .left:
             startX = section.frame.origin.x - 3 * (self.isInnerYAxis ? -1 : 1)
             extrude = section.frame.origin.x + section.padding.left - 2
-//            paragraphStyle.alignment = self.isInnerYAxis ? .left : .right
         case .right:
             startX = section.frame.maxX - self.yAxisLabelWidth + 3 * (self.isInnerYAxis ? -1 : 1)
             extrude = section.frame.origin.x + section.padding.left + section.frame.size.width - section.padding.right
-//            paragraphStyle.alignment = self.isInnerYAxis ? .right : .left
             
         case .none:
             showYAxisLabel = false
-//            paragraphStyle.alignment = .left
         }
         
-//        let fontAttributes = [
-//            NSFontAttributeName: self.labelFont,
-//            NSForegroundColorAttributeName: self.textColor,
-//            NSParagraphStyleAttributeName: paragraphStyle
-//        ] as [String : Any]
-        
+
         var yaxis = section.yAxis
-//        let format = NSString(string: "%.".appendingFormat("%df", yaxis.decimal))
         
         //保持Y轴标签个数偶数显示
         if (yaxis.tickInterval % 2 == 1) {
@@ -873,90 +931,88 @@ extension CHKLineChartView {
         var i = 0
         var yVal = yaxis.baseValue + CGFloat(i) * step
         while yVal <= yaxis.max && i <= yaxis.tickInterval {
-            //画虚线和Y标签值
-            let iy = section.getLocalY(yVal)
-            if showYAxisLabel {
-                //突出的线段
-                context?.setShouldAntialias(false)
-                context?.setStrokeColor(self.dashColor.cgColor)
-                context?.move(to: CGPoint(x: extrude, y: iy))
-                context?.addLine(to: CGPoint(x: extrude + 2, y: iy))
-                context?.strokePath()
-                
-                //把Y轴标签文字画上去
-                context?.setShouldAntialias(true)  //抗锯齿开启，解决字体发虚
-                
-                //获取调用者回调的label字符串值
-                let strValue = self.delegate?.kLineChart(chart: self, labelOnYAxisForValue: yVal, section: section) ?? ""
-                
-                let yLabelRect = CGRect(x: startX,
-                                        y: iy - 7,
-                                        width: yAxisLabelWidth,
-                                        height: 12
-                )
-                
-                //NSString(string: strValue).draw(in: yLabelRect, withAttributes: fontAttributes)
-                
-                yAxisToDraw.append((yLabelRect, strValue))
-//                NSString(string: strValue).draw(
-//                    at: CGPoint(x: startX, y: iy - 7), withAttributes: fontAttributes)
-            }
             
-            context?.setShouldAntialias(false)
-            context?.setStrokeColor(self.dashColor.cgColor)
-            context?.move(to: CGPoint(x: section.frame.origin.x + section.padding.left, y: iy))
-            context?.addLine(to: CGPoint(x: section.frame.origin.x + section.frame.size.width - section.padding.right, y: iy))
-            
-            context?.strokePath()
+            valueToDraw.insert(yVal)
             
             //递增下一个
             i =  i + 1
             yVal = yaxis.baseValue + CGFloat(i) * step
+            
         }
         
         i = 0
         yVal = yaxis.baseValue - CGFloat(i) * step
         while yVal >= yaxis.min && i <= yaxis.tickInterval {
-            //画虚线和Y标签值
-            let iy = section.getLocalY(yVal)
-            if showYAxisLabel {
-                //突出的线段
-                context?.setShouldAntialias(false)
-                context?.setStrokeColor(self.dashColor.cgColor)
-                context?.move(to: CGPoint(x: extrude, y: iy))
-                context?.addLine(to: CGPoint(x: extrude + 2, y: iy))
-                context?.strokePath()
-                
-                
-                let strValue = self.delegate?.kLineChart(chart: self, labelOnYAxisForValue: yVal, section: section) ?? ""
-                
-                let yLabelRect = CGRect(x: startX,
-                                        y: iy - 7,
-                                        width: yAxisLabelWidth,
-                                        height: 14
-                                        )
-                
-                //NSString(string: strValue).draw(in: yLabelRect, withAttributes: fontAttributes)
-                
-                yAxisToDraw.append((yLabelRect, strValue))
-                
-//                NSString(string: strValue).draw(
-//                    at: CGPoint(x: startX, y: iy - 7), withAttributes: fontAttributes)
-            }
             
-            context?.setShouldAntialias(false)
-            context?.setStrokeColor(self.dashColor.cgColor)
-            context?.move(to: CGPoint(x: section.frame.origin.x + section.padding.left, y: iy))
-            context?.addLine(to: CGPoint(x: section.frame.origin.x + section.frame.size.width - section.padding.right, y: iy))
-            
-            context?.strokePath()
+            valueToDraw.insert(yVal)
             
             //递增下一个
             i =  i + 1
             yVal = yaxis.baseValue - CGFloat(i) * step
         }
         
-        context?.setLineDash(phase: 0, lengths: [])
+        for yVal in valueToDraw {
+            
+            
+            //画虚线和Y标签值
+            let iy = section.getLocalY(yVal)
+            
+            if self.isInnerYAxis {
+                //y轴标签向内显示，为了不挡住辅助线，所以把y轴的数值位置向上移一些
+                startY = iy - 14
+            } else {
+                startY = iy - 7
+            }
+            
+            let referencePath = UIBezierPath()
+            let referenceLayer = CHShapeLayer()
+            referenceLayer.lineWidth = self.lineWidth
+            
+            //处理辅助线样式
+            switch section.yAxis.referenceStyle {
+            case let .dash(color: dashColor, pattern: pattern):
+                referenceLayer.strokeColor = dashColor.cgColor
+                referenceLayer.lineDashPattern = pattern
+                showYAxisReference = true
+            case let .solid(color: solidColor):
+                referenceLayer.strokeColor = solidColor.cgColor
+                showYAxisReference = true
+            default:
+                showYAxisReference = false
+                startY = iy - 7
+            }
+            
+            if showYAxisReference {
+                
+                //突出的线段，y轴向外显示才划突出线段
+                if !self.isInnerYAxis {
+                    referencePath.move(to: CGPoint(x: extrude, y: iy))
+                    referencePath.addLine(to: CGPoint(x: extrude + 2, y: iy))
+                }
+                
+                referencePath.move(to: CGPoint(x: section.frame.origin.x + section.padding.left, y: iy))
+                referencePath.addLine(to: CGPoint(x: section.frame.origin.x + section.frame.size.width - section.padding.right, y: iy))
+                
+                referenceLayer.path = referencePath.cgPath
+                self.drawLayer.addSublayer(referenceLayer)
+            }
+            
+            if showYAxisLabel {
+                
+                //获取调用者回调的label字符串值
+                let strValue = self.delegate?.kLineChart(chart: self, labelOnYAxisForValue: yVal, section: section) ?? ""
+                
+                let yLabelRect = CGRect(x: startX,
+                                        y: startY,
+                                        width: yAxisLabelWidth,
+                                        height: 12
+                )
+                
+                yAxisToDraw.append((yLabelRect, strValue))
+                
+            }
+            
+        }
         
         return yAxisToDraw
     }
@@ -967,32 +1023,32 @@ extension CHKLineChartView {
     /// - Parameter yAxisToDraw:
     fileprivate func drawYAxisLabel(_ yAxisToDraw: [(CGRect, String)]) {
         
-        let context = UIGraphicsGetCurrentContext()
-        
-        //把Y轴标签文字画上去
-        context?.setShouldAntialias(true)  //抗锯齿开启，解决字体发虚
-        
-        let paragraphStyle = NSMutableParagraphStyle()
-        
+        var alignmentMode = kCAAlignmentLeft
         //分区中各个y轴虚线和y轴的label
         //控制y轴的label在左还是右显示
         switch self.showYAxisLabel {
         case .left:
-            paragraphStyle.alignment = self.isInnerYAxis ? .left : .right
+            alignmentMode = self.isInnerYAxis ? kCAAlignmentLeft : kCAAlignmentRight
         case .right:
-            paragraphStyle.alignment = self.isInnerYAxis ? .right : .left
+            alignmentMode = self.isInnerYAxis ? kCAAlignmentRight : kCAAlignmentLeft
         case .none:
-            paragraphStyle.alignment = .left
+            alignmentMode = kCAAlignmentLeft
         }
         
-        let fontAttributes = [
-            NSFontAttributeName: self.labelFont,
-            NSForegroundColorAttributeName: self.textColor,
-            NSParagraphStyleAttributeName: paragraphStyle
-            ] as [String : Any]
-        
         for (yLabelRect, strValue) in yAxisToDraw {
-            NSString(string: strValue).draw(in: yLabelRect, withAttributes: fontAttributes)
+            
+            let yAxisLabel = CHTextLayer()
+            yAxisLabel.frame = yLabelRect
+            yAxisLabel.string = strValue
+            yAxisLabel.fontSize = self.labelFont.pointSize
+            yAxisLabel.foregroundColor =  self.textColor.cgColor
+            yAxisLabel.backgroundColor = UIColor.clear.cgColor
+            yAxisLabel.alignmentMode = alignmentMode
+            yAxisLabel.contentsScale = UIScreen.main.scale
+            
+            self.drawLayer.addSublayer(yAxisLabel)
+            
+            //NSString(string: strValue).draw(in: yLabelRect, withAttributes: fontAttributes)
         }
     }
     
@@ -1013,7 +1069,7 @@ extension CHKLineChartView {
                 self.drawSerie(serie)
             }
         }
-        
+        self.drawLayer.addSublayer(self.chartModelLayer)
     }
     
     /**
@@ -1023,7 +1079,8 @@ extension CHKLineChartView {
         if !serie.hidden {
             //循环画出每个模型的线
             for model in serie.chartModels {
-                model.drawSerie(self.rangeFrom, endIndex: self.rangeTo)
+                let serieLayer = model.drawSerie(self.rangeFrom, endIndex: self.rangeTo)
+                self.chartModelLayer.addSublayer(serieLayer)
             }
         }
     }
@@ -1038,7 +1095,7 @@ extension CHKLineChartView {
     public func reloadData(toPosition: CHChartViewScrollPosition = .none) {
         self.scrollToPosition = toPosition
         self.resetData()
-        self.setNeedsDisplay()
+        self.drawLayerView()
     }
     
     
@@ -1079,7 +1136,7 @@ extension CHKLineChartView {
                 }
             }
         }
-        self.setNeedsDisplay()
+        self.drawLayerView()
     }
     
     /**
@@ -1092,7 +1149,7 @@ extension CHKLineChartView {
                 break
             }
         }
-        self.setNeedsDisplay()
+        self.drawLayerView()
     }
     
     
@@ -1128,7 +1185,7 @@ extension CHKLineChartView {
                     }
                 }
                 self.range = self.rangeTo - self.rangeFrom
-                self.setNeedsDisplay()
+                self.drawLayerView()
             }
             
         } else {
@@ -1157,7 +1214,7 @@ extension CHKLineChartView {
                     }
                 }
                 self.range = self.rangeTo - self.rangeFrom
-                self.setNeedsDisplay()
+                self.drawLayerView()
             }
         }
         
@@ -1183,7 +1240,7 @@ extension CHKLineChartView {
                         self.rangeTo -= self.rangeFrom
                         
                     }
-                    self.setNeedsDisplay()
+                    self.drawLayerView()
                 }
             } else {
                 //单指向左拖，往前查看数据
@@ -1198,7 +1255,7 @@ extension CHKLineChartView {
                         
                         
                     }
-                    self.setNeedsDisplay()
+                    self.drawLayerView()
                 }
             }
         }
@@ -1341,7 +1398,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
                 self.setSelectedIndexByPoint(point)
             }
             
-            self.setNeedsDisplay()
+            self.drawLayerView()
         }
     }
     

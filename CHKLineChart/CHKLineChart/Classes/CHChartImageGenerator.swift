@@ -8,40 +8,69 @@
 
 import UIKit
 
-class CHImageGenerator: NSObject {
+
+/// 简单走势图生成器
+class CHChartImageGenerator: NSObject {
 
     var values: [(Int, Double)] = [(Int, Double)]()
     var chartView: CHKLineChartView!
-    var lineWidth: CGFloat = 1
-    var size: CGSize = .zero
-    var color: UIColor = UIColor.clear
+    var style: CHKLineChartStyle = CHKLineChartStyle.lineIMG
     
-    convenience init(values: [(Int, Double)], color: UIColor, lineWidth: CGFloat = 1, size: CGSize) {
-        self.init()
-        
-        self.values = values
-        self.lineWidth = lineWidth
-        self.size = size
-        self.color = color
-        
-        self.chartView = CHKLineChartView(frame: CGRect(origin: CGPoint.zero, size: size))
-        self.chartView.style = self.lineIMG
+    
+    /// 创建一个全局单例用于生成图表的截图
+    static let share: CHChartImageGenerator = {
+        let generator = CHChartImageGenerator()
+        return generator
+    }()
+    
+    override init() {
+        super.init()
+        self.chartView = CHKLineChartView(frame: CGRect.zero)
+        self.chartView.style = CHKLineChartStyle.lineIMG
         self.chartView.delegate = self
-//        self.chartView.reloadData()
     }
     
-    var image: UIImage {
+    
+    /// 通过 数据源，图表样式 生成一张图表截图
+    ///
+    /// - Parameters:
+    ///   - values: 数据源
+    ///   - lineWidth: 线粗
+    ///   - backgroundColor: 背景颜色
+    ///   - lineColor: 线颜色
+    ///   - size: 图片大小
+    /// - Returns: 图表图片
+    func getImage(by values: [(Int, Double)],
+                  lineWidth: CGFloat = 1,
+                  backgroundColor: UIColor = UIColor.white,
+                  lineColor: UIColor = UIColor.lightGray,
+                  size: CGSize) -> UIImage {
+        self.values = values
+        self.style.backgroundColor = backgroundColor
+        let section = self.style.sections[0]
+        let model = section.series[0].chartModels[0]
+        section.backgroundColor = backgroundColor
+        model.upColor = lineColor
+        model.downColor = lineColor
+        model.lineWidth = lineWidth
+        var frame = self.chartView.frame
+        frame.size.width = size.width
+        frame.size.height = size.height
+        self.chartView.frame = frame
+        self.chartView.style = self.style
+        self.chartView.reloadData()
         return self.chartView.image
     }
+    
 }
 
 
 // MARK: - 自定义风格
-extension CHImageGenerator {
+extension CHKLineChartStyle {
    
     
     //实现一个点线简单图表用于图片显示
-    var lineIMG: CHKLineChartStyle {
+    static var lineIMG: CHKLineChartStyle {
         
         
         let style = CHKLineChartStyle()
@@ -49,14 +78,12 @@ extension CHImageGenerator {
         style.labelFont = UIFont.systemFont(ofSize: 10)
         //分区框线颜色
         style.lineColor = UIColor.clear
-        //Y轴上虚线颜色
-        style.dashColor = UIColor.clear
         //背景颜色
         style.backgroundColor = UIColor.white
         //文字颜色
         style.textColor = UIColor(white: 0.8, alpha: 1)
         //整个图表的内边距
-        style.padding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        style.padding = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
         //Y轴是否内嵌式
         style.isInnerYAxis = true
         //显示X轴坐标内容在哪个分区仲
@@ -91,16 +118,18 @@ extension CHImageGenerator {
         priceSection.hidden = false
         //分区所占图表的比重，0代表不使用比重，采用固定高度
         priceSection.ratios = 1
+        //Y轴辅助线的样式，实线
+        priceSection.yAxis.referenceStyle = .none
         //分区内边距
         priceSection.padding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         
         /// 时分线
         let timelineSeries = CHSeries.getTimelinePrice(
-            color: self.color,
+            color: UIColor.lightGray,
             section: priceSection,
             showGuide: true,
             ultimateValueStyle: .none,
-            lineWidth: self.lineWidth)
+            lineWidth: 1)
         
         priceSection.series = [timelineSeries]
         
@@ -112,7 +141,9 @@ extension CHImageGenerator {
     
 }
 
-extension CHImageGenerator: CHKLineChartDelegate {
+
+// MARK: - 实现委托方法
+extension CHChartImageGenerator: CHKLineChartDelegate {
     
     func numberOfPointsInKLineChart(chart: CHKLineChartView) -> Int {
         return self.values.count
@@ -136,6 +167,11 @@ extension CHImageGenerator: CHKLineChartDelegate {
     }
     
     func kLineChart(chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, section: CHSection) -> String {
+//        let strValue = value.ch_toString(maxF: section.decimal)
+        return ""
+    }
+    
+    func kLineChart(chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String {
         return ""
     }
     

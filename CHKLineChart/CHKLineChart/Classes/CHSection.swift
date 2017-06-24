@@ -58,6 +58,7 @@ open class CHSection: NSObject {
     open var fixHeight: CGFloat = 0                                 //固定高度，为0则通过ratio计算高度
     open var frame: CGRect = CGRect.zero
     open var yAxis: CHYAxis = CHYAxis()                           //Y轴参数
+    open var xAxis: CHXAxis = CHXAxis()                             //X轴参数
     open var backgroundColor: UIColor = UIColor.black
     open var index: Int = 0
     
@@ -265,27 +266,38 @@ open class CHSection: NSObject {
     /**
      画分区的标题
      */
-    func drawTitle(_ chartSelectedIndex: Int) {
+    func drawTitle(_ chartSelectedIndex: Int) -> CHShapeLayer? {
         
         guard self.showTitle else {
-            return
+            return nil
         }
         
         if chartSelectedIndex == -1 {
-            return      //没有数据返回
+            return nil      //没有数据返回
         }
+        
+        let sectionTitleLayer = CHShapeLayer()
         
         var startX = self.frame.origin.x + self.padding.left + 2
         if self.paging {     //如果分页
             let series = self.series[self.selectedIndex]
-            let _ = self.drawTitlePerSerie(startX, chartSelectedIndex: chartSelectedIndex, series: series)
+            let (_, serieLayer) = self.drawTitlePerSerie(startX, chartSelectedIndex: chartSelectedIndex, series: series)
+            
+            if serieLayer != nil {
+                sectionTitleLayer.addSublayer(serieLayer!)
+            }
+            
         } else {
             for serie in self.series {   //不分页
-                startX = self.drawTitlePerSerie(startX, chartSelectedIndex: chartSelectedIndex, series: serie)
+                let (newStartX, serieLayer) = self.drawTitlePerSerie(startX, chartSelectedIndex: chartSelectedIndex, series: serie)
+                startX = newStartX
+                if serieLayer != nil {
+                    sectionTitleLayer.addSublayer(serieLayer!)
+                }
             }
         }
         
-        
+        return sectionTitleLayer
         
         
     }
@@ -293,14 +305,16 @@ open class CHSection: NSObject {
     /**
      画分区中每个系列的标题
      */
-    func drawTitlePerSerie(_ xPos: CGFloat, chartSelectedIndex: Int, series: CHSeries) -> CGFloat {
+    func drawTitlePerSerie(_ xPos: CGFloat, chartSelectedIndex: Int, series: CHSeries) -> (CGFloat, CHShapeLayer?) {
         
         if series.hidden {
-            return xPos
+            return (xPos, nil)
         }
         
-        let context = UIGraphicsGetCurrentContext()
-        context?.setShouldAntialias(true)
+        let serieLayer = CHShapeLayer()
+        
+//        let context = UIGraphicsGetCurrentContext()
+//        context?.setShouldAntialias(true)
         
         var yPos: CGFloat = 0, w: CGFloat = 0
         if titleShowOutSide {
@@ -316,12 +330,25 @@ open class CHSection: NSObject {
         if !series.title.isEmpty {
             let seriesTitle = series.title + "  "
             let point = CGPoint(x: startX + w, y: yPos)
-            NSString(string: seriesTitle).draw(at: point,
-                                               withAttributes:
-                [
-                    NSFontAttributeName: self.labelFont,
-                    NSForegroundColorAttributeName: self.titleColor
-                ])
+            let textSize = seriesTitle.ch_sizeWithConstrained(self.labelFont)
+            
+            let titleText = CHTextLayer()
+            titleText.frame = CGRect(origin: point, size: textSize)
+            titleText.string = seriesTitle
+            titleText.fontSize = self.labelFont.pointSize
+            titleText.foregroundColor =  self.titleColor.cgColor
+            titleText.backgroundColor = UIColor.clear.cgColor
+            titleText.contentsScale = UIScreen.main.scale
+            
+            serieLayer.addSublayer(titleText)
+
+            
+//            NSString(string: seriesTitle).draw(at: point,
+//                                               withAttributes:
+//                [
+//                    NSFontAttributeName: self.labelFont,
+//                    NSForegroundColorAttributeName: self.titleColor
+//                ])
             w += seriesTitle.ch_sizeWithConstrained(self.labelFont).width
         }
         
@@ -355,31 +382,43 @@ open class CHSection: NSObject {
             
             if model.useTitleColor {    //是否用标题颜色
                 textColor = model.titleColor
-                context?.setFillColor(model.titleColor.cgColor)
+//                context?.setFillColor(model.titleColor.cgColor)
             } else {
                 switch item.trend {
                 case .up, .equal:
                     textColor = model.upColor
-                    context?.setFillColor(model.upColor.cgColor)
+//                    context?.setFillColor(model.upColor.cgColor)
                 case .down:
                     textColor = model.downColor
-                    context?.setFillColor(model.downColor.cgColor)
+//                    context?.setFillColor(model.downColor.cgColor)
                 }
             }
             
-            
-            let fontAttributes = [
-                NSFontAttributeName: self.labelFont,
-                NSForegroundColorAttributeName: textColor
-                ] as [String : Any]
-            
             let point = CGPoint(x: startX + w, y: yPos)
-            NSString(string: title).draw(at: point,
-                                         withAttributes: fontAttributes)
+            let textSize = title.ch_sizeWithConstrained(self.labelFont)
+            
+            let titleText = CHTextLayer()
+            titleText.frame = CGRect(origin: point, size: textSize)
+            titleText.string = title
+            titleText.fontSize = self.labelFont.pointSize
+            titleText.foregroundColor =  textColor.cgColor
+            titleText.backgroundColor = UIColor.clear.cgColor
+            titleText.contentsScale = UIScreen.main.scale
+            
+            serieLayer.addSublayer(titleText)
+            
+//            let fontAttributes = [
+//                NSFontAttributeName: self.labelFont,
+//                NSForegroundColorAttributeName: textColor
+//                ] as [String : Any]
+//            
+//            
+//            NSString(string: title).draw(at: point,
+//                                         withAttributes: fontAttributes)
             
             w += title.ch_sizeWithConstrained(self.labelFont).width
         }
-        return startX + w
+        return (startX + w, serieLayer)
     }
     
     

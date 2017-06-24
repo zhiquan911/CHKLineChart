@@ -18,8 +18,10 @@
 		C57654D71E30AA480080A095 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = C57654D61E30AA480080A095 /* README.md */; };
 		C59B4D4C1D8F9E50007112EC /* ChartDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59B4D4B1D8F9E50007112EC /* ChartDemoViewController.swift */; };
 		C59DF3CE1D8FE3FD0085DA3D /* CHKLineChartStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59DF3CD1D8FE3FD0085DA3D /* CHKLineChartStyle.swift */; };
-		C5B8F15E1EFB769F0082E969 /* CHImageGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B8F15D1EFB769F0082E969 /* CHImageGenerator.swift */; };
+		C5B8F15E1EFB769F0082E969 /* CHChartImageGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B8F15D1EFB769F0082E969 /* CHChartImageGenerator.swift */; };
 		C5B8F1601EFBA5C10082E969 /* ChartImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B8F15F1EFBA5C10082E969 /* ChartImageViewController.swift */; };
+		C5BF28A71EFE619300F524DB /* ChartInTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BF28A61EFE619300F524DB /* ChartInTableViewController.swift */; };
+		C5BF28AA1EFE632300F524DB /* KChartCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BF28A91EFE632300F524DB /* KChartCell.swift */; };
 		C5C3C4CF1EEF96B000C1B696 /* ChartCustomDesignViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5C3C4CE1EEF96B000C1B696 /* ChartCustomDesignViewController.swift */; };
 		C5E4E05B1D76CC7E00C47F5A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E05A1D76CC7E00C47F5A /* AppDelegate.swift */; };
 		C5E4E05D1D76CC7E00C47F5A /* DemoSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E05C1D76CC7E00C47F5A /* DemoSelectViewController.swift */; };
@@ -28,6 +30,7 @@
 		C5E4E0651D76CC7E00C47F5A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C5E4E0631D76CC7E00C47F5A /* LaunchScreen.storyboard */; };
 		C5E4E06F1D76CF6200C47F5A /* CHSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E06E1D76CF6200C47F5A /* CHSection.swift */; };
 		C5E4E0711D76D7F800C47F5A /* CHAxisModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E0701D76D7F800C47F5A /* CHAxisModel.swift */; };
+		C5F138D81EFD42A800DCAEF6 /* CHShapeLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F138D71EFD42A800DCAEF6 /* CHShapeLayer.swift */; };
 		C5F6766E1D84E6A600E65F6F /* data.json in Resources */ = {isa = PBXBuildFile; fileRef = C5F6766D1D84E6A600E65F6F /* data.json */; };
 		C5F700011D7EA94500622E60 /* CHChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F700001D7EA94500622E60 /* CHChartModel.swift */; };
 		C5F7FFFB1D7EA57A00622E60 /* CHKLineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F7FFFA1D7EA57A00622E60 /* CHKLineChart.swift */; };
@@ -46,8 +49,10 @@
 		C57654D61E30AA480080A095 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
 		C59B4D4B1D8F9E50007112EC /* ChartDemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ChartDemoViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C59DF3CD1D8FE3FD0085DA3D /* CHKLineChartStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHKLineChartStyle.swift; path = Classes/CHKLineChartStyle.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		C5B8F15D1EFB769F0082E969 /* CHImageGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHImageGenerator.swift; path = Classes/CHImageGenerator.swift; sourceTree = "<group>"; };
+		C5B8F15D1EFB769F0082E969 /* CHChartImageGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHChartImageGenerator.swift; path = Classes/CHChartImageGenerator.swift; sourceTree = "<group>"; };
 		C5B8F15F1EFBA5C10082E969 /* ChartImageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartImageViewController.swift; sourceTree = "<group>"; };
+		C5BF28A61EFE619300F524DB /* ChartInTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartInTableViewController.swift; sourceTree = "<group>"; };
+		C5BF28A91EFE632300F524DB /* KChartCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KChartCell.swift; sourceTree = "<group>"; };
 		C5C3C4CE1EEF96B000C1B696 /* ChartCustomDesignViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartCustomDesignViewController.swift; sourceTree = "<group>"; };
 		C5E4E0571D76CC7E00C47F5A /* CHKLineChart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CHKLineChart.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5E4E05A1D76CC7E00C47F5A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AppDelegate.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -58,6 +63,7 @@
 		C5E4E0661D76CC7E00C47F5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C5E4E06E1D76CF6200C47F5A /* CHSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHSection.swift; path = Classes/CHSection.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C5E4E0701D76D7F800C47F5A /* CHAxisModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHAxisModel.swift; path = Classes/CHAxisModel.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C5F138D71EFD42A800DCAEF6 /* CHShapeLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHShapeLayer.swift; path = Classes/CHShapeLayer.swift; sourceTree = "<group>"; };
 		C5F6766D1D84E6A600E65F6F /* data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = data.json; sourceTree = "<group>"; };
 		C5F700001D7EA94500622E60 /* CHChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHChartModel.swift; path = Classes/CHChartModel.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C5F7FFFA1D7EA57A00622E60 /* CHKLineChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHKLineChart.swift; path = Classes/CHKLineChart.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -75,6 +81,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C5BF28A81EFE61A400F524DB /* views */ = {
+			isa = PBXGroup;
+			children = (
+				C5BF28A91EFE632300F524DB /* KChartCell.swift */,
+			);
+			name = views;
+			sourceTree = "<group>";
+		};
 		C5E4E04E1D76CC7E00C47F5A = {
 			isa = PBXGroup;
 			children = (
@@ -119,6 +133,7 @@
 				C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */,
 				C59DF3CD1D8FE3FD0085DA3D /* CHKLineChartStyle.swift */,
 				C571876A1EFA425C002432E5 /* CHDynamicItem.swift */,
+				C5F138D71EFD42A800DCAEF6 /* CHShapeLayer.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -126,6 +141,7 @@
 		C5E4E06D1D76CCF800C47F5A /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				C5BF28A81EFE61A400F524DB /* views */,
 				C5E4E05C1D76CC7E00C47F5A /* DemoSelectViewController.swift */,
 				C59B4D4B1D8F9E50007112EC /* ChartDemoViewController.swift */,
 				C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */,
@@ -133,8 +149,9 @@
 				C5C3C4CE1EEF96B000C1B696 /* ChartCustomDesignViewController.swift */,
 				C55355FC1EF7C84C00731DE8 /* ChartFullViewController.swift */,
 				C5158ED01EEE81850057A356 /* ChartStyles.swift */,
-				C5B8F15D1EFB769F0082E969 /* CHImageGenerator.swift */,
+				C5B8F15D1EFB769F0082E969 /* CHChartImageGenerator.swift */,
 				C5B8F15F1EFBA5C10082E969 /* ChartImageViewController.swift */,
+				C5BF28A61EFE619300F524DB /* ChartInTableViewController.swift */,
 				C5F6766D1D84E6A600E65F6F /* data.json */,
 			);
 			name = Demo;
@@ -215,11 +232,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5F138D81EFD42A800DCAEF6 /* CHShapeLayer.swift in Sources */,
 				C5158ED11EEE81850057A356 /* ChartStyles.swift in Sources */,
 				C5E4E0711D76D7F800C47F5A /* CHAxisModel.swift in Sources */,
 				C5C3C4CF1EEF96B000C1B696 /* ChartCustomDesignViewController.swift in Sources */,
 				C59DF3CE1D8FE3FD0085DA3D /* CHKLineChartStyle.swift in Sources */,
 				C5E4E06F1D76CF6200C47F5A /* CHSection.swift in Sources */,
+				C5BF28A71EFE619300F524DB /* ChartInTableViewController.swift in Sources */,
 				C571876B1EFA425C002432E5 /* CHDynamicItem.swift in Sources */,
 				C59B4D4C1D8F9E50007112EC /* ChartDemoViewController.swift in Sources */,
 				C5E4E05D1D76CC7E00C47F5A /* DemoSelectViewController.swift in Sources */,
@@ -227,9 +246,10 @@
 				C559F2591D80FC22002B1E57 /* CHExtension.swift in Sources */,
 				C5F700011D7EA94500622E60 /* CHChartModel.swift in Sources */,
 				C55355FD1EF7C84C00731DE8 /* ChartFullViewController.swift in Sources */,
+				C5BF28AA1EFE632300F524DB /* KChartCell.swift in Sources */,
 				C5E4E05B1D76CC7E00C47F5A /* AppDelegate.swift in Sources */,
 				C5B8F1601EFBA5C10082E969 /* ChartImageViewController.swift in Sources */,
-				C5B8F15E1EFB769F0082E969 /* CHImageGenerator.swift in Sources */,
+				C5B8F15E1EFB769F0082E969 /* CHChartImageGenerator.swift in Sources */,
 				C53B03581E1DEF8000174A7E /* StyleSettingViewController.swift in Sources */,
 				C57654D71E30AA480080A095 /* README.md in Sources */,
 				C5F7FFFB1D7EA57A00622E60 /* CHKLineChart.swift in Sources */,

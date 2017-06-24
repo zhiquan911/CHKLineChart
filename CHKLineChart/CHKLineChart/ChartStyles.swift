@@ -21,8 +21,6 @@ public extension CHKLineChartStyle {
         style.labelFont = UIFont.systemFont(ofSize: 10)
         //分区框线颜色
         style.lineColor = UIColor.clear
-        //Y轴上虚线颜色
-        style.dashColor = UIColor.clear
         //选中价格显示的背景颜色
         style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
         //文字颜色
@@ -75,6 +73,8 @@ public extension CHKLineChartStyle {
         priceSection.ratios = 0
         //分区采用固定高度
         priceSection.fixHeight = 176
+        //Y轴辅助线的样式，实线
+        priceSection.yAxis.referenceStyle = .none
         //分区内边距
         priceSection.padding = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
         
@@ -130,6 +130,7 @@ public extension CHKLineChartStyle {
         volumeSection.hidden = false
         volumeSection.showTitle = false
         volumeSection.ratios = 1
+        volumeSection.yAxis.referenceStyle = .none
         volumeSection.yAxis.tickInterval = 2
         volumeSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 4, right: 0)
         let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
@@ -155,6 +156,7 @@ public extension CHKLineChartStyle {
         trendSection.showTitle = false
         trendSection.ratios = 1
         trendSection.paging = true
+        trendSection.yAxis.referenceStyle = .none
         trendSection.yAxis.tickInterval = 2
         trendSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 8, right: 0)
         let kdjSeries = CHSeries.getKDJ(UIColor.ch_hex(0xDDDDDD),
@@ -191,8 +193,6 @@ public extension CHKLineChartStyle {
         style.labelFont = UIFont.systemFont(ofSize: 10)
         //分区框线颜色
         style.lineColor = UIColor.clear
-        //Y轴上虚线颜色
-        style.dashColor = UIColor.clear
         //选中价格显示的背景颜色
         style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
         //文字颜色
@@ -243,6 +243,8 @@ public extension CHKLineChartStyle {
         priceSection.hidden = false
         //分区所占图表的比重，0代表不使用比重，采用固定高度
         priceSection.ratios = 0
+        //Y轴辅助线的样式，实线
+        priceSection.yAxis.referenceStyle = .none
         //分区采用固定高度
         priceSection.fixHeight = 176
         //分区内边距
@@ -300,6 +302,7 @@ public extension CHKLineChartStyle {
         volumeSection.hidden = false
         volumeSection.showTitle = false
         volumeSection.ratios = 1
+        volumeSection.yAxis.referenceStyle = .none
         volumeSection.yAxis.tickInterval = 2
         volumeSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 4, right: 0)
         let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
@@ -325,6 +328,7 @@ public extension CHKLineChartStyle {
         trendSection.showTitle = false
         trendSection.ratios = 1
         trendSection.paging = true
+        trendSection.yAxis.referenceStyle = .none
         trendSection.yAxis.tickInterval = 2
         trendSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 8, right: 0)
         let kdjSeries = CHSeries.getKDJ(UIColor.ch_hex(0xDDDDDD),
@@ -364,8 +368,6 @@ public extension CHKLineChartStyle {
         style.labelFont = UIFont.systemFont(ofSize: 10)
         //分区框线颜色
         style.lineColor = UIColor.clear
-        //Y轴上虚线颜色
-        style.dashColor = UIColor.ch_hex(0x8D7B62, alpha: 0.44)
         //选中价格显示的背景颜色
         style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
         //文字颜色
@@ -409,6 +411,8 @@ public extension CHKLineChartStyle {
         priceSection.ratios = 1
         //Y轴隔间数
         priceSection.yAxis.tickInterval = 2
+        //Y轴辅助线的样式，实线
+        priceSection.yAxis.referenceStyle = .solid(color: UIColor.ch_hex(0x8D7B62, alpha: 0.44))
         //分区内边距
         priceSection.padding = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
         

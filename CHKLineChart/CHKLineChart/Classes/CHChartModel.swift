@@ -99,7 +99,9 @@ open class CHChartModel {
      - parameter endIndex:       结束索引
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
-    open func drawSerie(_ startIndex: Int, endIndex: Int, plotPaddingExt: CGFloat = 0.15) { }
+    open func drawSerie(_ startIndex: Int, endIndex: Int, plotPaddingExt: CGFloat = 0.15) -> CAShapeLayer {
+        return CAShapeLayer()
+    }
 }
 
 
@@ -117,19 +119,22 @@ open class CHLineModel: CHChartModel {
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
     open override func drawSerie(_ startIndex: Int, endIndex: Int,
-                                   plotPaddingExt: CGFloat = 0.25) {
+                                   plotPaddingExt: CGFloat = 0.15) -> CAShapeLayer {
+        
+        let serieLayer = CAShapeLayer()
+        
+        let modelLayer = CAShapeLayer()
+        modelLayer.strokeColor = self.upColor.cgColor
+        modelLayer.fillColor = UIColor.clear.cgColor
+        modelLayer.lineWidth = self.lineWidth
+        modelLayer.lineCap = kCALineCapRound
+        modelLayer.lineJoin = kCALineJoinBevel
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
         
-        let context = UIGraphicsGetCurrentContext()
-        context?.setShouldAntialias(true)
-        
         //使用bezierPath画线段
         let linePath = UIBezierPath()
-        linePath.lineWidth = self.lineWidth
-        linePath.lineCapStyle = .round
-        linePath.lineJoinStyle = .bevel
         
         var maxValue: CGFloat = 0       //最大值的项
         var maxPoint: CGPoint?          //最大值所在坐标
@@ -163,10 +168,6 @@ open class CHLineModel: CHChartModel {
                 linePath.addLine(to: point)
             }
             
-            
-            
-
-            
             //记录最大值信息
             if value > maxValue {
                 maxValue = value
@@ -180,22 +181,27 @@ open class CHLineModel: CHChartModel {
             }
         }
         
-        self.upColor.set()
-        linePath.stroke()
+        modelLayer.path = linePath.cgPath
         
+        serieLayer.addSublayer(modelLayer)
         
         //显示最大最小值
         if self.showMaxVal && maxValue != 0 {
             let highPrice = maxValue.ch_toString(maxF: section.decimal)
-            self.drawGuideValue(context!, value: highPrice, section: section, point: maxPoint!, trend: CHChartItemTrend.up)
+            let maxLayer = self.drawGuideValue(value: highPrice, section: section, point: maxPoint!, trend: CHChartItemTrend.up)
+            
+            serieLayer.addSublayer(maxLayer)
         }
         
         //显示最大最小值
         if self.showMinVal && minValue != CGFloat.greatestFiniteMagnitude {
             let lowPrice = minValue.ch_toString(maxF: section.decimal)
-            self.drawGuideValue(context!, value: lowPrice, section: section, point: minPoint!, trend: CHChartItemTrend.down)
+            let minLayer = self.drawGuideValue(value: lowPrice, section: section, point: minPoint!, trend: CHChartItemTrend.down)
+            
+            serieLayer.addSublayer(minLayer)
         }
         
+        return serieLayer
     }
     
     
@@ -214,15 +220,16 @@ open class CHCandleModel: CHChartModel {
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
     open override func drawSerie(_ startIndex: Int, endIndex: Int,
-                                   plotPaddingExt: CGFloat = 0.15) {
+                                   plotPaddingExt: CGFloat = 0.15) -> CAShapeLayer {
+        
+        let serieLayer = CAShapeLayer()
+        
+        let modelLayer = CAShapeLayer()
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
-        let plotPadding = plotWidth * plotPaddingExt
-        
-        let context = UIGraphicsGetCurrentContext()
-        context?.setShouldAntialias(false)
-        context?.setLineWidth(0.5)
+        var plotPadding = plotWidth * plotPaddingExt
+        plotPadding = plotPadding < 0.25 ? 0.25 : plotPadding
         
         var maxValue: CGFloat = 0       //最大值的项
         var maxPoint: CGPoint?          //最大值所在坐标
@@ -231,6 +238,13 @@ open class CHCandleModel: CHChartModel {
         
         //循环起始到终结
         for i in stride(from: startIndex, to: endIndex, by: 1) {
+            
+            let candleLayer = CAShapeLayer()
+            var candlePath: UIBezierPath?
+            let shadowLayer = CAShapeLayer()
+            let shadowPath = UIBezierPath()
+            shadowPath.lineWidth = 0
+            
             let item = datas[i]
             //开始X
             let ix = self.section.frame.origin.x + self.section.padding.left + CGFloat(i - startIndex) * plotWidth
@@ -250,36 +264,52 @@ open class CHCandleModel: CHChartModel {
             switch item.trend {
             case .equal:
                 //开盘收盘一样，则显示横线
-                context?.setStrokeColor(self.upColor.cgColor)
+                shadowLayer.strokeColor = self.upColor.cgColor
+//                context?.setStrokeColor(self.upColor.cgColor)
             case .up:
                 //收盘价比开盘高，则显示涨的颜色
-                context?.setStrokeColor(self.upColor.cgColor)
-                context?.setFillColor(self.upColor.cgColor)
+                shadowLayer.strokeColor = self.upColor.cgColor
+                candleLayer.fillColor = self.upColor.cgColor
+//                context?.setStrokeColor(self.upColor.cgColor)
+//                context?.setFillColor(self.upColor.cgColor)
             case .down:
                 //收盘价比开盘低，则显示跌的颜色
-                context?.setStrokeColor(self.downColor.cgColor)
-                context?.setFillColor(self.downColor.cgColor)
+                shadowLayer.strokeColor = self.downColor.cgColor
+                candleLayer.fillColor = self.downColor.cgColor
+//                context?.setStrokeColor(self.downColor.cgColor)
+//                context?.setFillColor(self.downColor.cgColor)
             }
             
             //1.先画最高和最低价格的线
-            context?.move(to: CGPoint(x: ix + plotWidth / 2, y: iyh))
-            context?.addLine(to: CGPoint(x: ix + plotWidth / 2, y: iyl))
-            context?.strokePath()
+            shadowPath.move(to: CGPoint(x: ix + plotWidth / 2, y: iyh))
+            shadowPath.addLine(to: CGPoint(x: ix + plotWidth / 2, y: iyl))
+//            context?.strokePath()
             
             //2.画蜡烛柱的矩形，空心的刚好覆盖上面的线
             switch item.trend {
             case .equal:
                 //开盘收盘一样，则显示横线
-                context?.move(to: CGPoint(x: ix + plotPadding, y: iyo))
-                context?.addLine(to: CGPoint(x: iNx - plotPadding, y: iyo))
-                context?.strokePath()
+                shadowPath.move(to: CGPoint(x: ix + plotPadding, y: iyo))
+                shadowPath.addLine(to: CGPoint(x: iNx - plotPadding, y: iyo))
+//                context?.strokePath()
             case .up:
                 //收盘价比开盘高，则从收盘的Y值向下画矩形
-                context?.fill(CGRect(x: ix + plotPadding, y: iyc, width: plotWidth - 2 * plotPadding, height: iyo - iyc))
+                candlePath = UIBezierPath(rect: CGRect(x: ix + plotPadding, y: iyc, width: plotWidth - 2 * plotPadding, height: iyo - iyc))
+           
             case .down:
                 //收盘价比开盘低，则从开盘的Y值向下画矩形
-                context?.fill(CGRect(x: ix + plotPadding, y: iyo, width: plotWidth - 2 *  plotPadding, height: iyc - iyo))
+                candlePath = UIBezierPath(rect: CGRect(x: ix + plotPadding, y: iyo, width: plotWidth - 2 *  plotPadding, height: iyc - iyo))
             }
+            
+            shadowLayer.path = shadowPath.cgPath
+            modelLayer.addSublayer(shadowLayer)
+            
+            if candlePath != nil {
+                candleLayer.lineWidth = 0
+                candleLayer.path = candlePath!.cgPath
+                modelLayer.addSublayer(candleLayer)
+            }
+            
             
             
             //记录最大值信息
@@ -296,17 +326,23 @@ open class CHCandleModel: CHChartModel {
             
         }
         
+        serieLayer.addSublayer(modelLayer)
+        
         //显示最大最小值
         if self.showMaxVal && maxValue != 0 {
             let highPrice = maxValue.ch_toString(maxF: section.decimal)
-            self.drawGuideValue(context!, value: highPrice, section: section, point: maxPoint!, trend: CHChartItemTrend.up)
+            let maxLayer = self.drawGuideValue(value: highPrice, section: section, point: maxPoint!, trend: CHChartItemTrend.up)
+            serieLayer.addSublayer(maxLayer)
         }
         
         //显示最大最小值
         if self.showMinVal && minValue != CGFloat.greatestFiniteMagnitude {
             let lowPrice = minValue.ch_toString(maxF: section.decimal)
-            self.drawGuideValue(context!, value: lowPrice, section: section, point: minPoint!, trend: CHChartItemTrend.down)
+            let minLayer = self.drawGuideValue(value: lowPrice, section: section, point: minPoint!, trend: CHChartItemTrend.down)
+            serieLayer.addSublayer(minLayer)
         }
+        
+        return serieLayer
     }
     
 }
@@ -324,17 +360,22 @@ open class CHColumnModel: CHChartModel {
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
     open override func drawSerie(_ startIndex: Int, endIndex: Int,
-                                   plotPaddingExt: CGFloat = 0.15) {
+                                   plotPaddingExt: CGFloat = 0.15) -> CAShapeLayer {
+        
+        let serieLayer = CAShapeLayer()
+        
+        let modelLayer = CAShapeLayer()
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
-        let plotPadding = plotWidth * plotPaddingExt
+        var plotPadding = plotWidth * plotPaddingExt
+        plotPadding = plotPadding < 0.25 ? 0.25 : plotPadding
         
         let iybase = self.section.getLocalY(section.yAxis.baseValue)
         
-        let context = UIGraphicsGetCurrentContext()
-        context?.setShouldAntialias(false)
-        context?.setLineWidth(0.5)
+//        let context = UIGraphicsGetCurrentContext()
+//        context?.setShouldAntialias(false)
+//        context?.setLineWidth(1)
         
         //循环起始到终结
         for i in stride(from: startIndex, to: endIndex, by: 1) {
@@ -343,6 +384,8 @@ open class CHColumnModel: CHChartModel {
 //            if value == nil{
 //                continue  //无法计算的值不绘画
 //            }
+            
+            let columnLayer = CAShapeLayer()
             
             let item = datas[i]
             //开始X
@@ -355,18 +398,28 @@ open class CHColumnModel: CHChartModel {
             switch item.trend {
             case .up, .equal:
                 //收盘价比开盘高，则显示涨的颜色
-                context?.setStrokeColor(self.upColor.cgColor)
-                context?.setFillColor(self.upColor.cgColor)
+                columnLayer.strokeColor = self.upColor.cgColor
+                columnLayer.fillColor = self.upColor.cgColor
+//                context?.setStrokeColor(self.upColor.cgColor)
+//                context?.setFillColor(self.upColor.cgColor)
             case .down:
-                context?.setStrokeColor(self.downColor.cgColor)
-                context?.setFillColor(self.downColor.cgColor)
+                columnLayer.strokeColor = self.downColor.cgColor
+                columnLayer.fillColor = self.downColor.cgColor
+//                context?.setStrokeColor(self.downColor.cgColor)
+//                context?.setFillColor(self.downColor.cgColor)
             }
             
             //画交易量的矩形
-            context?.fill (CGRect(x: ix + plotPadding, y: iyv, width: plotWidth - 2 * plotPadding, height: iybase - iyv))
+            let columnPath = UIBezierPath(rect: CGRect(x: ix + plotPadding, y: iyv, width: plotWidth - 2 * plotPadding, height: iybase - iyv))
+            columnLayer.path = columnPath.cgPath
+            columnLayer.lineWidth = 0   //不设置为0会受到抗锯齿处理导致变大
             
-            
+            modelLayer.addSublayer(columnLayer)
         }
+        
+        serieLayer.addSublayer(modelLayer)
+        
+        return serieLayer
     }
     
 }
@@ -384,17 +437,22 @@ open class CHBarModel: CHChartModel {
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
     open override func drawSerie(_ startIndex: Int, endIndex: Int,
-                                 plotPaddingExt: CGFloat = 0.15) {
+                                 plotPaddingExt: CGFloat = 0.15) -> CAShapeLayer{
+        
+        let serieLayer = CAShapeLayer()
+        
+        let modelLayer = CAShapeLayer()
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
-        let plotPadding = plotWidth * plotPaddingExt
+        var plotPadding = plotWidth * plotPaddingExt
+        plotPadding = plotPadding < 0.25 ? 0.25 : plotPadding
         
         let iybase = self.section.getLocalY(section.yAxis.baseValue)
         
-        let context = UIGraphicsGetCurrentContext()
-        context?.setShouldAntialias(false)
-        context?.setLineWidth(0.5)
+//        let context = UIGraphicsGetCurrentContext()
+//        context?.setShouldAntialias(false)
+//        context?.setLineWidth(1)
         
         //循环起始到终结
         for i in stride(from: startIndex, to: endIndex, by: 1) {
@@ -409,6 +467,9 @@ open class CHBarModel: CHChartModel {
             if value == nil {
                 continue  //无法计算的值不绘画
             }
+            
+            let barLayer = CAShapeLayer()
+            
             //开始X
             let ix = self.section.frame.origin.x + self.section.padding.left + CGFloat(i - startIndex) * plotWidth
             
@@ -418,18 +479,29 @@ open class CHBarModel: CHChartModel {
             //如果值是正数
             if value! > 0 {
                 //收盘价比开盘高，则显示涨的颜色
-                context?.setStrokeColor(self.upColor.cgColor)
-                context?.setFillColor(self.upColor.cgColor)
+                barLayer.strokeColor = self.upColor.cgColor
+                barLayer.fillColor = self.upColor.cgColor
+//                context?.setStrokeColor(self.upColor.cgColor)
+//                context?.setFillColor(self.upColor.cgColor)
             } else {
-                context?.setStrokeColor(self.downColor.cgColor)
-                context?.setFillColor(self.downColor.cgColor)
+                barLayer.strokeColor = self.downColor.cgColor
+                barLayer.fillColor = self.downColor.cgColor
+//                context?.setStrokeColor(self.downColor.cgColor)
+//                context?.setFillColor(self.downColor.cgColor)
             }
             
             //画交易量的矩形
-            context?.fill (CGRect(x: ix + plotPadding, y: iyv, width: plotWidth - 2 * plotPadding, height: iybase - iyv))
+            let barPath = UIBezierPath(rect: CGRect(x: ix + plotPadding, y: iyv, width: plotWidth - 2 * plotPadding, height: iybase - iyv))
             
+            barLayer.path = barPath.cgPath
+            barLayer.lineWidth = 0      //不设置为0会受到抗锯齿处理导致变大
             
+            modelLayer.addSublayer(barLayer)
         }
+        
+        serieLayer.addSublayer(modelLayer)
+        
+        return serieLayer
     }
     
 }
@@ -441,7 +513,9 @@ public extension CHChartModel {
     /**
      绘画最大值
      */
-    public func drawGuideValue(_ context: CGContext, value: String, section: CHSection, point: CGPoint, trend: CHChartItemTrend) {
+    public func drawGuideValue(value: String, section: CHSection, point: CGPoint, trend: CHChartItemTrend) -> CAShapeLayer {
+        
+        let guideValueLayer = CAShapeLayer()
         
         let fontSize = value.ch_sizeWithConstrained(section.labelFont)
         let arrowLineWidth: CGFloat = 4
@@ -462,8 +536,8 @@ public extension CHChartModel {
         }
         
         
-        context.setShouldAntialias(true)
-        context.setStrokeColor(self.titleColor.cgColor)
+//        context.setShouldAntialias(true)
+//        context.setStrokeColor(self.titleColor.cgColor)
         var fillColor: UIColor = self.upColor
         switch trend {
         case .up:
@@ -483,38 +557,55 @@ public extension CHChartModel {
         
         switch self.ultimateValueStyle {
         case let .arrow(color):
+            
+            let arrowPath = UIBezierPath()
+            let arrowLayer = CAShapeLayer()
+            
             guideValueTextColor = color
             //画小箭头
-            context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
-            context.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft, y: point.y + arrowLineWidth * isUp))
-            context.strokePath()
+            arrowPath.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
+            arrowPath.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft, y: point.y + arrowLineWidth * isUp))
             
-            context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
-            context.addLine(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp * 2))
-            context.strokePath()
+            arrowPath.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
+            arrowPath.addLine(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp * 2))
             
-            context.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
-            context.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft, y: point.y + arrowLineWidth * isUp * 2))
-            context.strokePath()
+            arrowPath.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
+            arrowPath.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft, y: point.y + arrowLineWidth * isUp * 2))
+            
+            arrowLayer.path = arrowPath.cgPath
+            arrowLayer.strokeColor = self.titleColor.cgColor
+            
+            guideValueLayer.addSublayer(arrowLayer)
             
         case let .tag(color):
             
-            guideValueTextColor = color
+            let tagLayer = CAShapeLayer()
+            let arrowLayer = CAShapeLayer()
             
-            fillColor.set()
+            guideValueTextColor = color
             
             let arrowPath = UIBezierPath()
             arrowPath.move(to: CGPoint(x: point.x, y: point.y + arrowLineWidth * isUp))
             arrowPath.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft * 2, y: point.y + arrowLineWidth * isUp))
             arrowPath.addLine(to: CGPoint(x: point.x + arrowLineWidth * isLeft * 2, y: point.y + arrowLineWidth * isUp * 3))
             arrowPath.close()
-            arrowPath.fill()
-            
+            arrowLayer.path = arrowPath.cgPath
+            arrowLayer.fillColor = fillColor.cgColor
+            guideValueLayer.addSublayer(arrowLayer)
+
             let tagPath = UIBezierPath(
                 roundedRect: CGRect(x: maxPriceStartX - arrowLineWidth, y: tagStartY, width: fontSize.width + arrowLineWidth * 2, height: fontSize.height + arrowLineWidth), cornerRadius: arrowLineWidth * 2)
-            tagPath.fill()
+//            tagPath.fill()
+            
+            tagLayer.path = tagPath.cgPath
+            tagLayer.fillColor = fillColor.cgColor
+            
+            guideValueLayer.addSublayer(tagLayer)
             
         case let .circle(color, show):
+            
+            let circleLayer = CAShapeLayer()
+            
             guideValueTextColor = color
             isShowValue = show
             
@@ -522,13 +613,20 @@ public extension CHChartModel {
             let circlePoint = CGPoint(x: point.x - circleWidth / 2, y: point.y - circleWidth / 2)
             let circleSize = CGSize(width: circleWidth, height: circleWidth)
             let circlePath = UIBezierPath(ovalIn: CGRect(origin: circlePoint, size: circleSize))
-            circlePath.lineWidth = self.lineWidth * 2
             
-            fillColor.set()
-            circlePath.stroke()
             
-            self.section.backgroundColor.set()
-            circlePath.fill()
+//            fillColor.set()
+//            circlePath.stroke()
+//            
+//            self.section.backgroundColor.set()
+//            circlePath.fill()
+            
+            circleLayer.lineWidth = self.lineWidth
+            circleLayer.path = circlePath.cgPath
+            circleLayer.fillColor = self.section.backgroundColor.cgColor
+            circleLayer.strokeColor = fillColor.cgColor
+            
+            guideValueLayer.addSublayer(circleLayer)
             
         default:
             isShowValue = false
@@ -537,24 +635,36 @@ public extension CHChartModel {
         
         if isShowValue {
             
-            let fontAttributes = [
-                NSFontAttributeName: section.labelFont,
-                NSForegroundColorAttributeName: guideValueTextColor
-                ] as [String : Any]
+//            let fontAttributes = [
+//                NSFontAttributeName: section.labelFont,
+//                NSForegroundColorAttributeName: guideValueTextColor
+//                ] as [String : Any]
             
             //计算画文字的位置
             let point = CGPoint(x: maxPriceStartX, y: maxPriceStartY)
+            let textSize = value.ch_sizeWithConstrained(section.labelFont)
             
             //画最大值数字
-            NSString(string: value)
-                .draw(at: point,
-                      withAttributes: fontAttributes)
+            let valueText = CHTextLayer()
+            valueText.frame = CGRect(origin: point, size: textSize)
+            valueText.string = value
+            valueText.fontSize = section.labelFont.pointSize
+            valueText.foregroundColor =  guideValueTextColor.cgColor
+            valueText.backgroundColor = UIColor.clear.cgColor
+            valueText.contentsScale = UIScreen.main.scale
+            
+            guideValueLayer.addSublayer(valueText)
+            
+            
+//            NSString(string: value)
+//                .draw(at: point,
+//                      withAttributes: fontAttributes)
             
         }
         
         
-        
-        context.setShouldAntialias(false)
+        return guideValueLayer
+//        context.setShouldAntialias(false)
         
     }
     
