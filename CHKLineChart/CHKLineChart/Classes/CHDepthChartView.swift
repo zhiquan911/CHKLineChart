@@ -387,11 +387,11 @@ open class CHDepthChartView: UIView {
          当前y值的实际坐标 = 分区高度 + 分区y坐标 - paddingBottom - 当前y值的实际的相对y轴有值的区间的高度
          */
         let baseY = self.bounds.maxY - self.padding.bottom - (self.bounds.size.height - self.padding.top - self.padding.bottom) * (val - min) / (max - min)
-        NSLog("baseY(val) = \(baseY)(\(val))")
-        NSLog("fra.size.height = \(self.bounds.size.height)");
-        NSLog("self.bounds.maxY = \(self.bounds.maxY)");
-        NSLog("max = \(max)");
-        NSLog("min = \(min)");
+//        NSLog("baseY(val) = \(baseY)(\(val))")
+//        NSLog("fra.size.height = \(self.bounds.size.height)");
+//        NSLog("self.bounds.maxY = \(self.bounds.maxY)");
+//        NSLog("max = \(max)");
+//        NSLog("min = \(min)");
         return baseY
     }
     
