@@ -32,6 +32,7 @@
 		C5E4E06F1D76CF6200C47F5A /* CHSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E06E1D76CF6200C47F5A /* CHSection.swift */; };
 		C5E4E0711D76D7F800C47F5A /* CHAxisModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4E0701D76D7F800C47F5A /* CHAxisModel.swift */; };
 		C5F03A771F021CD600872E09 /* DepthChartDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F03A761F021CD600872E09 /* DepthChartDemoViewController.swift */; };
+		C5F03A791F024C3400872E09 /* depth.json in Resources */ = {isa = PBXBuildFile; fileRef = C5F03A781F024C3400872E09 /* depth.json */; };
 		C5F138D81EFD42A800DCAEF6 /* CHShapeLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F138D71EFD42A800DCAEF6 /* CHShapeLayer.swift */; };
 		C5F6766E1D84E6A600E65F6F /* data.json in Resources */ = {isa = PBXBuildFile; fileRef = C5F6766D1D84E6A600E65F6F /* data.json */; };
 		C5F700011D7EA94500622E60 /* CHChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5F700001D7EA94500622E60 /* CHChartModel.swift */; };
@@ -67,6 +68,7 @@
 		C5E4E06E1D76CF6200C47F5A /* CHSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHSection.swift; path = Classes/CHSection.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C5E4E0701D76D7F800C47F5A /* CHAxisModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHAxisModel.swift; path = Classes/CHAxisModel.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C5F03A761F021CD600872E09 /* DepthChartDemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DepthChartDemoViewController.swift; sourceTree = "<group>"; };
+		C5F03A781F024C3400872E09 /* depth.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = depth.json; sourceTree = "<group>"; };
 		C5F138D71EFD42A800DCAEF6 /* CHShapeLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHShapeLayer.swift; path = Classes/CHShapeLayer.swift; sourceTree = "<group>"; };
 		C5F6766D1D84E6A600E65F6F /* data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = data.json; sourceTree = "<group>"; };
 		C5F700001D7EA94500622E60 /* CHChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHChartModel.swift; path = Classes/CHChartModel.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -118,6 +120,7 @@
 				C5E4E06D1D76CCF800C47F5A /* Demo */,
 				C5E4E05A1D76CC7E00C47F5A /* AppDelegate.swift */,
 				C5E4E05E1D76CC7E00C47F5A /* Main.storyboard */,
+				C5F03A781F024C3400872E09 /* depth.json */,
 				C5F6766D1D84E6A600E65F6F /* data.json */,
 				C5E4E0611D76CC7E00C47F5A /* Assets.xcassets */,
 				C5E4E0631D76CC7E00C47F5A /* LaunchScreen.storyboard */,
@@ -224,6 +227,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C5E4E0651D76CC7E00C47F5A /* LaunchScreen.storyboard in Resources */,
+				C5F03A791F024C3400872E09 /* depth.json in Resources */,
 				C5FA1F871D92400200271E36 /* CHKLineChart.podspec in Resources */,
 				C5E4E0621D76CC7E00C47F5A /* Assets.xcassets in Resources */,
 				C5E4E0601D76CC7E00C47F5A /* Main.storyboard in Resources */,

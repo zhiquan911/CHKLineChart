@@ -21,60 +21,26 @@ class DepthChartDemoViewController: UIViewController {
         self.depthChart.delegate = self
         self.depthChart.style = .depthStyle
         self.depthChart.yAxis.referenceStyle = .none
-        self.getRemoteServiceData()
+        self.getDataByFile()
     }
 
     @IBAction func handleClosePress(sender: AnyObject?) {
         self.dismiss(animated: true, completion: nil)
     }
 
-    func getRemoteServiceData() {
+    func getDataByFile() {
+        let data = try? Data(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "depth", ofType: "json")!))
+        let dict = try! JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions.mutableLeaves) as! [String: AnyObject]
         
-        self.loadingView.startAnimating()
-        self.loadingView.isHidden = false
-        
-        // 快捷方式获得session对象
-        let session = URLSession.shared
-        
-        let url = URL(string: "https://data.bter.com/api2/1/orderBook/ltc_cny")
-        // 通过URL初始化task,在block内部可以直接对返回的数据进行处理
-        let task = session.dataTask(with: url!, completionHandler: {
-            [unowned self](data, response, error) in
-            if let data = data {
-                
-                DispatchQueue.main.async {
-                    /*
-                     对从服务器获取到的数据data进行相应的处理.
-                     */
-                    do {
-                        self.depthDatas.removeAll()
-                        
-                        let dict = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as! [String: AnyObject]
-                        
-                        let isSuc = dict["result"] as? String ?? "false"
-                        if isSuc == "true" {
-                            //print(dict)
-                            let asks = dict["asks"] as! [[Double]]
-                            let bids = dict["bids"] as! [[Double]]
-                            self.decodeDatasToAppend(datas: bids, type: .bid)
-                            self.decodeDatasToAppend(datas: asks, type: .ask)
-                            self.depthChart.reloadData()
-                        }
-                        
-                    } catch _ {
-                        
-                    }
-                    
-                    self.loadingView.stopAnimating()
-                    self.loadingView.isHidden = true
-                }
-                
-                
-            }
-        })
-        
-        // 启动任务
-        task.resume()
+        let isSuc = dict["result"] as? String ?? "false"
+        if isSuc == "true" {
+            //print(dict)
+            let asks = dict["asks"] as! [[Double]]
+            let bids = dict["bids"] as! [[Double]]
+            self.decodeDatasToAppend(datas: bids, type: .bid)
+            self.decodeDatasToAppend(datas: asks, type: .ask)
+            self.depthChart.reloadData()
+        }
     }
     
     
