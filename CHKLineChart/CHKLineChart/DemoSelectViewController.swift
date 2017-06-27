@@ -19,6 +19,7 @@ class DemoSelectViewController: UIViewController {
         3: ("K线简单线段例子", "ChartFullViewController"),
         4: ("K线静态图片例子", "ChartImageViewController"),
         5: ("K线列表图表例子", "ChartInTableViewController"),
+        6: ("盘口深度图表例子", "DepthChartDemoViewController"),
     ]
     
     override func viewDidLoad() {

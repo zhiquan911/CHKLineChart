@@ -87,6 +87,13 @@ open class CHKLineChartStyle {
     /// 是否显示所有内容
     open var isShowAll: Bool = false
     
+    
+    /// 买方深度图层颜色
+    open var bidColor: (stroke: UIColor, fill: UIColor, lineWidth: CGFloat) = (.white, .white, 1)
+    
+    /// 卖方深度图层颜色
+    open var askColor: (stroke: UIColor, fill: UIColor, lineWidth: CGFloat) = (.white, .white, 1)
+    
     public init() {
         
     }
@@ -123,8 +130,8 @@ public extension CHKLineChartStyle {
         ]
         
         //分区点线样式
-        let upcolor = UIColor.ch_hex(0xF80D1F)
-        let downcolor = UIColor.ch_hex(0x1E932B)
+        let upcolor = (UIColor.ch_hex(0xF80D1F), true)
+        let downcolor = (UIColor.ch_hex(0x1E932B), true)
         let priceSection = CHSection()
         priceSection.titleShowOutSide = true
         priceSection.valueType = .price
@@ -144,8 +151,8 @@ public extension CHKLineChartStyle {
         
         /// 蜡烛线
         let priceSeries = CHSeries.getCandlePrice(
-            upColor: upcolor,
-            downColor: downcolor,
+            upStyle: upcolor,
+            downStyle: downcolor,
             titleColor: UIColor(white: 0.8, alpha: 1),
             section: priceSection,
             showGuide: true,
@@ -183,7 +190,7 @@ public extension CHKLineChartStyle {
         volumeSection.ratios = 1
         volumeSection.yAxis.tickInterval = 3
         volumeSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
-        let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
+        let volumeSeries = CHSeries.getDefaultVolume(upStyle: upcolor, downStyle: downcolor, section: volumeSection)
         
         let volumeMASeries = CHSeries.getMA(
             isEMA: false,
@@ -226,7 +233,7 @@ public extension CHKLineChartStyle {
             UIColor.ch_hex(0xDDDDDD),
             deac: UIColor.ch_hex(0xF9EE30),
             barc: UIColor.ch_hex(0xF600FF),
-            upColor: upcolor, downColor: downcolor,
+            upStyle: upcolor, downStyle: downcolor,
             section: trendSection)
         macdSeries.title = "MACD(12,26,9)"
         macdSeries.symmetrical = true

@@ -56,9 +56,9 @@ public extension CHKLineChartStyle {
         
         //分区点线样式
         //表示上涨的颜色
-        let upcolor = UIColor.ch_hex(0x5BA267)
+        let upcolor = (UIColor.ch_hex(0x5BA267), true)
         //表示下跌的颜色
-        let downcolor = UIColor.ch_hex(0xB1414C)
+        let downcolor = (UIColor.ch_hex(0xB1414C), true)
         let priceSection = CHSection()
         priceSection.backgroundColor = style.backgroundColor
         //分区上显示选中点的数据文字是否在分区外显示
@@ -97,8 +97,8 @@ public extension CHKLineChartStyle {
         
         /// 蜡烛线
         let priceSeries = CHSeries.getCandlePrice(
-            upColor: upcolor,
-            downColor: downcolor,
+            upStyle: upcolor,
+            downStyle: downcolor,
             titleColor: UIColor(white: 0.5, alpha: 1),
             section: priceSection,
             showGuide: true,
@@ -133,7 +133,7 @@ public extension CHKLineChartStyle {
         volumeSection.yAxis.referenceStyle = .none
         volumeSection.yAxis.tickInterval = 2
         volumeSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 4, right: 0)
-        let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
+        let volumeSeries = CHSeries.getDefaultVolume(upStyle: upcolor, downStyle: downcolor, section: volumeSection)
         let volumeMASeries = CHSeries.getMA(
             isEMA: false,
             num: [5,10,30],
@@ -169,7 +169,7 @@ public extension CHKLineChartStyle {
         let macdSeries = CHSeries.getMACD(UIColor.ch_hex(0xDDDDDD),
                                           deac: UIColor.ch_hex(0xF9EE30),
                                           barc: UIColor.ch_hex(0xF600FF),
-                                          upColor: upcolor, downColor: downcolor,
+                                          upStyle: upcolor, downStyle: downcolor,
                                           section: trendSection)
         macdSeries.title = "MACD(12,26,9)"
         macdSeries.symmetrical = true
@@ -228,9 +228,9 @@ public extension CHKLineChartStyle {
         
         //分区点线样式
         //表示上涨的颜色
-        let upcolor = UIColor.ch_hex(0x5BA267)
+        let upcolor = (UIColor.ch_hex(0x5BA267), false)
         //表示下跌的颜色
-        let downcolor = UIColor.ch_hex(0xB1414C)
+        let downcolor = (UIColor.ch_hex(0xB1414C), true)
         let priceSection = CHSection()
         priceSection.backgroundColor = style.backgroundColor
         //分区上显示选中点的数据文字是否在分区外显示
@@ -269,8 +269,8 @@ public extension CHKLineChartStyle {
         
         /// 蜡烛线
         let priceSeries = CHSeries.getCandlePrice(
-            upColor: upcolor,
-            downColor: downcolor,
+            upStyle: upcolor,
+            downStyle: downcolor,
             titleColor: UIColor(white: 0.5, alpha: 1),
             section: priceSection,
             showGuide: true,
@@ -305,7 +305,7 @@ public extension CHKLineChartStyle {
         volumeSection.yAxis.referenceStyle = .none
         volumeSection.yAxis.tickInterval = 2
         volumeSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 4, right: 0)
-        let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
+        let volumeSeries = CHSeries.getDefaultVolume(upStyle: upcolor, downStyle: downcolor, section: volumeSection)
         let volumeMASeries = CHSeries.getMA(
             isEMA: false,
             num: [5,10,30],
@@ -341,7 +341,7 @@ public extension CHKLineChartStyle {
         let macdSeries = CHSeries.getMACD(UIColor.ch_hex(0xDDDDDD),
                                           deac: UIColor.ch_hex(0xF9EE30),
                                           barc: UIColor.ch_hex(0xF600FF),
-                                          upColor: upcolor, downColor: downcolor,
+                                          upStyle: upcolor, downStyle: downcolor,
                                           section: trendSection)
         macdSeries.title = "MACD(12,26,9)"
         macdSeries.symmetrical = true

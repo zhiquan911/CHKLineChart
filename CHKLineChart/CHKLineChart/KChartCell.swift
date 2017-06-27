@@ -120,9 +120,9 @@ extension CHKLineChartStyle {
         
         //分区点线样式
         //表示上涨的颜色
-        let upcolor = UIColor.ch_hex(0x5BA267)
+        let upcolor = (UIColor.ch_hex(0x5BA267), true)
         //表示下跌的颜色
-        let downcolor = UIColor.ch_hex(0xB1414C)
+        let downcolor = (UIColor.ch_hex(0xB1414C), true)
         let priceSection = CHSection()
         priceSection.backgroundColor = style.backgroundColor
         //分区上显示选中点的数据文字是否在分区外显示
@@ -161,8 +161,8 @@ extension CHKLineChartStyle {
         
         /// 蜡烛线
         let priceSeries = CHSeries.getCandlePrice(
-            upColor: upcolor,
-            downColor: downcolor,
+            upStyle: upcolor,
+            downStyle: downcolor,
             titleColor: UIColor(white: 0.5, alpha: 1),
             section: priceSection,
             showGuide: true,

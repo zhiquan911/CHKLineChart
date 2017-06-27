@@ -348,6 +348,65 @@
             </objects>
             <point key="canvasLocation" x="960.79999999999995" y="2619.9400299850076"/>
         </scene>
+        <!--Depth Chart Demo View Controller-->
+        <scene sceneID="ZNA-Qi-Um1">
+            <objects>
+                <viewController storyboardIdentifier="DepthChartDemoViewController" id="ArM-jJ-fdh" customClass="DepthChartDemoViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="DGv-M9-DOf"/>
+                        <viewControllerLayoutGuide type="bottom" id="oSF-gs-z2U"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="wvm-eQ-rI2">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LPf-wo-9ce">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="qCe-Oo-FQ4"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="lsD-hw-9iK"/>
+                                    <barButtonItem title="Close" id="lXg-WF-Odz">
+                                        <connections>
+                                            <action selector="handleClosePressWithSender:" destination="ArM-jJ-fdh" id="O0H-3J-Cgc"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a3z-gM-bzF" customClass="CHDepthChartView" customModule="CHKLineChart" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="64" width="375" height="150"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="150" id="wfF-UC-8IM"/>
+                                </constraints>
+                            </view>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="W6d-lH-2el">
+                                <rect key="frame" x="169" y="120.5" width="37" height="37"/>
+                                <color key="color" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="W6d-lH-2el" firstAttribute="centerX" secondItem="a3z-gM-bzF" secondAttribute="centerX" id="4dq-sD-NDx"/>
+                            <constraint firstItem="LPf-wo-9ce" firstAttribute="leading" secondItem="wvm-eQ-rI2" secondAttribute="leading" id="6eI-BK-0Sc"/>
+                            <constraint firstAttribute="trailing" secondItem="LPf-wo-9ce" secondAttribute="trailing" id="7qF-lg-rBT"/>
+                            <constraint firstItem="a3z-gM-bzF" firstAttribute="leading" secondItem="wvm-eQ-rI2" secondAttribute="leading" id="EeD-HT-aEW"/>
+                            <constraint firstItem="a3z-gM-bzF" firstAttribute="top" secondItem="LPf-wo-9ce" secondAttribute="bottom" id="Fy1-Ev-4sd"/>
+                            <constraint firstItem="LPf-wo-9ce" firstAttribute="top" secondItem="DGv-M9-DOf" secondAttribute="bottom" id="T0m-ZX-75z"/>
+                            <constraint firstItem="W6d-lH-2el" firstAttribute="centerY" secondItem="a3z-gM-bzF" secondAttribute="centerY" id="arZ-74-pDe"/>
+                            <constraint firstAttribute="trailing" secondItem="a3z-gM-bzF" secondAttribute="trailing" id="pGF-GR-otR"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="depthChart" destination="a3z-gM-bzF" id="Bvp-C7-D6n"/>
+                        <outlet property="loadingView" destination="W6d-lH-2el" id="olk-ae-EVX"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7nJ-ul-Scu" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="960.79999999999995" y="3335.9820089955024"/>
+        </scene>
         <!--Chart In Table View Controller-->
         <scene sceneID="t3Y-os-dZl">
             <objects>

@@ -312,10 +312,7 @@ open class CHSection: NSObject {
         }
         
         let serieLayer = CHShapeLayer()
-        
-//        let context = UIGraphicsGetCurrentContext()
-//        context?.setShouldAntialias(true)
-        
+
         var yPos: CGFloat = 0, w: CGFloat = 0
         if titleShowOutSide {
             yPos = self.frame.origin.y - self.padding.top + 2
@@ -343,12 +340,6 @@ open class CHSection: NSObject {
             serieLayer.addSublayer(titleText)
 
             
-//            NSString(string: seriesTitle).draw(at: point,
-//                                               withAttributes:
-//                [
-//                    NSFontAttributeName: self.labelFont,
-//                    NSForegroundColorAttributeName: self.titleColor
-//                ])
             w += seriesTitle.ch_sizeWithConstrained(self.labelFont).width
         }
         
@@ -386,11 +377,9 @@ open class CHSection: NSObject {
             } else {
                 switch item.trend {
                 case .up, .equal:
-                    textColor = model.upColor
-//                    context?.setFillColor(model.upColor.cgColor)
+                    textColor = model.upStyle.color
                 case .down:
-                    textColor = model.downColor
-//                    context?.setFillColor(model.downColor.cgColor)
+                    textColor = model.downStyle.color
                 }
             }
             

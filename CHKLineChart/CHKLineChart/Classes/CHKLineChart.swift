@@ -520,8 +520,6 @@ extension CHKLineChartView {
     func removeLayerView() {
         _ = self.drawLayer.sublayers?.map { $0.removeFromSuperlayer() }
         self.drawLayer.sublayers?.removeAll()
-        _ = self.chartModelLayer.sublayers?.map { $0.removeFromSuperlayer() }
-        self.chartModelLayer.sublayers?.removeAll()
     }
     
     /// 通过CALayer方式画图表
@@ -532,6 +530,10 @@ extension CHKLineChartView {
         
         //初始化数据
         if self.initChart() {
+            
+            
+            /// 待绘制的x坐标标签
+            var xAxisToDraw = [(CGRect, String)]()
             
             //建立每个分区
             self.buildSections {
@@ -546,6 +548,10 @@ extension CHKLineChartView {
                 
                 //绘制每个区域
                 self.drawSection(section)
+                
+                //绘制X轴坐标系，先绘制辅助线，记录标签位置，
+                //返回出来，最后才在需要显示的分区上绘制
+                xAxisToDraw = self.drawXAxis(section)
                 
                 //绘制Y轴坐标系，但最后的y轴标签放到绘制完线段才做
                 let yAxisToDraw = self.drawYAxis(section)
@@ -563,7 +569,7 @@ extension CHKLineChartView {
             
             let showXAxisSection = self.getSecionWhichShowXAxis()
             //显示在分区下面绘制X轴坐标
-            self.drawXAxis(showXAxisSection)
+            self.drawXAxisLabel(showXAxisSection, xAxisToDraw: xAxisToDraw)
             
             //重新显示点击选中的坐标
             self.setSelectedIndexByPoint(self.selectedPoint)
@@ -732,11 +738,9 @@ extension CHKLineChartView {
      - parameter padding: 内边距
      - parameter width:   总宽度
      */
-    fileprivate func drawXAxis(_ section: CHSection) {
+    fileprivate func drawXAxis(_ section: CHSection) -> [(CGRect, String)] {
         
-        guard self.showXAxisLabel else {
-            return
-        }
+        var xAxisToDraw = [(CGRect, String)]()
         
         let xAxis = CHShapeLayer()
         
@@ -773,17 +777,8 @@ extension CHKLineChartView {
             //        NSLog(@"textSize.width = %f", textSize.width)
             let barLabelRect = CGRect(x: xPox, y: startY, width: textSize.width, height: textSize.height)
             
-            //绘制文本
-            let xLabelText = CHTextLayer()
-            xLabelText.frame = barLabelRect
-            xLabelText.string = xLabel
-            xLabelText.alignmentMode = kCAAlignmentCenter
-            xLabelText.fontSize = self.labelFont.pointSize
-            xLabelText.foregroundColor =  self.textColor.cgColor
-            xLabelText.backgroundColor = UIColor.clear.cgColor
-            xLabelText.contentsScale = UIScreen.main.scale
-            
-            xAxis.addSublayer(xLabelText)
+            //记录待绘制的文本
+            xAxisToDraw.append((barLabelRect, xLabel))
             
             //绘制辅助线
             let referencePath = UIBezierPath()
@@ -816,10 +811,52 @@ extension CHKLineChartView {
             startX = perPlotWidth * CGFloat(k)
         }
         
-        self.drawLayer.insertSublayer(xAxis, below: self.chartModelLayer)
-//        context?.strokePath()
+        self.drawLayer.addSublayer(xAxis)
+
+        return xAxisToDraw
     }
     
+    
+    /// 绘制X坐标标签
+    ///
+    /// - Parameters:
+    ///   - section: 哪个分区绘制
+    ///   - xAxisToDraw: 待绘制的内容
+    fileprivate func drawXAxisLabel(_ section: CHSection, xAxisToDraw: [(CGRect, String)]) {
+        
+        guard self.showXAxisLabel else {
+            return
+        }
+        
+        guard xAxisToDraw.count > 0 else {
+            return
+        }
+        
+        let xAxis = CHShapeLayer()
+        
+        let startY = section.frame.maxY //需要显示x坐标标签名字的分区，再最下方显示
+        //绘制x坐标标签，x的位置通过画辅助线时计算得出
+        for (var barLabelRect, xLabel) in xAxisToDraw {
+            
+            barLabelRect.origin.y = startY
+            
+            //绘制文本
+            let xLabelText = CHTextLayer()
+            xLabelText.frame = barLabelRect
+            xLabelText.string = xLabel
+            xLabelText.alignmentMode = kCAAlignmentCenter
+            xLabelText.fontSize = self.labelFont.pointSize
+            xLabelText.foregroundColor =  self.textColor.cgColor
+            xLabelText.backgroundColor = UIColor.clear.cgColor
+            xLabelText.contentsScale = UIScreen.main.scale
+            
+            xAxis.addSublayer(xLabelText)
+            
+        }
+        
+        self.drawLayer.addSublayer(xAxis)
+        //        context?.strokePath()
+    }
     
     /**
      绘制分区
@@ -1069,7 +1106,7 @@ extension CHKLineChartView {
                 self.drawSerie(serie)
             }
         }
-        self.drawLayer.addSublayer(self.chartModelLayer)
+//        self.drawLayer.addSublayer(self.chartModelLayer)
     }
     
     /**
@@ -1080,7 +1117,7 @@ extension CHKLineChartView {
             //循环画出每个模型的线
             for model in serie.chartModels {
                 let serieLayer = model.drawSerie(self.rangeFrom, endIndex: self.rangeTo)
-                self.chartModelLayer.addSublayer(serieLayer)
+                self.drawLayer.addSublayer(serieLayer)
             }
         }
     }

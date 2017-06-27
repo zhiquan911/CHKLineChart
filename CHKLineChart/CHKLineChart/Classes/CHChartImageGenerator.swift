@@ -50,8 +50,8 @@ class CHChartImageGenerator: NSObject {
         let section = self.style.sections[0]
         let model = section.series[0].chartModels[0]
         section.backgroundColor = backgroundColor
-        model.upColor = lineColor
-        model.downColor = lineColor
+        model.upStyle = (lineColor, true)
+        model.downStyle = (lineColor, true)
         model.lineWidth = lineWidth
         var frame = self.chartView.frame
         frame.size.width = size.width

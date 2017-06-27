@@ -69,10 +69,15 @@ extension CHSeries {
     /**
      返回一个标准的蜡烛柱价格系列样式
      */
-    public class func getCandlePrice(upColor: UIColor, downColor: UIColor,titleColor: UIColor, section: CHSection, showGuide: Bool = false, ultimateValueStyle: CHUltimateValueStyle = .none) -> CHSeries {
+    public class func getCandlePrice(upStyle: (color: UIColor, isSolid: Bool),
+                                     downStyle: (color: UIColor, isSolid: Bool),
+                                     titleColor: UIColor,
+                                     section: CHSection,
+                                     showGuide: Bool = false,
+                                     ultimateValueStyle: CHUltimateValueStyle = .none) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.candle
-        let candle = CHChartModel.getCandle(upColor: upColor, downColor: downColor, titleColor: titleColor)
+        let candle = CHChartModel.getCandle(upStyle: upStyle, downStyle: downStyle, titleColor: titleColor)
         candle.section = section
         candle.useTitleColor = false
         candle.showMaxVal = showGuide
@@ -85,10 +90,12 @@ extension CHSeries {
     /**
      返回一个标准的交易量系列样式
      */
-    public class func getDefaultVolume(upColor: UIColor, downColor: UIColor, section: CHSection) -> CHSeries {
+    public class func getDefaultVolume(upStyle: (color: UIColor, isSolid: Bool),
+                                       downStyle: (color: UIColor, isSolid: Bool),
+                                       section: CHSection) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.volume
-        let vol = CHChartModel.getVolume(upColor: upColor, downColor: downColor)
+        let vol = CHChartModel.getVolume(upStyle: upStyle, downStyle: downStyle)
         vol.section = section
         vol.useTitleColor = false
         series.chartModels = [vol]
@@ -136,15 +143,19 @@ extension CHSeries {
     /**
      返回一个MACD系列样式
      */
-    public class func getMACD(_ difc: UIColor, deac: UIColor, barc: UIColor,
-                       upColor: UIColor, downColor: UIColor, section: CHSection) -> CHSeries {
+    public class func getMACD(_ difc: UIColor,
+                              deac: UIColor,
+                              barc: UIColor,
+                              upStyle: (color: UIColor, isSolid: Bool),
+                              downStyle: (color: UIColor, isSolid: Bool),
+                              section: CHSection) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.macd
         let dif = CHChartModel.getLine(difc, title: "DIF", key: "MACD_DIF")
         dif.section = section
         let dea = CHChartModel.getLine(deac, title: "DEA", key: "MACD_DEA")
         dea.section = section
-        let bar = CHChartModel.getBar(upColor: upColor, downColor: downColor, titleColor: barc, title: "BAR", key: "MACD_BAR")
+        let bar = CHChartModel.getBar(upStyle: upStyle, downStyle: downStyle, titleColor: barc, title: "BAR", key: "MACD_BAR")
         bar.section = section
         series.chartModels = [bar, dif, dea]
         return series

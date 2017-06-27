@@ -108,15 +108,15 @@ extension StyleSettingViewController {
     ///   - selectedCandleColor: 选择的蜡烛颜色样式
     func changePriceSeries(selectedStyle: Int, selectedCandleColor: Int) {
         
-        var upcolor: UIColor
-        var downcolor: UIColor
+        var upcolor: (color: UIColor, isSolid: Bool)
+        var downcolor: (color: UIColor, isSolid: Bool)
         
         if selectedCandleColor == 0 {
-            upcolor = UIColor.ch_hex(0xF80D1F)
-            downcolor = UIColor.ch_hex(0x1E932B)
+            upcolor = (UIColor.ch_hex(0xF80D1F), true)
+            downcolor = (UIColor.ch_hex(0x1E932B), true)
         } else {
-            upcolor = UIColor.ch_hex(0x1E932B)
-            downcolor = UIColor.ch_hex(0xF80D1F)
+            upcolor = (UIColor.ch_hex(0x1E932B), true)
+            downcolor = (UIColor.ch_hex(0xF80D1F), true)
         }
         
         
@@ -133,8 +133,8 @@ extension StyleSettingViewController {
             timelineSeries.hidden = true
             
             /// 蜡烛线
-            let priceSeries = CHSeries.getCandlePrice(upColor: upcolor,
-                                                      downColor: downcolor,
+            let priceSeries = CHSeries.getCandlePrice(upStyle: upcolor,
+                                                      downStyle: downcolor,
                                                       titleColor: UIColor(white: 0.8, alpha: 1),
                                                       section: priceSection)
             
@@ -164,8 +164,8 @@ extension StyleSettingViewController {
             timelineSeries.hidden = true
             
             /// 蜡烛线
-            let priceSeries = CHSeries.getCandlePrice(upColor: upcolor,
-                                                      downColor: downcolor,
+            let priceSeries = CHSeries.getCandlePrice(upStyle: upcolor,
+                                                      downStyle: downcolor,
                                                       titleColor: UIColor(white: 0.5, alpha: 1),
                                                       section: priceSection)
             
@@ -197,15 +197,15 @@ extension StyleSettingViewController {
     ///   - selectedCandleColor: 选择的蜡烛颜色样式
     func changeVolumeSeries(selectedStyle: Int, selectedCandleColor: Int) {
         
-        var upcolor: UIColor
-        var downcolor: UIColor
+        var upcolor: (color: UIColor, isSolid: Bool)
+        var downcolor: (color: UIColor, isSolid: Bool)
         
         if selectedCandleColor == 0 {
-            upcolor = UIColor.ch_hex(0xF80D1F)
-            downcolor = UIColor.ch_hex(0x1E932B)
+            upcolor = (UIColor.ch_hex(0xF80D1F), true)
+            downcolor = (UIColor.ch_hex(0x1E932B), true)
         } else {
-            upcolor = UIColor.ch_hex(0x1E932B)
-            downcolor = UIColor.ch_hex(0xF80D1F)
+            upcolor = (UIColor.ch_hex(0x1E932B), true)
+            downcolor = (UIColor.ch_hex(0xF80D1F), true)
         }
         
         
@@ -216,7 +216,7 @@ extension StyleSettingViewController {
             //虚线颜色
             volumeSection.yAxis.referenceStyle = .dash(color: UIColor(white: 0.2, alpha: 1), pattern: [5])
             
-            let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
+            let volumeSeries = CHSeries.getDefaultVolume(upStyle: upcolor, downStyle: downcolor, section: volumeSection)
             let volumeMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
                                                 colors: [
                                                     UIColor.ch_hex(0xDDDDDD),
@@ -237,7 +237,7 @@ extension StyleSettingViewController {
             //虚线颜色
             volumeSection.yAxis.referenceStyle = .dash(color: UIColor(white: 0.8, alpha: 1), pattern: [5])
             
-            let volumeSeries = CHSeries.getDefaultVolume(upColor: upcolor, downColor: downcolor, section: volumeSection)
+            let volumeSeries = CHSeries.getDefaultVolume(upStyle: upcolor, downStyle: downcolor, section: volumeSection)
             let volumeMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
                                                 colors: [
                                                     UIColor.ch_hex(0x4E9CC1),
@@ -265,15 +265,15 @@ extension StyleSettingViewController {
     ///   - selectedCandleColor: 选择的蜡烛颜色样式
     func changeTrendSeries(selectedStyle: Int, selectedCandleColor: Int) {
         
-        var upcolor: UIColor
-        var downcolor: UIColor
+        var upcolor: (color: UIColor, isSolid: Bool)
+        var downcolor: (color: UIColor, isSolid: Bool)
         
         if selectedCandleColor == 0 {
-            upcolor = UIColor.ch_hex(0xF80D1F)
-            downcolor = UIColor.ch_hex(0x1E932B)
+            upcolor = (UIColor.ch_hex(0xF80D1F), true)
+            downcolor = (UIColor.ch_hex(0x1E932B), true)
         } else {
-            upcolor = UIColor.ch_hex(0x1E932B)
-            downcolor = UIColor.ch_hex(0xF80D1F)
+            upcolor = (UIColor.ch_hex(0x1E932B), true)
+            downcolor = (UIColor.ch_hex(0xF80D1F), true)
         }
         
         let trendSection = self.cusStyle.sections[2]
@@ -292,7 +292,7 @@ extension StyleSettingViewController {
             let macdSeries = CHSeries.getMACD(UIColor.ch_hex(0xDDDDDD),
                                               deac: UIColor.ch_hex(0xF9EE30),
                                               barc: UIColor.ch_hex(0xF600FF),
-                                              upColor: upcolor, downColor: downcolor,
+                                              upStyle: upcolor, downStyle: downcolor,
                                               section: trendSection)
             macdSeries.title = "MACD(12,26,9)"
             macdSeries.symmetrical = true
@@ -316,7 +316,7 @@ extension StyleSettingViewController {
             let macdSeries = CHSeries.getMACD(UIColor.ch_hex(0x4E9CC1),
                                               deac: UIColor.ch_hex(0xF7A23B),
                                               barc: UIColor.ch_hex(0xF600FF),
-                                              upColor: upcolor, downColor: downcolor,
+                                              upStyle: upcolor, downStyle: downcolor,
                                               section: trendSection)
             macdSeries.title = "MACD(12,26,9)"
             macdSeries.symmetrical = true
