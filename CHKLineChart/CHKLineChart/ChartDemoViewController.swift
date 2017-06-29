@@ -269,7 +269,7 @@ extension ChartDemoViewController: CHKLineChartDelegate {
     /// - parameter chart:
     ///
     /// - returns:
-    func widthForYAxisLabel(in chart: CHKLineChartView) -> CGFloat {
+    func widthForYAxisLabelInKLineChart(in chart: CHKLineChartView) -> CGFloat {
         if self.selectexPair == "btccny" {
             return chart.kYAxisLabelWidth
         } else {

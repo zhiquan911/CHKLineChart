@@ -110,7 +110,7 @@ extension CustomStyleViewController: CHKLineChartDelegate {
     /// - parameter chart:
     ///
     /// - returns:
-    func widthForYAxisLabel(in chart: CHKLineChartView) -> CGFloat {
+    func widthForYAxisLabelInKLineChart(in chart: CHKLineChartView) -> CGFloat {
         return chart.kYAxisLabelWidth
     }
     

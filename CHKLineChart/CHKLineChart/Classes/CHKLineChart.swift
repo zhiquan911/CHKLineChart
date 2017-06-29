@@ -86,7 +86,7 @@ public enum CHChartViewScrollPosition {
     /// - parameter chart:
     ///
     /// - returns:
-    @objc optional func widthForYAxisLabel(in chart: CHKLineChartView) -> CGFloat
+    @objc optional func widthForYAxisLabelInKLineChart(in chart: CHKLineChartView) -> CGFloat
     
     
     /// 点击图表列响应方法
@@ -102,7 +102,7 @@ public enum CHChartViewScrollPosition {
     ///
     /// - Parameter chart: 图表
     /// - Returns: 返回自定义的高度
-    @objc optional func hegihtForXAxis(in chart: CHKLineChartView) -> CGFloat
+    @objc optional func heightForXAxisInKLineChart(in chart: CHKLineChartView) -> CGFloat
 }
 
 open class CHKLineChartView: UIView {
@@ -172,7 +172,7 @@ open class CHKLineChartView: UIView {
     var plotCount: Int = 0
     var rangeFrom: Int = 0                          //可见区域的开始索引位
     var rangeTo: Int = 0                            //可见区域的结束索引位
-    var range: Int = 77                             //显示在可见区域的个数
+    open var range: Int = 77                             //显示在可见区域的个数
     var borderColor: UIColor = UIColor.gray
     open var labelSize = CGSize(width: 40, height: 16)
     
@@ -205,6 +205,9 @@ open class CHKLineChartView: UIView {
     
     /// 点线图层
     var chartModelLayer: CHShapeLayer = CHShapeLayer()
+    
+    /// 图表数据信息显示层，显示每个分区的数值内容
+    var chartInfoLayer: CHShapeLayer = CHShapeLayer()
     
     open var style: CHKLineChartStyle! {           //显示样式
         didSet {
@@ -316,6 +319,13 @@ open class CHKLineChartView: UIView {
             action: #selector(doPinchAction(_:)))
         pinch.delegate = self
         self.addGestureRecognizer(pinch)
+        
+        //长按手势操作
+//        let longPress = UILongPressGestureRecognizer(target: self,
+//                                                     action: #selector(doLongPressAction(_:)))
+//        //长按时间为1秒
+//        longPress.minimumPressDuration = 0.5
+//        self.addGestureRecognizer(longPress)
         
         //初始数据
         self.resetData()
@@ -598,11 +608,18 @@ extension CHKLineChartView {
         
         self.plotCount = self.delegate?.numberOfPointsInKLineChart(chart: self) ?? 0
         
+        //数据条数不一致，需要重新计算
+        if self.plotCount != self.datas.count {
+            self.resetData()
+        }
+        
         if plotCount > 0 {
             
             //如果显示全部，显示范围为全部数据量
             if self.isShowAll {
                 self.range = self.plotCount
+                self.rangeFrom = 0
+                self.rangeTo = self.plotCount
             }
             
             //图表刷新滚动为默认时，如果第一次初始化，就默认滚动到最后显示
@@ -664,7 +681,7 @@ extension CHKLineChartView {
         var height = self.frame.size.height - (self.padding.top + self.padding.bottom)
         let width  = self.frame.size.width - (self.padding.left + self.padding.right)
         
-        let xAxisHeight = self.delegate?.hegihtForXAxis?(in: self) ?? self.kXAxisHegiht
+        let xAxisHeight = self.delegate?.heightForXAxisInKLineChart?(in: self) ?? self.kXAxisHegiht
         height = height - xAxisHeight
         
         var total = 0
@@ -698,7 +715,7 @@ extension CHKLineChartView {
             }
             
             
-            self.yAxisLabelWidth = self.delegate?.widthForYAxisLabel?(in: self) ?? self.kYAxisLabelWidth
+            self.yAxisLabelWidth = self.delegate?.widthForYAxisLabelInKLineChart?(in: self) ?? self.kYAxisLabelWidth
             
             //y轴的标签显示方位
             switch self.showYAxisLabel {
@@ -1121,6 +1138,19 @@ extension CHKLineChartView {
             }
         }
     }
+    
+    
+//    func drawTitleInfo(_ section: CHSection) {
+//        
+//        //显示范围最后一个点的内容
+//        if let sectionTitleLayer = section.drawTitle(self.selectedIndex) {
+//            _ = self.chartInfoLayer.sublayers?.map { $0.removeFromSuperlayer() }
+//            self.chartInfoLayer.sublayers?.removeAll()
+//            
+//            self.chartInfoLayer.addSublayer(sectionTitleLayer)
+//            self.drawLayer.addSublayer(sectionTitleLayer)
+//        }
+//    }
 }
 
 // MARK: - 公开方法
@@ -1173,6 +1203,7 @@ extension CHKLineChartView {
                 }
             }
         }
+  
         self.drawLayerView()
     }
     
@@ -1186,6 +1217,8 @@ extension CHKLineChartView {
                 break
             }
         }
+
+        
         self.drawLayerView()
     }
     
@@ -1480,5 +1513,22 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
             sender.scale = 1    //恢复比例
         }
         
+    }
+    
+    
+    /// 处理长按操作
+    ///
+    /// - Parameter sender:
+    func doLongPressAction(_ sender: UILongPressGestureRecognizer) {
+        let point = sender.location(in: self)
+        let (_, section) = self.getSectionByTouchPoint(point)
+        if section != nil {
+            if !section!.paging {
+                //显示点击选中的内容
+                self.setSelectedIndexByPoint(point)
+            }
+            
+            self.drawLayerView()
+        }
     }
 }

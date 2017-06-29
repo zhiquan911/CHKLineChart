@@ -93,7 +93,7 @@ extension DepthChartDemoViewController: CHKDepthChartDelegate {
     ///
     /// - Parameter depthChart:
     /// - Returns:
-    func baseValueForYAxis(on depthChart: CHDepthChartView) -> Double {
+    func baseValueForYAxisInDepthChart(in depthChart: CHDepthChartView) -> Double {
         return 0
     }
     
@@ -102,7 +102,7 @@ extension DepthChartDemoViewController: CHKDepthChartDelegate {
     ///
     /// - Parameter depthChart:
     /// - Returns:
-    func incrementValueForYAxis(on depthChart: CHDepthChartView) -> Double {
+    func incrementValueForYAxisInDepthChart(in depthChart: CHDepthChartView) -> Double {
         
         //计算一个显示4个辅助线的友好效果
         var step = self.maxAmount / 4

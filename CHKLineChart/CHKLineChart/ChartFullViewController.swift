@@ -132,11 +132,11 @@ extension ChartFullViewController: CHKLineChartDelegate {
     /// - parameter chart:
     ///
     /// - returns:
-    func widthForYAxisLabel(in chart: CHKLineChartView) -> CGFloat {
+    func widthForYAxisLabelInKLineChart(in chart: CHKLineChartView) -> CGFloat {
         return chart.kYAxisLabelWidth
     }
     
-    func hegihtForXAxis(in chart: CHKLineChartView) -> CGFloat {
+    func heightForXAxisInKLineChart(in chart: CHKLineChartView) -> CGFloat {
         return 16
     }
     

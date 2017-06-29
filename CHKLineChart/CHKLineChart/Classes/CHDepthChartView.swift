@@ -70,14 +70,14 @@ open class CHKDepthChartItem: NSObject {
     /// 做到更好的用户体验，例如：baseValue = 0，incrementValue = 10，则显示y轴显示为0，10，20，30，40...<max
     /// - Parameter depthChart: 图表
     /// - Returns: 开始显示的值
-    @objc optional func baseValueForYAxis(on depthChart: CHDepthChartView) -> Double
+    @objc optional func baseValueForYAxisInDepthChart(in depthChart: CHDepthChartView) -> Double
     
     
     /// y轴每段增加的值
     /// 例如：baseValue = 0，incrementValue = 10，则显示y轴显示为0，10，20，30，40...<max
     /// - Parameter depthChart: 图表
     /// - Returns: 增量
-    @objc optional func incrementValueForYAxis(on depthChart: CHDepthChartView) -> Double
+    @objc optional func incrementValueForYAxisInDepthChart(in depthChart: CHDepthChartView) -> Double
     
     /**
      获取图表X轴的显示的内容
@@ -100,7 +100,7 @@ open class CHKDepthChartItem: NSObject {
     /// - parameter chart:
     ///
     /// - returns:
-    @objc optional func widthForYAxisLabel(in depthChart: CHDepthChartView) -> CGFloat
+    @objc optional func widthForYAxisLabelInDepthChart(in depthChart: CHDepthChartView) -> CGFloat
     
     
     /// 点击图表列响应方法
@@ -116,7 +116,7 @@ open class CHKDepthChartItem: NSObject {
     ///
     /// - Parameter chart: 图表
     /// - Returns: 返回自定义的高度
-    @objc optional func hegihtForXAxis(in depthChart: CHDepthChartView) -> CGFloat
+    @objc optional func heightForXAxisInDepthChart(in depthChart: CHDepthChartView) -> CGFloat
 }
 
 open class CHDepthChartView: UIView {
@@ -487,7 +487,7 @@ extension CHDepthChartView {
         backgroundLayer.fillColor = self.backgroundColor?.cgColor
         self.drawLayer.addSublayer(backgroundLayer)
         
-        self.yAxisLabelWidth = self.delegate?.widthForYAxisLabel?(in: self) ?? self.kYAxisLabelWidth
+        self.yAxisLabelWidth = self.delegate?.widthForYAxisLabelInDepthChart?(in: self) ?? self.kYAxisLabelWidth
         
         //y轴的标签显示方位
         switch self.showYAxisLabel {
@@ -579,7 +579,7 @@ extension CHDepthChartView {
         }
         
         //如果有基础值
-        guard let baseValue = self.delegate?.baseValueForYAxis?(on: self) else {
+        guard let baseValue = self.delegate?.baseValueForYAxisInDepthChart?(in: self) else {
             return
         }
         
@@ -628,7 +628,7 @@ extension CHDepthChartView {
         var yaxis = self.yAxis
         var step: CGFloat = 0       //递增值
         //计算y轴间断增值
-        if let increaseValue = self.delegate?.incrementValueForYAxis?(on: self) {
+        if let increaseValue = self.delegate?.incrementValueForYAxisInDepthChart?(in: self) {
            
             step = CGFloat(increaseValue)
             
