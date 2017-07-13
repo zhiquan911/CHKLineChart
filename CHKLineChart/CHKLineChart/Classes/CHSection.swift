@@ -61,7 +61,8 @@ open class CHSection: NSObject {
     open var xAxis: CHXAxis = CHXAxis()                             //X轴参数
     open var backgroundColor: UIColor = UIColor.black
     open var index: Int = 0
-    
+    var titleLayer: CHShapeLayer = CHShapeLayer()                           //显示标题内容的层
+    var sectionLayer: CHShapeLayer = CHShapeLayer()                 //分区的绘图层
     
     /// 初始化分区
     ///
@@ -69,6 +70,16 @@ open class CHSection: NSObject {
     convenience init(valueType: CHSectionValueType) {
         self.init()
         self.valueType = valueType
+    }
+    
+    
+    /// 清空图表的子图层
+    func removeLayerView() {
+        _ = self.sectionLayer.sublayers?.map { $0.removeFromSuperlayer() }
+        self.sectionLayer.sublayers?.removeAll()
+        
+        _ = self.titleLayer.sublayers?.map { $0.removeFromSuperlayer() }
+        self.titleLayer.sublayers?.removeAll()
     }
     
     func buildYAxis(startIndex: Int, endIndex: Int, datas: [CHChartItem]) {
@@ -266,45 +277,42 @@ open class CHSection: NSObject {
     /**
      画分区的标题
      */
-    func drawTitle(_ chartSelectedIndex: Int) -> CHShapeLayer? {
+    func drawTitle(_ chartSelectedIndex: Int) {
         
         guard self.showTitle else {
-            return nil
+            return
         }
         
         if chartSelectedIndex == -1 {
-            return nil      //没有数据返回
+            return       //没有数据返回
         }
         
-        let sectionTitleLayer = CHShapeLayer()
-        
-        var startX = self.frame.origin.x + self.padding.left + 2
         if self.paging {     //如果分页
             let series = self.series[self.selectedIndex]
-            let (_, serieLayer) = self.drawTitlePerSerie(startX, chartSelectedIndex: chartSelectedIndex, series: series)
-            
-            if serieLayer != nil {
-                sectionTitleLayer.addSublayer(serieLayer!)
+            if let attributes = self.getTitleAttributesByIndex(chartSelectedIndex, series: series) {
+                self.setHeader(titles: attributes)
             }
+      
             
         } else {
+            var titleAttr = [(title: String, color: UIColor)]()
             for serie in self.series {   //不分页
-                let (newStartX, serieLayer) = self.drawTitlePerSerie(startX, chartSelectedIndex: chartSelectedIndex, series: serie)
-                startX = newStartX
-                if serieLayer != nil {
-                    sectionTitleLayer.addSublayer(serieLayer!)
+                if let attributes = self.getTitleAttributesByIndex(chartSelectedIndex, series: serie) {
+                    titleAttr.append(contentsOf: attributes)
                 }
+                
+
             }
+            
+            self.setHeader(titles: titleAttr)
         }
-        
-        return sectionTitleLayer
         
         
     }
     
     /**
      画分区中每个系列的标题
-     */
+ 
     func drawTitlePerSerie(_ xPos: CGFloat, chartSelectedIndex: Int, series: CHSeries) -> (CGFloat, CHShapeLayer?) {
         
         if series.hidden {
@@ -409,8 +417,144 @@ open class CHSection: NSObject {
         }
         return (startX + w, serieLayer)
     }
+     */
+    
+    /// 设置分区头部文本显示内容
+    ///
+    /// - Parameters:
+    ///   - titles: 文本内容及颜色元组
+    open func setHeader(titles: [(title: String, color: UIColor)])  {
+
+        var start = 0
+        let titleString = NSMutableAttributedString()
+        for (title, color) in titles {
+            titleString.append(NSAttributedString(string: title))
+            let range = NSMakeRange(start, title.ch_length)
+//            NSLog("title = \(title)")
+//            NSLog("range = \(range)")
+            let colorAttribute: [String: AnyObject] = [NSForegroundColorAttributeName: color]
+            titleString.addAttributes(colorAttribute, range: range)
+            start += title.ch_length
+        }
+        
+        self.drawTitleForHeader(title: titleString)
+    }
     
     
+    /// 获取标题属性元组
+    ///
+    /// - Parameters:
+    ///   - chartSelectedIndex: 图表选中位置
+    ///   - series: 线
+    /// - Returns: 标题属性
+    open func getTitleAttributesByIndex(_ chartSelectedIndex: Int, series: CHSeries) -> [(title: String, color: UIColor)]? {
+        
+        if series.hidden {
+            return nil
+        }
+        
+        guard series.showTitle else {
+            return nil
+        }
+ 
+        if chartSelectedIndex == -1 {
+            return nil      //没有数据返回
+        }
+        
+        var titleAttr = [(title: String, color: UIColor)]()
+        
+        if !series.title.isEmpty {
+            let seriesTitle = series.title + "  "
+            
+            titleAttr.append((title: seriesTitle, color: self.titleColor))
+            
+        }
+        
+        for model in series.chartModels {
+            var title = ""
+            var textColor: UIColor
+            let item = model[chartSelectedIndex]
+            switch model {
+            case is CHCandleModel:
+                
+                title += NSLocalizedString("O", comment: "") + ": " +
+                    item.openPrice.ch_toString(maxF: self.decimal) + "  "   //开始
+                title += NSLocalizedString("H", comment: "") + ": " +
+                    item.highPrice.ch_toString(maxF: self.decimal) + "  "   //最高
+                title += NSLocalizedString("L", comment: "") + ": " +
+                    item.lowPrice.ch_toString(maxF: self.decimal) + "  "    //最低
+                title += NSLocalizedString("C", comment: "") + ": " +
+                    item.closePrice.ch_toString(maxF: self.decimal) + "  "  //收市
+                
+            case is CHColumnModel:
+                title += model.title + ": " + item.vol.ch_toString(maxF: self.decimal) + "  "
+            default:
+                if item.value != nil {
+                    title += model.title + ": " + item.value!.ch_toString(maxF: self.decimal) + "  "
+                }  else {
+                    title += model.title + ": --  "
+                }
+                
+            }
+            
+            if model.useTitleColor {    //是否用标题颜色
+                textColor = model.titleColor
+            } else {
+                switch item.trend {
+                case .up, .equal:
+                    textColor = model.upStyle.color
+                case .down:
+                    textColor = model.downStyle.color
+                }
+            }
+            
+            titleAttr.append((title: title, color: textColor))
+           
+        }
+        
+        return titleAttr
+    }
+    
+    
+    
+    /// 绘制header上的标题信息
+    ///
+    /// - Parameter title: 标题内容
+    func drawTitleForHeader(title: NSMutableAttributedString) {
+        
+        guard self.showTitle else {
+            return
+        }
+        
+        _ = self.titleLayer.sublayers?.map { $0.removeFromSuperlayer() }
+        self.titleLayer.sublayers?.removeAll()
+        
+        var yPos: CGFloat = 0, w: CGFloat = 0
+        if titleShowOutSide {
+            yPos = self.frame.origin.y - self.padding.top + 2
+        } else {
+            yPos = self.frame.origin.y + 2
+        }
+        
+        let startX = self.frame.origin.x + self.padding.left + 2
+        let containerWidth = self.frame.width - self.padding.left - self.padding.right
+        
+        let point = CGPoint(x: startX + w, y: yPos)
+        
+        let textSize = title.string.ch_sizeWithConstrained(self.labelFont)
+        
+        let titleText = CHTextLayer()
+        titleText.frame = CGRect(origin: point, size: CGSize(width: containerWidth, height: textSize.height + 20))
+        titleText.string = title
+        titleText.fontSize = self.labelFont.pointSize
+//        titleText.foregroundColor =  self.titleColor.cgColor
+        titleText.backgroundColor = UIColor.clear.cgColor
+        titleText.contentsScale = UIScreen.main.scale
+        titleText.isWrapped = true
+        
+        self.titleLayer.addSublayer(titleText)
+        
+    }
     
     //切换到下一个系列显示
     func nextPage() {

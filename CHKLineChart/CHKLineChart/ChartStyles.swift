@@ -228,7 +228,7 @@ public extension CHKLineChartStyle {
         
         //分区点线样式
         //表示上涨的颜色
-        let upcolor = (UIColor.ch_hex(0x5BA267), false)
+        let upcolor = (UIColor.ch_hex(0x5BA267), true)
         //表示下跌的颜色
         let downcolor = (UIColor.ch_hex(0xB1414C), true)
         let priceSection = CHSection()
@@ -245,6 +245,8 @@ public extension CHKLineChartStyle {
         priceSection.ratios = 0
         //Y轴辅助线的样式，实线
         priceSection.yAxis.referenceStyle = .none
+        
+        priceSection.yAxis.tickInterval = 3
         //分区采用固定高度
         priceSection.fixHeight = 176
         //分区内边距
@@ -303,7 +305,7 @@ public extension CHKLineChartStyle {
         volumeSection.showTitle = false
         volumeSection.ratios = 1
         volumeSection.yAxis.referenceStyle = .none
-        volumeSection.yAxis.tickInterval = 2
+        volumeSection.yAxis.tickInterval = 1
         volumeSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 4, right: 0)
         let volumeSeries = CHSeries.getDefaultVolume(upStyle: upcolor, downStyle: downcolor, section: volumeSection)
         let volumeMASeries = CHSeries.getMA(
@@ -329,7 +331,7 @@ public extension CHKLineChartStyle {
         trendSection.ratios = 1
         trendSection.paging = true
         trendSection.yAxis.referenceStyle = .none
-        trendSection.yAxis.tickInterval = 2
+        trendSection.yAxis.tickInterval = 1
         trendSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 8, right: 0)
         let kdjSeries = CHSeries.getKDJ(UIColor.ch_hex(0xDDDDDD),
                                         dc: UIColor.ch_hex(0xF9EE30),
@@ -341,7 +343,7 @@ public extension CHKLineChartStyle {
         let macdSeries = CHSeries.getMACD(UIColor.ch_hex(0xDDDDDD),
                                           deac: UIColor.ch_hex(0xF9EE30),
                                           barc: UIColor.ch_hex(0xF600FF),
-                                          upStyle: upcolor, downStyle: downcolor,
+                                          upStyle: (UIColor.ch_hex(0x5BA267), false), downStyle: downcolor,
                                           section: trendSection)
         macdSeries.title = "MACD(12,26,9)"
         macdSeries.symmetrical = true

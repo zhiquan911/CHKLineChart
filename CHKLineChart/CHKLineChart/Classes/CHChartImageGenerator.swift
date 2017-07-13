@@ -166,7 +166,7 @@ extension CHChartImageGenerator: CHKLineChartDelegate {
         return chart.kYAxisLabelWidth
     }
     
-    func kLineChart(chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, section: CHSection) -> String {
+    func kLineChart(chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, atIndex index: Int, section: CHSection) -> String {
 //        let strValue = value.ch_toString(maxF: section.decimal)
         return ""
     }

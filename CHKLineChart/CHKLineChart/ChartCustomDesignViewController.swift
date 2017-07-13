@@ -189,7 +189,7 @@ extension ChartCustomDesignViewController: CHKLineChartDelegate {
         return item
     }
     
-    func kLineChart(chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, section: CHSection) -> String {
+    func kLineChart(chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, atIndex index: Int, section: CHSection) -> String {
         var strValue = ""
         if value / 10000 > 1 {
             strValue = (value / 10000).ch_toString(maxF: section.decimal) + "万"

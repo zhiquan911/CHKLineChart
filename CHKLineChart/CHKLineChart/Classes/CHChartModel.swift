@@ -74,7 +74,7 @@ open class CHChartModel {
     open var useTitleColor = true
     open var key: String = ""                                     //key的名字
     open var ultimateValueStyle: CHUltimateValueStyle = .none       // 最大最小值显示样式
-    open var lineWidth: CGFloat = 1                                     //线段宽度
+    open var lineWidth: CGFloat = 0.6                                     //线段宽度
     
     weak var section: CHSection!
     
@@ -313,7 +313,7 @@ open class CHCandleModel: CHChartModel {
                 
                 //如果为自定义为空心，需要把矩形缩小lineWidth一圈。
                 if isSolid {
-                    candleLayer.lineWidth = 0
+                    candleLayer.lineWidth = self.lineWidth
                 } else {
                     candleLayer.fillColor = section.backgroundColor.cgColor
                     candleLayer.lineWidth = self.lineWidth
@@ -421,7 +421,7 @@ open class CHColumnModel: CHChartModel {
             columnLayer.path = columnPath.cgPath
             
             if isSolid {
-                columnLayer.lineWidth = 0   //不设置为0会受到抗锯齿处理导致变大
+                columnLayer.lineWidth = self.lineWidth   //不设置为0会受到抗锯齿处理导致变大
             } else {
                 columnLayer.fillColor = section.backgroundColor.cgColor
                 columnLayer.lineWidth = self.lineWidth
@@ -509,7 +509,7 @@ open class CHBarModel: CHChartModel {
             }
             
             if isSolid {
-                barLayer.lineWidth = 0      //不设置为0会受到抗锯齿处理导致变大
+                barLayer.lineWidth = self.lineWidth      //不设置为0会受到抗锯齿处理导致变大
             } else {
                 barLayer.fillColor = section.backgroundColor.cgColor
                 barLayer.lineWidth = self.lineWidth

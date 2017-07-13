@@ -133,6 +133,7 @@ public extension CHKLineChartStyle {
         let upcolor = (UIColor.ch_hex(0xF80D1F), true)
         let downcolor = (UIColor.ch_hex(0x1E932B), true)
         let priceSection = CHSection()
+        priceSection.backgroundColor = style.backgroundColor
         priceSection.titleShowOutSide = true
         priceSection.valueType = .price
         priceSection.hidden = false
@@ -157,6 +158,8 @@ public extension CHKLineChartStyle {
             section: priceSection,
             showGuide: true,
             ultimateValueStyle: .arrow(UIColor(white: 0.8, alpha: 1)))
+        
+        priceSeries.showTitle = true
         
         priceSeries.chartModels.first?.ultimateValueStyle = .arrow(UIColor(white: 0.8, alpha: 1))
         
@@ -185,6 +188,7 @@ public extension CHKLineChartStyle {
         priceSection.series = [timelineSeries, priceSeries, priceMASeries, priceEMASeries]
         
         let volumeSection = CHSection()
+        volumeSection.backgroundColor = style.backgroundColor
         volumeSection.valueType = .volume
         volumeSection.hidden = false
         volumeSection.ratios = 1
@@ -216,6 +220,7 @@ public extension CHKLineChartStyle {
         volumeSection.series = [volumeSeries, volumeMASeries, volumeEMASeries]
         
         let trendSection = CHSection()
+        trendSection.backgroundColor = style.backgroundColor
         trendSection.valueType = .analysis
         trendSection.hidden = false
         trendSection.ratios = 1

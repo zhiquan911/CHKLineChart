@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 //String类扩展
-public extension String {
+extension String {
     
     /**
      计算文字的宽度
@@ -20,16 +20,20 @@ public extension String {
      
      - returns:
      */
-    public func ch_sizeWithConstrained(_ font: UIFont) -> CGSize {
-        let constraintRect = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+    func ch_sizeWithConstrained(_ font: UIFont,
+                                constraintRect: CGSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)) -> CGSize {
         let boundingBox = self.boundingRect(with: constraintRect, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil)
         return boundingBox.size
     }
     
+    /// 字符串长度
+    var ch_length: Int {
+        return self.characters.count;
+    }
 }
 
 
-public extension UIColor {
+extension UIColor {
     
     /**
      16进制表示颜色
@@ -38,16 +42,16 @@ public extension UIColor {
      
      - returns:
      */
-    public class func ch_hex(_ hex: UInt, alpha: Float = 1.0) -> UIColor {
+    class func ch_hex(_ hex: UInt, alpha: Float = 1.0) -> UIColor {
         return UIColor(red: CGFloat((hex & 0xFF0000) >> 16) / 255.0,
-                  green: CGFloat((hex & 0x00FF00) >> 8) / 255.0,
-                  blue: CGFloat(hex & 0x0000FF) / 255.0,
-                  alpha: CGFloat(alpha))
+                       green: CGFloat((hex & 0x00FF00) >> 8) / 255.0,
+                       blue: CGFloat(hex & 0x0000FF) / 255.0,
+                       alpha: CGFloat(alpha))
     }
-
+    
 }
 
-public extension Date {
+extension Date {
     
     /*!
      * @method 把时间戳转换为用户格式时间
@@ -57,7 +61,7 @@ public extension Date {
      * @param   format        格式
      * @result                时间
      */
-    public static func ch_getTimeByStamp(_ timestamp: Int, format: String) -> String {
+    static func ch_getTimeByStamp(_ timestamp: Int, format: String) -> String {
         var time = ""
         if (timestamp == 0) {
             return ""
@@ -71,7 +75,7 @@ public extension Date {
 }
 
 
-public extension CGFloat {
+extension CGFloat {
     
     /**
      转化为字符串格式
@@ -82,12 +86,18 @@ public extension CGFloat {
      
      - returns:
      */
-    public func ch_toString(_ minF: Int = 2, maxF: Int = 6, minI: Int = 1) -> String {
+    func ch_toString(_ minF: Int = 2, maxF: Int = 6, minI: Int = 1) -> String {
         let valueDecimalNumber = NSDecimalNumber(value: Double(self) as Double)
         let twoDecimalPlacesFormatter = NumberFormatter()
         twoDecimalPlacesFormatter.maximumFractionDigits = maxF
         twoDecimalPlacesFormatter.minimumFractionDigits = minF
         twoDecimalPlacesFormatter.minimumIntegerDigits = minI
         return twoDecimalPlacesFormatter.string(from: valueDecimalNumber)!
+    }
+}
+
+extension Array {
+    subscript (safe index: Int) -> Element? {
+        return (0..<count).contains(index) ? self[index] : nil
     }
 }

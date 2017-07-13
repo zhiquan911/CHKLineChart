@@ -21,6 +21,16 @@ public enum CHChartViewScrollPosition {
     case top, end, none
 }
 
+
+/// 图表选中的十字y轴显示位置
+///
+/// - free: 自由就在显示的点上
+/// - onClosePrice: 在收盘价上
+public enum CHChartSelectedPosition {
+    case free
+    case onClosePrice
+}
+
 /**
  *  K线数据源代理
  */
@@ -53,7 +63,7 @@ public enum CHChartViewScrollPosition {
      
      - returns:
      */
-    func kLineChart(chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, section: CHSection) -> String
+    func kLineChart(chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, atIndex index: Int, section: CHSection) -> String
     
     /**
      获取图表X轴的显示的内容
@@ -103,6 +113,32 @@ public enum CHChartViewScrollPosition {
     /// - Parameter chart: 图表
     /// - Returns: 返回自定义的高度
     @objc optional func heightForXAxisInKLineChart(in chart: CHKLineChartView) -> CGFloat
+    
+    
+    /// 初始化时的显示范围长度
+    ///
+    /// - Parameter chart: 图表
+    @objc optional func initRangeInKLineChart(in chart: CHKLineChartView) -> Int
+    
+    
+    /// 自定义选择点时出现的标签样式
+    ///
+    /// - Parameters:
+    ///   - chart: 图表
+    ///   - yAxis: 可给用户自定义的y轴显示标签
+    ///   - viewOfXAxis: 可给用户自定义的x轴显示标签
+    @objc optional func kLineChart(chart: CHKLineChartView, viewOfYAxis yAxis: UILabel, viewOfXAxis: UILabel)
+    
+    
+    /// 自定义section的头部View显示内容
+    ///
+    /// - Parameters:
+    ///   - chart: 图表
+    ///   - section: 分区的索引位
+    /// - Returns: 自定义的View
+    @objc optional func kLineChart(chart: CHKLineChartView, viewForHeaderInSection section: Int) -> UIView
+    
+
 }
 
 open class CHKLineChartView: UIView {
@@ -126,7 +162,8 @@ open class CHKLineChartView: UIView {
     open var handlerOfAlgorithms: [CHChartAlgorithmProtocol] = [CHChartAlgorithmProtocol]()
     open var padding: UIEdgeInsets = UIEdgeInsets.zero    //内边距
     open var showYAxisLabel = CHYAxisShowPosition.right      //显示y的位置，默认右边
-    open var isInnerYAxis: Bool = false                     // 是否把y坐标内嵌到图表仲
+    open var isInnerYAxis: Bool = false                     // 是否把y坐标内嵌到图表中
+    open var selectedPosition: CHChartSelectedPosition = .onClosePrice         //选中显示y值的位置
 
     @IBOutlet open weak var delegate: CHKLineChartDelegate?             //代理
     
@@ -142,17 +179,18 @@ open class CHKLineChartView: UIView {
     //是否可点选
     open var enableTap: Bool = true {
         didSet {
-            self.showSelection = false
+            self.showSelection = self.enableTap
         }
     }
     
     /// 是否显示选中的内容
     open var showSelection: Bool = true {
         didSet {
-            self.selectedXAxisLabel?.isHidden = true
-            self.selectedYAxisLabel?.isHidden = true
-            self.verticalLineView?.isHidden = true
-            self.horizontalLineView?.isHidden = true
+            self.selectedXAxisLabel?.isHidden = !self.showSelection
+            self.selectedYAxisLabel?.isHidden = !self.showSelection
+            self.verticalLineView?.isHidden = !self.showSelection
+            self.horizontalLineView?.isHidden = !self.showSelection
+            self.sightView?.isHidden = !self.showSelection
         }
     }
     
@@ -184,6 +222,7 @@ open class CHKLineChartView: UIView {
     var horizontalLineView: UIView?
     var selectedXAxisLabel: UILabel?
     var selectedYAxisLabel: UILabel?
+    var sightView: UIView?       //点击出现的准星
     
     //动力学引擎
     lazy var animator: UIDynamicAnimator = UIDynamicAnimator(referenceView: self)
@@ -294,6 +333,12 @@ open class CHKLineChartView: UIView {
         self.selectedXAxisLabel?.textAlignment = NSTextAlignment.center
         self.addSubview(self.selectedXAxisLabel!)
         
+        self.sightView = UIView(frame: CGRect(x: 0, y: 0, width: 6, height: 6))
+        self.sightView?.backgroundColor = self.selectedBGColor
+        self.sightView?.isHidden = true
+        self.sightView?.layer.cornerRadius = 3
+        self.addSubview(self.sightView!)
+        
         //绘画图层
         self.layer.addSublayer(self.drawLayer)
         
@@ -321,11 +366,17 @@ open class CHKLineChartView: UIView {
         self.addGestureRecognizer(pinch)
         
         //长按手势操作
-//        let longPress = UILongPressGestureRecognizer(target: self,
-//                                                     action: #selector(doLongPressAction(_:)))
-//        //长按时间为1秒
-//        longPress.minimumPressDuration = 0.5
-//        self.addGestureRecognizer(longPress)
+        let longPress = UILongPressGestureRecognizer(target: self,
+                                                     action: #selector(doLongPressAction(_:)))
+        //长按时间为1秒
+        longPress.minimumPressDuration = 0.5
+        self.addGestureRecognizer(longPress)
+        
+        
+        //加载一个初始化的Range值
+        if let userRange = self.delegate?.initRangeInKLineChart?(in: self) {
+            self.range = userRange
+        }
         
         //初始数据
         self.resetData()
@@ -411,11 +462,11 @@ open class CHKLineChartView: UIView {
             return
         }
         
-        self.selectedXAxisLabel?.isHidden = !self.showSelection
-        self.selectedYAxisLabel?.isHidden = !self.showSelection
-        self.verticalLineView?.isHidden = !self.showSelection
-        self.horizontalLineView?.isHidden = !self.showSelection
-        
+//        self.selectedXAxisLabel?.isHidden = !self.showSelection
+//        self.selectedYAxisLabel?.isHidden = !self.showSelection
+//        self.verticalLineView?.isHidden = !self.showSelection
+//        self.horizontalLineView?.isHidden = !self.showSelection
+//        self.sightView?.isHidden = !self.showSelection
         
         if point.equalTo(CGPoint.zero) {
             return
@@ -449,7 +500,7 @@ open class CHKLineChartView: UIView {
         //每个点的间隔宽度
         let plotWidth = (section!.frame.size.width - section!.padding.left - section!.padding.right) / CGFloat(self.rangeTo - self.rangeFrom)
         
-        let yVal = section!.getRawValue(point.y)        //获取y轴坐标的实际值
+        var yVal: CGFloat = 0        //获取y轴坐标的实际值
         
         for i in self.rangeFrom...self.rangeTo - 1 {
             let ixs = plotWidth * CGFloat(i - self.rangeFrom) + section!.padding.left + self.padding.left
@@ -466,20 +517,37 @@ open class CHKLineChartView: UIView {
                 let hheight = lastSection.frame.maxY
                 //显示辅助线
                 self.horizontalLineView?.frame = CGRect(x: hx, y: hy, width: self.lineWidth, height: hheight)
-//                self.horizontalLineView?.isHidden = false
+                //                self.horizontalLineView?.isHidden = false
                 
                 let vx = section!.frame.origin.x + section!.padding.left
-                let vy = point.y
+                var vy: CGFloat = 0
+                
+                
+                
+                //处理水平线y的值
+                switch self.selectedPosition {
+                case .free:
+                    vy = point.y
+                    yVal = section!.getRawValue(point.y)        //获取y轴坐标的实际值
+                case .onClosePrice:
+                    if section?.valueType == .price {
+                        yVal = item.closePrice                      //获取收盘价作为实际值
+                    } else if section?.valueType == .volume {
+                        yVal = item.vol
+                    }
+                    vy = section!.getLocalY(yVal)
+                    
+                }
                 let hwidth = section!.frame.size.width - section!.padding.left - section!.padding.right
                 //显示辅助线
-                self.verticalLineView?.frame = CGRect(x: vx, y: vy, width: hwidth, height: self.lineWidth)
-//                self.verticalLineView?.isHidden = false
+                self.verticalLineView?.frame = CGRect(x: vx, y: vy - self.lineWidth / 2, width: hwidth, height: self.lineWidth)
+                //                self.verticalLineView?.isHidden = false
                 
                 //显示y轴辅助内容
                 //控制y轴的label在左还是右显示
                 var yAxisStartX: CGFloat = 0
-//                self.selectedYAxisLabel?.isHidden = false
-//                self.selectedXAxisLabel?.isHidden = false
+                //                self.selectedYAxisLabel?.isHidden = false
+                //                self.selectedXAxisLabel?.isHidden = false
                 switch self.showYAxisLabel {
                 case .left:
                     yAxisStartX = section!.frame.origin.x
@@ -489,7 +557,7 @@ open class CHKLineChartView: UIView {
                     self.selectedYAxisLabel?.isHidden = true
                 }
                 self.selectedYAxisLabel?.text = String(format: format, yVal)     //显示实际值
-                self.selectedYAxisLabel?.frame = CGRect(x: yAxisStartX, y: point.y - self.labelSize.height / 2, width: self.yAxisLabelWidth, height: self.labelSize.height)
+                self.selectedYAxisLabel?.frame = CGRect(x: yAxisStartX, y: vy - self.labelSize.height / 2, width: self.yAxisLabelWidth, height: self.labelSize.height)
                 let time = Date.ch_getTimeByStamp(item.time, format: "yyyy-MM-dd HH:mm") //显示实际值
                 let size = time.ch_sizeWithConstrained(self.labelFont)
                 self.selectedXAxisLabel?.text = time
@@ -506,18 +574,56 @@ open class CHKLineChartView: UIView {
                 
                 self.selectedXAxisLabel?.frame = CGRect(x: x, y: showXAxisSection.frame.maxY, width: size.width  + 6, height: self.labelSize.height)
                 
+                self.sightView?.center = CGPoint(x: hx, y: vy)
+                
+                //给用户进行最后的自定义
+                self.delegate?.kLineChart?(chart: self, viewOfYAxis: self.selectedXAxisLabel!, viewOfXAxis: self.selectedYAxisLabel!)
+                
+                self.showSelection = true
+                
                 self.bringSubview(toFront: self.verticalLineView!)
                 self.bringSubview(toFront: self.horizontalLineView!)
                 self.bringSubview(toFront: self.selectedXAxisLabel!)
                 self.bringSubview(toFront: self.selectedYAxisLabel!)
+                self.bringSubview(toFront: self.sightView!)
                 
-                //回调给代理委托方法
-                self.delegate?.kLineChart?(chart: self, didSelectAt: i, item: item)
+                //设置选中点
+                self.setSelectedIndexByIndex(i)
                 
                 break
             }
             
         }
+    }
+    
+    /**
+     设置选中的数据点
+     
+     - parameter index: 选中位置
+     */
+    func setSelectedIndexByIndex(_ index: Int) {
+        
+        guard index >= self.rangeFrom && index < self.rangeTo else {
+            return
+        }
+        
+        self.selectedIndex = index
+        let item = self.datas[index]
+        
+        //显示分区的header标题
+        for section in self.sections {
+            if section.hidden {
+                continue
+            }
+            
+            section.drawTitle(index)
+        }
+        
+        
+        
+        //回调给代理委托方法
+        self.delegate?.kLineChart?(chart: self, didSelectAt: index, item: item)
+        
     }
     
 }
@@ -528,6 +634,12 @@ extension CHKLineChartView {
     
     /// 清空图表的子图层
     func removeLayerView() {
+        for section in self.sections {
+            section.removeLayerView()
+            for series in section.series {
+                series.removeLayerView()
+            }
+        }
         _ = self.drawLayer.sublayers?.map { $0.removeFromSuperlayer() }
         self.drawLayer.sublayers?.removeAll()
     }
@@ -570,10 +682,10 @@ extension CHKLineChartView {
                 //绘制Y轴坐标上的标签
                 self.drawYAxisLabel(yAxisToDraw)
                 
+                //把标题添加到主绘图层上
+                self.drawLayer.addSublayer(section.titleLayer)
                 //显示范围最后一个点的内容
-                if let sectionTitleLayer = section.drawTitle(self.selectedIndex) {
-                    self.drawLayer.addSublayer(sectionTitleLayer)
-                }
+                section.drawTitle(self.selectedIndex)
                 
             }
             
@@ -582,7 +694,7 @@ extension CHKLineChartView {
             self.drawXAxisLabel(showXAxisSection, xAxisToDraw: xAxisToDraw)
             
             //重新显示点击选中的坐标
-            self.setSelectedIndexByPoint(self.selectedPoint)
+            //self.setSelectedIndexByPoint(self.selectedPoint)
             
             self.delegate?.didFinishKLineChartRefresh?(chart: self)
         }
@@ -769,7 +881,10 @@ extension CHKLineChartView {
         
         //x轴分平均分4个间断，显示5个x轴坐标，按照图表的值个数，计算每个间断的个数
         let dataRange = self.rangeTo - self.rangeFrom
-        let xTickInterval: Int = dataRange / self.xAxisPerInterval
+        var xTickInterval: Int = dataRange / self.xAxisPerInterval
+        if xTickInterval <= 0 {
+            xTickInterval = 1
+        }
         
         //绘制x轴标签
         //每个点的间隔宽度
@@ -788,7 +903,7 @@ extension CHKLineChartView {
             if (xPox < 0) {
                 xPox = startX
             } else if (xPox + textSize.width > endX) {
-                xPox = xPox - (xPox + textSize.width - endX)
+                xPox = endX - textSize.width
             }
             //        NSLog(@"xPox = %f", xPox)
             //        NSLog(@"textSize.width = %f", textSize.width)
@@ -1005,7 +1120,7 @@ extension CHKLineChartView {
             yVal = yaxis.baseValue - CGFloat(i) * step
         }
         
-        for yVal in valueToDraw {
+        for (i, yVal) in valueToDraw.enumerated() {
             
             
             //画虚线和Y标签值
@@ -1054,7 +1169,7 @@ extension CHKLineChartView {
             if showYAxisLabel {
                 
                 //获取调用者回调的label字符串值
-                let strValue = self.delegate?.kLineChart(chart: self, labelOnYAxisForValue: yVal, section: section) ?? ""
+                let strValue = self.delegate?.kLineChart(chart: self, labelOnYAxisForValue: yVal, atIndex: i, section: section) ?? ""
                 
                 let yLabelRect = CGRect(x: startX,
                                         y: startY,
@@ -1115,42 +1230,36 @@ extension CHKLineChartView {
         if section.paging {
             //如果section以分页显示，则读取当前显示的系列
             let serie = section.series[section.selectedIndex]
-            self.drawSerie(serie)
+            let seriesLayer = self.drawSerie(serie)
+            section.sectionLayer.addSublayer(seriesLayer)
             
         } else {
             //不分页显示，全部系列绘制到图表上
             for serie in section.series {
-                self.drawSerie(serie)
+                let seriesLayer = self.drawSerie(serie)
+                section.sectionLayer.addSublayer(seriesLayer)
             }
         }
-//        self.drawLayer.addSublayer(self.chartModelLayer)
+        
+        self.drawLayer.addSublayer(section.sectionLayer)
     }
     
     /**
      绘制图表分区上的系列点先
      */
-    func drawSerie(_ serie: CHSeries) {
+    func drawSerie(_ serie: CHSeries) -> CHShapeLayer {
         if !serie.hidden {
             //循环画出每个模型的线
             for model in serie.chartModels {
                 let serieLayer = model.drawSerie(self.rangeFrom, endIndex: self.rangeTo)
-                self.drawLayer.addSublayer(serieLayer)
+                serie.seriesLayer.addSublayer(serieLayer)
+                
             }
         }
+        
+        return serie.seriesLayer
     }
     
-    
-//    func drawTitleInfo(_ section: CHSection) {
-//        
-//        //显示范围最后一个点的内容
-//        if let sectionTitleLayer = section.drawTitle(self.selectedIndex) {
-//            _ = self.chartInfoLayer.sublayers?.map { $0.removeFromSuperlayer() }
-//            self.chartInfoLayer.sublayers?.removeAll()
-//            
-//            self.chartInfoLayer.addSublayer(sectionTitleLayer)
-//            self.drawLayer.addSublayer(sectionTitleLayer)
-//        }
-//    }
 }
 
 // MARK: - 公开方法
@@ -1333,12 +1442,27 @@ extension CHKLineChartView {
     }
     
     /// 生成截图
-    var image: UIImage {
+    open var image: UIImage {
         UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
         self.layer.render(in: UIGraphicsGetCurrentContext()!)
         let capturedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return capturedImage!
+    }
+    
+    
+    /// 手动设置分区头部文本显示内容
+    ///
+    /// - Parameters:
+    ///   - titles: 文本内容及颜色元组
+    ///   - section: 分区位置
+    open func setHeader(titles: [(title: String, color: UIColor)], inSection section: Int)  {
+        guard let section = self.sections[safe: section] else {
+            return
+        }
+        
+        //设置标题
+        section.setHeader(titles: titles)
     }
 }
 
@@ -1372,6 +1496,8 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         guard self.enablePan else {
             return
         }
+        
+        self.showSelection = false
         
         //手指滑动总平移量
         let translation = sender.translation(in: self)
@@ -1463,12 +1589,12 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
             if section!.paging {
                 //显示下一页
                 section!.nextPage()
+                self.drawLayerView()
             } else {
                 //显示点击选中的内容
                 self.setSelectedIndexByPoint(point)
             }
             
-            self.drawLayerView()
         }
     }
     
@@ -1528,7 +1654,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
                 self.setSelectedIndexByPoint(point)
             }
             
-            self.drawLayerView()
+//            self.drawLayerView()
         }
     }
 }
