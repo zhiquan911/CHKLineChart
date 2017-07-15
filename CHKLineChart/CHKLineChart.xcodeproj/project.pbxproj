@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39761FEC58C8E4F68174FA6C /* Pods_CHKLineChart.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26A04E5DC2417C7350CB690A /* Pods_CHKLineChart.framework */; };
 		C502BEF61F01168100E1BE8F /* CHDepthChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C502BEF51F01168100E1BE8F /* CHDepthChartView.swift */; };
 		C5158ED11EEE81850057A356 /* ChartStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5158ED01EEE81850057A356 /* ChartStyles.swift */; };
 		C5382BEF1E178A67007CF836 /* CustomStyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */; };
 		C53B03581E1DEF8000174A7E /* StyleSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */; };
+		C548699C1F18703D00D59F7A /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C548699B1F18703D00D59F7A /* SectionHeaderView.swift */; };
 		C54926661D8923BB0074ACD2 /* CHChartAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */; };
 		C55355FD1EF7C84C00731DE8 /* ChartFullViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55355FC1EF7C84C00731DE8 /* ChartFullViewController.swift */; };
 		C559F2591D80FC22002B1E57 /* CHExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C559F2581D80FC22002B1E57 /* CHExtension.swift */; };
@@ -41,10 +43,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		26A04E5DC2417C7350CB690A /* Pods_CHKLineChart.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CHKLineChart.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3999AEE1D8C13CBE0F47A12B /* Pods-CHKLineChart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CHKLineChart.release.xcconfig"; path = "Pods/Target Support Files/Pods-CHKLineChart/Pods-CHKLineChart.release.xcconfig"; sourceTree = "<group>"; };
+		6349AF5F1FE2C1220C72A35B /* Pods-CHKLineChart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CHKLineChart.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CHKLineChart/Pods-CHKLineChart.debug.xcconfig"; sourceTree = "<group>"; };
 		C502BEF51F01168100E1BE8F /* CHDepthChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CHDepthChartView.swift; path = Classes/CHDepthChartView.swift; sourceTree = "<group>"; };
 		C5158ED01EEE81850057A356 /* ChartStyles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartStyles.swift; sourceTree = "<group>"; };
 		C5382BEE1E178A67007CF836 /* CustomStyleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = CustomStyleViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C53B03571E1DEF8000174A7E /* StyleSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = StyleSettingViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C548699B1F18703D00D59F7A /* SectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHChartAlgorithm.swift; path = Classes/CHChartAlgorithm.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C55355FC1EF7C84C00731DE8 /* ChartFullViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartFullViewController.swift; sourceTree = "<group>"; };
 		C559F2581D80FC22002B1E57 /* CHExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHExtension.swift; path = Classes/CHExtension.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -81,16 +87,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39761FEC58C8E4F68174FA6C /* Pods_CHKLineChart.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9BDF4CB112CA55CB5D3CFEC4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				26A04E5DC2417C7350CB690A /* Pods_CHKLineChart.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C5BF28A81EFE61A400F524DB /* views */ = {
 			isa = PBXGroup;
 			children = (
 				C5BF28A91EFE632300F524DB /* KChartCell.swift */,
+				C548699B1F18703D00D59F7A /* SectionHeaderView.swift */,
 			);
 			name = views;
 			sourceTree = "<group>";
@@ -100,6 +116,8 @@
 			children = (
 				C5E4E0591D76CC7E00C47F5A /* CHKLineChart */,
 				C5E4E0581D76CC7E00C47F5A /* Products */,
+				CC4E30706B00673EF954C2FF /* Pods */,
+				9BDF4CB112CA55CB5D3CFEC4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -166,6 +184,15 @@
 			name = Demo;
 			sourceTree = "<group>";
 		};
+		CC4E30706B00673EF954C2FF /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6349AF5F1FE2C1220C72A35B /* Pods-CHKLineChart.debug.xcconfig */,
+				3999AEE1D8C13CBE0F47A12B /* Pods-CHKLineChart.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -173,9 +200,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C5E4E0691D76CC7E00C47F5A /* Build configuration list for PBXNativeTarget "CHKLineChart" */;
 			buildPhases = (
+				73C6277D48030B32869A24CA /* [CP] Check Pods Manifest.lock */,
 				C5E4E0531D76CC7E00C47F5A /* Sources */,
 				C5E4E0541D76CC7E00C47F5A /* Frameworks */,
 				C5E4E0551D76CC7E00C47F5A /* Resources */,
+				40B7F8FB3346993AF4CF406A /* [CP] Embed Pods Frameworks */,
+				1F90C3236FB8C07FBC6D1D7F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -237,6 +267,54 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1F90C3236FB8C07FBC6D1D7F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CHKLineChart/Pods-CHKLineChart-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		40B7F8FB3346993AF4CF406A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CHKLineChart/Pods-CHKLineChart-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		73C6277D48030B32869A24CA /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		C5E4E0531D76CC7E00C47F5A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -257,6 +335,7 @@
 				C5F700011D7EA94500622E60 /* CHChartModel.swift in Sources */,
 				C55355FD1EF7C84C00731DE8 /* ChartFullViewController.swift in Sources */,
 				C5BF28AA1EFE632300F524DB /* KChartCell.swift in Sources */,
+				C548699C1F18703D00D59F7A /* SectionHeaderView.swift in Sources */,
 				C5E4E05B1D76CC7E00C47F5A /* AppDelegate.swift in Sources */,
 				C5B8F1601EFBA5C10082E969 /* ChartImageViewController.swift in Sources */,
 				C5B8F15E1EFB769F0082E969 /* CHChartImageGenerator.swift in Sources */,
@@ -384,6 +463,7 @@
 		};
 		C5E4E06A1D76CC7E00C47F5A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6349AF5F1FE2C1220C72A35B /* Pods-CHKLineChart.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 2M2W6LSE6S;
@@ -397,6 +477,7 @@
 		};
 		C5E4E06B1D76CC7E00C47F5A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3999AEE1D8C13CBE0F47A12B /* Pods-CHKLineChart.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 2M2W6LSE6S;

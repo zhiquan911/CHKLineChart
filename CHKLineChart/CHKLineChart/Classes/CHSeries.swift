@@ -19,6 +19,7 @@ public struct CHSeriesKey {
     public static let ema = "EMA"
     public static let kdj = "KDJ"
     public static let macd = "MACD"
+    public static let boll = "BOLL"
 }
 
 
@@ -41,6 +42,8 @@ open class CHSeries: NSObject {
     open var symmetrical = false                     //是否以固定基值为中位数，对称显示最大最小值
     var seriesLayer: CHShapeLayer = CHShapeLayer()      //点线模型的绘图层
     
+    public var algorithms: [CHChartAlgorithmProtocol] = [CHChartAlgorithmProtocol]()
+    
     /// 清空图表的子图层
     func removeLayerView() {
         _ = self.seriesLayer.sublayers?.map { $0.removeFromSuperlayer() }
@@ -62,7 +65,7 @@ extension CHSeries {
     public class func getTimelinePrice(color: UIColor, section: CHSection, showGuide: Bool = false, ultimateValueStyle: CHUltimateValueStyle = .none, lineWidth: CGFloat = 1) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.timeline
-        let timeline = CHChartModel.getLine(color, title: NSLocalizedString("Price", comment: ""), key: "\(CHSeriesKey.timeline)_\(section.valueType.key)")
+        let timeline = CHChartModel.getLine(color, title: NSLocalizedString("Price", comment: ""), key: "\(CHSeriesKey.timeline)_\(section.key)")
         timeline.section = section
         timeline.useTitleColor = false
         timeline.ultimateValueStyle = ultimateValueStyle
@@ -109,10 +112,27 @@ extension CHSeries {
         return series
     }
     
+    
+    /// 获取交易量的MA线
+    ///
+    public class func getVolumeMA(isEMA: Bool = false, num: [Int], colors: [UIColor], section: CHSection) -> CHSeries {
+        let valueKey = CHSeriesKey.volume
+        let series = self.getMA(isEMA: isEMA, num: num, colors: colors, valueKey: valueKey, section: section)
+        return series
+    }
+    
+    /// 获取交易量的MA线
+    ///
+    public class func getPriceMA(isEMA: Bool = false, num: [Int], colors: [UIColor], section: CHSection) -> CHSeries {
+        let valueKey = CHSeriesKey.timeline
+        let series = self.getMA(isEMA: isEMA, num: num, colors: colors, valueKey: valueKey, section: section)
+        return series
+    }
+    
     /**
      返回一个移动平均线系列样式
      */
-    public class func getMA(isEMA: Bool = false, num: [Int], colors: [UIColor], section: CHSection) -> CHSeries {
+    public class func getMA(isEMA: Bool = false, num: [Int], colors: [UIColor], valueKey: String, section: CHSection) -> CHSeries {
         var key = ""
         if isEMA {
             key = CHSeriesKey.ema
@@ -124,7 +144,7 @@ extension CHSeries {
         series.key = key
         for (i, n) in num.enumerated() {
             
-            let ma = CHChartModel.getLine(colors[i], title: "\(key)\(n)", key: "\(key)\(n)_\(section.valueType.key)")
+            let ma = CHChartModel.getLine(colors[i], title: "\(key)\(n)", key: "\(key)_\(n)_\(valueKey)")
             ma.section = section
             series.chartModels.append(ma)
         }
@@ -137,11 +157,11 @@ extension CHSeries {
     public class func getKDJ(_ kc: UIColor, dc: UIColor, jc: UIColor, section: CHSection) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.kdj
-        let k = CHChartModel.getLine(kc, title: "K", key: "KDJ_K")
+        let k = CHChartModel.getLine(kc, title: "K", key: "\(CHSeriesKey.kdj)_K")
         k.section = section
-        let d = CHChartModel.getLine(dc, title: "D", key: "KDJ_D")
+        let d = CHChartModel.getLine(dc, title: "D", key: "\(CHSeriesKey.kdj)_D")
         d.section = section
-        let j = CHChartModel.getLine(jc, title: "J", key: "KDJ_J")
+        let j = CHChartModel.getLine(jc, title: "J", key: "\(CHSeriesKey.kdj)_J")
         j.section = section
         series.chartModels = [k, d, j]
         return series
@@ -158,11 +178,11 @@ extension CHSeries {
                               section: CHSection) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.macd
-        let dif = CHChartModel.getLine(difc, title: "DIF", key: "MACD_DIF")
+        let dif = CHChartModel.getLine(difc, title: "DIF", key: "\(CHSeriesKey.macd)_DIF")
         dif.section = section
-        let dea = CHChartModel.getLine(deac, title: "DEA", key: "MACD_DEA")
+        let dea = CHChartModel.getLine(deac, title: "DEA", key: "\(CHSeriesKey.macd)_DEA")
         dea.section = section
-        let bar = CHChartModel.getBar(upStyle: upStyle, downStyle: downStyle, titleColor: barc, title: "BAR", key: "MACD_BAR")
+        let bar = CHChartModel.getBar(upStyle: upStyle, downStyle: downStyle, titleColor: barc, title: "MACD", key: "\(CHSeriesKey.macd)_BAR")
         bar.section = section
         series.chartModels = [bar, dif, dea]
         return series

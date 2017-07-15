@@ -151,15 +151,15 @@ class ChartDemoViewController: UIViewController {
         } else {
             switch sender.selectedSegmentIndex {
             case 0:
-                self.chartView.setSection(hidden: true, by: CHSectionValueType.analysis.key)
+                self.chartView.setSection(hidden: true, byIndex: 2)
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.kdj)
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.macd)
             case 1:
-                self.chartView.setSection(hidden: false, by: CHSectionValueType.analysis.key)
+                self.chartView.setSection(hidden: false, byIndex: 2)
                 self.chartView.setSerie(hidden: false, by: CHSeriesKey.kdj)
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.macd)
             case 2:
-                self.chartView.setSection(hidden: false, by: CHSectionValueType.analysis.key)
+                self.chartView.setSection(hidden: false, byIndex: 2)
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.kdj)
                 self.chartView.setSerie(hidden: false, by: CHSeriesKey.macd)
             default:
@@ -288,6 +288,7 @@ extension ChartDemoViewController: CHKLineChartDelegate {
         NSLog("selected index = \(index)")
         NSLog("selected item closePrice = \(item.closePrice)")
     }
+    
     
 }
 

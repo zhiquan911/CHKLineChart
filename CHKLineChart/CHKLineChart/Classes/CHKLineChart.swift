@@ -136,7 +136,7 @@ public enum CHChartSelectedPosition {
     ///   - chart: 图表
     ///   - section: 分区的索引位
     /// - Returns: 自定义的View
-    @objc optional func kLineChart(chart: CHKLineChartView, viewForHeaderInSection section: Int) -> UIView
+    @objc optional func kLineChart(chart: CHKLineChartView, viewForHeaderInSection section: Int) -> UIView?
     
 
 }
@@ -530,11 +530,14 @@ open class CHKLineChartView: UIView {
                     vy = point.y
                     yVal = section!.getRawValue(point.y)        //获取y轴坐标的实际值
                 case .onClosePrice:
-                    if section?.valueType == .price {
-                        yVal = item.closePrice                      //获取收盘价作为实际值
-                    } else if section?.valueType == .volume {
-                        yVal = item.vol
+                    if let series = section?.getSeries(key: CHSeriesKey.candle), !series.hidden {
+                        yVal = item.closePrice          //获取收盘价作为实际值
+                    } else if let series = section?.getSeries(key: CHSeriesKey.timeline), !series.hidden {
+                        yVal = item.closePrice          //获取收盘价作为实际值
+                    } else if let series = section?.getSeries(key: CHSeriesKey.volume), !series.hidden {
+                        yVal = item.vol                 //获取交易量作为实际值
                     }
+                    
                     vy = section!.getLocalY(yVal)
                     
                 }
@@ -684,8 +687,18 @@ extension CHKLineChartView {
                 
                 //把标题添加到主绘图层上
                 self.drawLayer.addSublayer(section.titleLayer)
-                //显示范围最后一个点的内容
-                section.drawTitle(self.selectedIndex)
+                
+                //是否采用用户自定义
+                if let titleView = self.delegate?.kLineChart?(chart: self, viewForHeaderInSection: index) {
+                    
+                    //显示用户自定义的View，显示内容交由委托者
+                    section.showTitle = false
+                    section.addCustomView(titleView, inView: self)
+                    
+                } else {
+                    //显示范围最后一个点的内容
+                    section.drawTitle(self.selectedIndex)
+                }
                 
             }
             
@@ -1086,12 +1099,12 @@ extension CHKLineChartView {
         }
         
 
-        var yaxis = section.yAxis
+        let yaxis = section.yAxis
         
         //保持Y轴标签个数偶数显示
-        if (yaxis.tickInterval % 2 == 1) {
-            yaxis.tickInterval += 1
-        }
+//        if (yaxis.tickInterval % 2 == 1) {
+//            yaxis.tickInterval += 1
+//        }
         
         //计算y轴的标签及虚线分几段
         let step = (yaxis.max - yaxis.min) / CGFloat(yaxis.tickInterval)
@@ -1319,9 +1332,10 @@ extension CHKLineChartView {
     /**
      通过key隐藏或显示分区
      */
-    public func setSection(hidden: Bool, by key: String) {
+    public func setSection(hidden: Bool, byKey key: String) {
         for section in self.sections {
-            if section.key == key {
+            //副图才能隐藏
+            if section.key == key && section.valueType == .assistant {
                 section.hidden = hidden
                 break
             }
@@ -1331,6 +1345,20 @@ extension CHKLineChartView {
         self.drawLayerView()
     }
     
+    /**
+     通过索引位隐藏或显示分区
+     */
+    public func setSection(hidden: Bool, byIndex index: Int) {
+        //副图才能隐藏
+        guard let section = self.sections[safe: index], section.valueType == .assistant else {
+            return
+        }
+        
+        section.hidden = hidden
+        
+        
+        self.drawLayerView()
+    }
     
     
     /// 缩放图表

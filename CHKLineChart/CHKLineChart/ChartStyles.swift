@@ -65,8 +65,10 @@ public extension CHKLineChartStyle {
         priceSection.titleShowOutSide = false
         //是否显示选中点的数据文字
         priceSection.showTitle = false
-        //分区的数值类型
-        priceSection.valueType = .price
+        //分区的类型
+        priceSection.valueType = .master
+        //分区唯一键值
+        priceSection.key = "price"
         //是否隐藏分区
         priceSection.hidden = false
         //分区所占图表的比重，0代表不使用比重，采用固定高度
@@ -105,7 +107,7 @@ public extension CHKLineChartStyle {
             ultimateValueStyle: .arrow(UIColor(white: 0.5, alpha: 1)))
         
         //MA线
-        let priceMASeries = CHSeries.getMA(
+        let priceMASeries = CHSeries.getPriceMA(
             isEMA: false,
             num: [5,10,30],
             colors:maColor,
@@ -114,7 +116,7 @@ public extension CHKLineChartStyle {
         priceMASeries.hidden = false
         
         //EMA线
-        let priceEMASeries = CHSeries.getMA(
+        let priceEMASeries = CHSeries.getPriceMA(
             isEMA: true,
             num: [5,10,30],
             colors: maColor,
@@ -126,7 +128,10 @@ public extension CHKLineChartStyle {
         //交易量柱形线
         let volumeSection = CHSection()
         volumeSection.backgroundColor = style.backgroundColor
-        volumeSection.valueType = .volume
+        //分区的类型
+        volumeSection.valueType = .assistant
+        //分区唯一键值
+        volumeSection.key = "volume"
         volumeSection.hidden = false
         volumeSection.showTitle = false
         volumeSection.ratios = 1
@@ -134,13 +139,13 @@ public extension CHKLineChartStyle {
         volumeSection.yAxis.tickInterval = 2
         volumeSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 4, right: 0)
         let volumeSeries = CHSeries.getDefaultVolume(upStyle: upcolor, downStyle: downcolor, section: volumeSection)
-        let volumeMASeries = CHSeries.getMA(
+        let volumeMASeries = CHSeries.getVolumeMA(
             isEMA: false,
             num: [5,10,30],
             colors: maColor, section:
             volumeSection)
         
-        let volumeEMASeries = CHSeries.getMA(
+        let volumeEMASeries = CHSeries.getVolumeMA(
             isEMA: true,
             num: [5,10,30],
             colors: maColor,
@@ -151,7 +156,10 @@ public extension CHKLineChartStyle {
         
         let trendSection = CHSection()
         trendSection.backgroundColor = style.backgroundColor
-        trendSection.valueType = .analysis
+        //分区的类型
+        trendSection.valueType = .assistant
+        //分区唯一键值
+        trendSection.key = "analysis"
         trendSection.hidden = false
         trendSection.showTitle = false
         trendSection.ratios = 1
@@ -237,8 +245,10 @@ public extension CHKLineChartStyle {
         priceSection.titleShowOutSide = false
         //是否显示选中点的数据文字
         priceSection.showTitle = false
-        //分区的数值类型
-        priceSection.valueType = .price
+        //分区的类型
+        priceSection.valueType = .master
+        //分区唯一键值
+        priceSection.key = "price"
         //是否隐藏分区
         priceSection.hidden = false
         //分区所占图表的比重，0代表不使用比重，采用固定高度
@@ -279,7 +289,7 @@ public extension CHKLineChartStyle {
             ultimateValueStyle: .tag(UIColor.white))
         
         //MA线
-        let priceMASeries = CHSeries.getMA(
+        let priceMASeries = CHSeries.getPriceMA(
             isEMA: false,
             num: [5,10,30],
             colors:maColor,
@@ -288,7 +298,7 @@ public extension CHKLineChartStyle {
         priceMASeries.hidden = false
         
         //EMA线
-        let priceEMASeries = CHSeries.getMA(
+        let priceEMASeries = CHSeries.getPriceMA(
             isEMA: true,
             num: [5,10,30],
             colors: maColor,
@@ -300,7 +310,10 @@ public extension CHKLineChartStyle {
         //交易量柱形线
         let volumeSection = CHSection()
         volumeSection.backgroundColor = style.backgroundColor
-        volumeSection.valueType = .volume
+        //分区的类型
+        volumeSection.valueType = .assistant
+        //分区唯一键值
+        volumeSection.key = "volume"
         volumeSection.hidden = false
         volumeSection.showTitle = false
         volumeSection.ratios = 1
@@ -308,13 +321,13 @@ public extension CHKLineChartStyle {
         volumeSection.yAxis.tickInterval = 1
         volumeSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 4, right: 0)
         let volumeSeries = CHSeries.getDefaultVolume(upStyle: upcolor, downStyle: downcolor, section: volumeSection)
-        let volumeMASeries = CHSeries.getMA(
+        let volumeMASeries = CHSeries.getVolumeMA(
             isEMA: false,
             num: [5,10,30],
-            colors: maColor, section:
-            volumeSection)
+            colors: maColor,
+            section: volumeSection)
         
-        let volumeEMASeries = CHSeries.getMA(
+        let volumeEMASeries = CHSeries.getVolumeMA(
             isEMA: true,
             num: [5,10,30],
             colors: maColor,
@@ -325,13 +338,16 @@ public extension CHKLineChartStyle {
         
         let trendSection = CHSection()
         trendSection.backgroundColor = style.backgroundColor
-        trendSection.valueType = .analysis
+        //分区的类型
+        trendSection.valueType = .assistant
+        //分区唯一键值
+        trendSection.key = "analysis"
         trendSection.hidden = false
         trendSection.showTitle = false
         trendSection.ratios = 1
         trendSection.paging = true
         trendSection.yAxis.referenceStyle = .none
-        trendSection.yAxis.tickInterval = 1
+        trendSection.yAxis.tickInterval = 2
         trendSection.padding = UIEdgeInsets(top: 10, left: 0, bottom: 8, right: 0)
         let kdjSeries = CHSeries.getKDJ(UIColor.ch_hex(0xDDDDDD),
                                         dc: UIColor.ch_hex(0xF9EE30),
@@ -405,8 +421,10 @@ public extension CHKLineChartStyle {
         priceSection.titleShowOutSide = false
         //是否显示选中点的数据文字
         priceSection.showTitle = false
-        //分区的数值类型
-        priceSection.valueType = .price
+        //分区的类型
+        priceSection.valueType = .master
+        //分区唯一键值
+        priceSection.key = "price"
         //是否隐藏分区
         priceSection.hidden = false
         //分区所占图表的比重，0代表不使用比重，采用固定高度

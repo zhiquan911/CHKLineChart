@@ -138,14 +138,14 @@ extension StyleSettingViewController {
                                                       titleColor: UIColor(white: 0.8, alpha: 1),
                                                       section: priceSection)
             
-            let priceMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
+            let priceMASeries = CHSeries.getPriceMA(isEMA: false, num: [5,10,30],
                                                colors: [
                                                 UIColor.ch_hex(0xDDDDDD),
                                                 UIColor.ch_hex(0xF9EE30),
                                                 UIColor.ch_hex(0xF600FF),
                                                 ], section: priceSection)
             priceMASeries.hidden = false
-            let priceEMASeries = CHSeries.getMA(isEMA: true, num: [5,10,30],
+            let priceEMASeries = CHSeries.getPriceMA(isEMA: true, num: [5,10,30],
                                                 colors: [
                                                     UIColor.ch_hex(0xDDDDDD),
                                                     UIColor.ch_hex(0xF9EE30),
@@ -169,14 +169,14 @@ extension StyleSettingViewController {
                                                       titleColor: UIColor(white: 0.5, alpha: 1),
                                                       section: priceSection)
             
-            let priceMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
+            let priceMASeries = CHSeries.getPriceMA(isEMA: false, num: [5,10,30],
                                                colors: [
                                                 UIColor.ch_hex(0x4E9CC1),
                                                 UIColor.ch_hex(0xF7A23B),
                                                 UIColor.ch_hex(0xF600FF),
                                                 ], section: priceSection)
             priceMASeries.hidden = false
-            let priceEMASeries = CHSeries.getMA(isEMA: true, num: [5,10,30],
+            let priceEMASeries = CHSeries.getPriceMA(isEMA: true, num: [5,10,30],
                                                 colors: [
                                                     UIColor.ch_hex(0x4E9CC1),
                                                     UIColor.ch_hex(0xF7A23B),
@@ -217,13 +217,13 @@ extension StyleSettingViewController {
             volumeSection.yAxis.referenceStyle = .dash(color: UIColor(white: 0.2, alpha: 1), pattern: [5])
             
             let volumeSeries = CHSeries.getDefaultVolume(upStyle: upcolor, downStyle: downcolor, section: volumeSection)
-            let volumeMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
+            let volumeMASeries = CHSeries.getVolumeMA(isEMA: false, num: [5,10,30],
                                                 colors: [
                                                     UIColor.ch_hex(0xDDDDDD),
                                                     UIColor.ch_hex(0xF9EE30),
                                                     UIColor.ch_hex(0xF600FF),
                                                     ], section: volumeSection)
-            let volumeEMASeries = CHSeries.getMA(isEMA: true, num: [5,10,30],
+            let volumeEMASeries = CHSeries.getVolumeMA(isEMA: true, num: [5,10,30],
                                                  colors: [
                                                     UIColor.ch_hex(0xDDDDDD),
                                                     UIColor.ch_hex(0xF9EE30),
@@ -238,13 +238,13 @@ extension StyleSettingViewController {
             volumeSection.yAxis.referenceStyle = .dash(color: UIColor(white: 0.8, alpha: 1), pattern: [5])
             
             let volumeSeries = CHSeries.getDefaultVolume(upStyle: upcolor, downStyle: downcolor, section: volumeSection)
-            let volumeMASeries = CHSeries.getMA(isEMA: false, num: [5,10,30],
+            let volumeMASeries = CHSeries.getVolumeMA(isEMA: false, num: [5,10,30],
                                                 colors: [
                                                     UIColor.ch_hex(0x4E9CC1),
                                                     UIColor.ch_hex(0xF7A23B),
                                                     UIColor.ch_hex(0xF600FF),
                                                     ], section: volumeSection)
-            let volumeEMASeries = CHSeries.getMA(isEMA: true, num: [5,10,30],
+            let volumeEMASeries = CHSeries.getVolumeMA(isEMA: true, num: [5,10,30],
                                                  colors: [
                                                     UIColor.ch_hex(0x4E9CC1),
                                                     UIColor.ch_hex(0xF7A23B),

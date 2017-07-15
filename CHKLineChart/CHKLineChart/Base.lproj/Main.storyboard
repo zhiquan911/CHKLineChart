@@ -201,7 +201,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XGM-KK-eiI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="960.79999999999995" y="1113.1934032983509"/>
+            <point key="canvasLocation" x="961" y="1212"/>
         </scene>
         <!--Chart Full View Controller-->
         <scene sceneID="SjF-wu-FkP">

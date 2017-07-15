@@ -18,6 +18,18 @@ class CustomStyleViewController: UIViewController {
     
     var settingVC: StyleSettingViewController!
     
+    lazy var mainSectionView: SectionHeaderView = {
+        let view = SectionHeaderView(frame: CGRect(x: 0, y: 0, width: 200, height: 16))
+        view.backgroundColor = UIColor.clear
+        return view
+    }()
+    
+    lazy var subSectionView: SectionHeaderView = {
+        let view = SectionHeaderView(frame: CGRect(x: 0, y: 0, width: 200, height: 16))
+        view.backgroundColor = UIColor.clear
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.chartView.delegate = self
@@ -114,5 +126,20 @@ extension CustomStyleViewController: CHKLineChartDelegate {
         return chart.kYAxisLabelWidth
     }
     
+    func kLineChart(chart: CHKLineChartView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 0 {
+            return self.mainSectionView
+        } else if section  == 1 {
+            return self.subSectionView
+        } else {
+            return nil
+        }
+    }
+    
+    func kLineChart(chart: CHKLineChartView, didSelectAt index: Int, item: CHChartItem) {
+        //NSLog("select index = \(index)")
+        self.mainSectionView.labelTitle.text = "price = \(item.closePrice)"
+        self.subSectionView.labelTitle.text = "vol = \(item.vol)"
+    }
 }
 

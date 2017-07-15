@@ -135,7 +135,8 @@ public extension CHKLineChartStyle {
         let priceSection = CHSection()
         priceSection.backgroundColor = style.backgroundColor
         priceSection.titleShowOutSide = true
-        priceSection.valueType = .price
+        priceSection.valueType = .master
+        priceSection.key = "master"
         priceSection.hidden = false
         priceSection.ratios = 3
         priceSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
@@ -163,7 +164,7 @@ public extension CHKLineChartStyle {
         
         priceSeries.chartModels.first?.ultimateValueStyle = .arrow(UIColor(white: 0.8, alpha: 1))
         
-        let priceMASeries = CHSeries.getMA(
+        let priceMASeries = CHSeries.getPriceMA(
             isEMA: false,
             num: [5,10,30],
             colors: [
@@ -174,7 +175,7 @@ public extension CHKLineChartStyle {
             section: priceSection)
         priceMASeries.hidden = false
         
-        let priceEMASeries = CHSeries.getMA(
+        let priceEMASeries = CHSeries.getPriceMA(
             isEMA: true,
             num: [5,10,30],
             colors: [
@@ -189,14 +190,15 @@ public extension CHKLineChartStyle {
         
         let volumeSection = CHSection()
         volumeSection.backgroundColor = style.backgroundColor
-        volumeSection.valueType = .volume
+        volumeSection.valueType = .assistant
+        volumeSection.key = "volume"
         volumeSection.hidden = false
         volumeSection.ratios = 1
-        volumeSection.yAxis.tickInterval = 3
+        volumeSection.yAxis.tickInterval = 4
         volumeSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
         let volumeSeries = CHSeries.getDefaultVolume(upStyle: upcolor, downStyle: downcolor, section: volumeSection)
         
-        let volumeMASeries = CHSeries.getMA(
+        let volumeMASeries = CHSeries.getVolumeMA(
             isEMA: false,
             num: [5,10,30],
             colors: [
@@ -206,7 +208,7 @@ public extension CHKLineChartStyle {
                 ],
             section: volumeSection)
         
-        let volumeEMASeries = CHSeries.getMA(
+        let volumeEMASeries = CHSeries.getVolumeMA(
             isEMA: true,
             num: [5,10,30],
             colors: [
@@ -221,11 +223,12 @@ public extension CHKLineChartStyle {
         
         let trendSection = CHSection()
         trendSection.backgroundColor = style.backgroundColor
-        trendSection.valueType = .analysis
+        trendSection.valueType = .assistant
+        trendSection.key = "analysis"
         trendSection.hidden = false
         trendSection.ratios = 1
         trendSection.paging = true
-        trendSection.yAxis.tickInterval = 3
+        trendSection.yAxis.tickInterval = 4
         trendSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
         let kdjSeries = CHSeries.getKDJ(
             UIColor.ch_hex(0xDDDDDD),

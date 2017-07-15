@@ -9,21 +9,12 @@
 import UIKit
 
 
+
+/// 分区图类型
 public enum CHSectionValueType {
-    case price              //价格
-    case volume             //交易量
-    case analysis           //指标
-    
-    public var key: String {
-        switch self {
-        case .price:
-            return "Price"
-        case .volume:
-            return "Volume"
-        case .analysis:
-            return "Analysis"
-        }
-    }
+    case master              //主图
+    case assistant             //副图
+
 }
 
 
@@ -37,11 +28,7 @@ open class CHSection: NSObject {
     open var downColor: UIColor = UIColor.red     //跌的颜色
     open var titleColor: UIColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1) //文字颜色
     open var labelFont = UIFont.systemFont(ofSize: 10)
-    open var valueType: CHSectionValueType = CHSectionValueType.price {
-        didSet {
-            self.key = valueType.key
-        }
-    }
+    open var valueType: CHSectionValueType = CHSectionValueType.master
     open var key = ""
     open var name: String = ""                              //区域的名称
     open var hidden: Bool = false
@@ -63,15 +50,24 @@ open class CHSection: NSObject {
     open var index: Int = 0
     var titleLayer: CHShapeLayer = CHShapeLayer()                           //显示标题内容的层
     var sectionLayer: CHShapeLayer = CHShapeLayer()                 //分区的绘图层
+    var titleView: UIView?                                      //用户自定义的View
     
     /// 初始化分区
     ///
     /// - Parameter valueType: 分区类型
-    convenience init(valueType: CHSectionValueType) {
+    convenience init(valueType: CHSectionValueType, key: String = "") {
         self.init()
         self.valueType = valueType
+        self.key = key
     }
     
+    
+    
+}
+
+
+// MARK: - 内部方法
+extension CHSection {
     
     /// 清空图表的子图层
     func removeLayerView() {
@@ -82,71 +78,6 @@ open class CHSection: NSObject {
         self.titleLayer.sublayers?.removeAll()
     }
     
-    func buildYAxis(startIndex: Int, endIndex: Int, datas: [CHChartItem]) {
-        self.yAxis.isUsed = false
-        var baseValueSticky = false
-        var symmetrical = false
-        if self.paging {     //如果分页，计算当前选中的系列作为坐标系的数据源
-            //建立分区每条线的坐标系
-            let serie = self.series[self.selectedIndex]
-            baseValueSticky = serie.baseValueSticky
-            symmetrical = serie.symmetrical
-            for serieModel in serie.chartModels {
-                serieModel.datas = datas
-                self.buildYAxisPerModel(serieModel,
-                                   startIndex: startIndex,
-                                   endIndex: endIndex)
-            }
-        } else {
-            for serie in self.series {   //不分页，计算所有系列作为坐标系的数据源
-                baseValueSticky = serie.baseValueSticky
-                symmetrical = serie.symmetrical
-                for serieModel in serie.chartModels {
-                    serieModel.datas = datas
-                    self.buildYAxisPerModel(serieModel,
-                                       startIndex: startIndex,
-                                       endIndex: endIndex)
-                }
-            }
-        }
-        
-        //让边界溢出些，这样图表不会占满屏幕
-        //        self.yAxis.max += (self.yAxis.max - self.yAxis.min) * self.yAxis.ext
-        //        self.yAxis.min -= (self.yAxis.max - self.yAxis.min) * self.yAxis.ext
-        
-        if !baseValueSticky {        //不使用固定基值
-            if self.yAxis.max >= 0 && self.yAxis.min >= 0 {
-                self.yAxis.baseValue = self.yAxis.min
-            } else if self.yAxis.max < 0 && self.yAxis.min < 0 {
-                self.yAxis.baseValue = self.yAxis.max
-            } else {
-                self.yAxis.baseValue = 0
-            }
-        } else {                                //使用固定基值
-            if self.yAxis.baseValue < self.yAxis.min {
-                self.yAxis.min = self.yAxis.baseValue
-            }
-            
-            if self.yAxis.baseValue > self.yAxis.max {
-                self.yAxis.max = self.yAxis.baseValue
-            }
-        }
-        
-        //如果使用水平对称显示y轴，基本基值计算上下的边界值
-        if symmetrical {
-            if self.yAxis.baseValue > self.yAxis.max {
-                self.yAxis.max = self.yAxis.baseValue + (self.yAxis.baseValue - self.yAxis.min)
-            } else if self.yAxis.baseValue < self.yAxis.min {
-                self.yAxis.min =  self.yAxis.baseValue - (self.yAxis.max - self.yAxis.baseValue)
-            } else {
-                if (self.yAxis.max - self.yAxis.baseValue) > (self.yAxis.baseValue - self.yAxis.min) {
-                    self.yAxis.min = self.yAxis.baseValue - (self.yAxis.max - self.yAxis.baseValue)
-                } else {
-                    self.yAxis.max = self.yAxis.baseValue + (self.yAxis.baseValue - self.yAxis.min)
-                }
-            }
-        }
-    }
     
     /**
      建立Y轴左边对象，由起始位到结束位
@@ -221,6 +152,126 @@ open class CHSection: NSObject {
         }
     }
     
+    /// 绘制header上的标题信息
+    ///
+    /// - Parameter title: 标题内容
+    func drawTitleForHeader(title: NSMutableAttributedString) {
+        
+        guard self.showTitle else {
+            return
+        }
+        
+        _ = self.titleLayer.sublayers?.map { $0.removeFromSuperlayer() }
+        self.titleLayer.sublayers?.removeAll()
+        
+        var yPos: CGFloat = 0
+        if titleShowOutSide {
+            yPos = self.frame.origin.y - self.padding.top + 2
+        } else {
+            yPos = self.frame.origin.y + 2
+        }
+        
+        let startX = self.frame.origin.x + self.padding.left + 2
+        let containerWidth = self.frame.width - self.padding.left - self.padding.right
+        
+        let point = CGPoint(x: startX, y: yPos)
+        
+        let textSize = title.string.ch_sizeWithConstrained(self.labelFont)
+        
+        let titleText = CHTextLayer()
+        titleText.frame = CGRect(origin: point, size: CGSize(width: containerWidth, height: textSize.height + 20))
+        titleText.string = title
+        titleText.fontSize = self.labelFont.pointSize
+        //        titleText.foregroundColor =  self.titleColor.cgColor
+        titleText.backgroundColor = UIColor.clear.cgColor
+        titleText.contentsScale = UIScreen.main.scale
+        titleText.isWrapped = true
+        
+        self.titleLayer.addSublayer(titleText)
+        
+    }
+    
+    //切换到下一个系列显示
+    func nextPage() {
+        if(self.selectedIndex < self.series.count - 1){
+            self.selectedIndex += 1
+        } else {
+            self.selectedIndex = 0
+        }
+    }
+}
+
+
+// MARK: - 公开方法
+extension CHSection {
+    
+    public func buildYAxis(startIndex: Int, endIndex: Int, datas: [CHChartItem]) {
+        self.yAxis.isUsed = false
+        var baseValueSticky = false
+        var symmetrical = false
+        if self.paging {     //如果分页，计算当前选中的系列作为坐标系的数据源
+            //建立分区每条线的坐标系
+            let serie = self.series[self.selectedIndex]
+            baseValueSticky = serie.baseValueSticky
+            symmetrical = serie.symmetrical
+            for serieModel in serie.chartModels {
+                serieModel.datas = datas
+                self.buildYAxisPerModel(serieModel,
+                                        startIndex: startIndex,
+                                        endIndex: endIndex)
+            }
+        } else {
+            for serie in self.series {   //不分页，计算所有系列作为坐标系的数据源
+                baseValueSticky = serie.baseValueSticky
+                symmetrical = serie.symmetrical
+                for serieModel in serie.chartModels {
+                    serieModel.datas = datas
+                    self.buildYAxisPerModel(serieModel,
+                                            startIndex: startIndex,
+                                            endIndex: endIndex)
+                }
+            }
+        }
+        
+        //让边界溢出些，这样图表不会占满屏幕
+        //        self.yAxis.max += (self.yAxis.max - self.yAxis.min) * self.yAxis.ext
+        //        self.yAxis.min -= (self.yAxis.max - self.yAxis.min) * self.yAxis.ext
+        
+        if !baseValueSticky {        //不使用固定基值
+            if self.yAxis.max >= 0 && self.yAxis.min >= 0 {
+                self.yAxis.baseValue = self.yAxis.min
+            } else if self.yAxis.max < 0 && self.yAxis.min < 0 {
+                self.yAxis.baseValue = self.yAxis.max
+            } else {
+                self.yAxis.baseValue = 0
+            }
+        } else {                                //使用固定基值
+            if self.yAxis.baseValue < self.yAxis.min {
+                self.yAxis.min = self.yAxis.baseValue
+            }
+            
+            if self.yAxis.baseValue > self.yAxis.max {
+                self.yAxis.max = self.yAxis.baseValue
+            }
+        }
+        
+        //如果使用水平对称显示y轴，基本基值计算上下的边界值
+        if symmetrical {
+            if self.yAxis.baseValue > self.yAxis.max {
+                self.yAxis.max = self.yAxis.baseValue + (self.yAxis.baseValue - self.yAxis.min)
+            } else if self.yAxis.baseValue < self.yAxis.min {
+                self.yAxis.min =  self.yAxis.baseValue - (self.yAxis.max - self.yAxis.baseValue)
+            } else {
+                if (self.yAxis.max - self.yAxis.baseValue) > (self.yAxis.baseValue - self.yAxis.min) {
+                    self.yAxis.min = self.yAxis.baseValue - (self.yAxis.max - self.yAxis.baseValue)
+                } else {
+                    self.yAxis.max = self.yAxis.baseValue + (self.yAxis.baseValue - self.yAxis.min)
+                }
+            }
+        }
+    }
+    
+    
     /**
      获取y轴上标签数值对应在坐标系中的y值
      
@@ -228,7 +279,7 @@ open class CHSection: NSObject {
      
      - returns: 坐标系中实际的y值
      */
-    func getLocalY(_ val: CGFloat) -> CGFloat {
+    public func getLocalY(_ val: CGFloat) -> CGFloat {
         let max = self.yAxis.max
         let min = self.yAxis.min
         
@@ -258,7 +309,7 @@ open class CHSection: NSObject {
      
      - returns:
      */
-    func getRawValue(_ y: CGFloat) -> CGFloat {
+    public func getRawValue(_ y: CGFloat) -> CGFloat {
         let max = self.yAxis.max
         let min = self.yAxis.min
         
@@ -277,7 +328,7 @@ open class CHSection: NSObject {
     /**
      画分区的标题
      */
-    func drawTitle(_ chartSelectedIndex: Int) {
+    public func drawTitle(_ chartSelectedIndex: Int) {
         
         guard self.showTitle else {
             return
@@ -292,7 +343,7 @@ open class CHSection: NSObject {
             if let attributes = self.getTitleAttributesByIndex(chartSelectedIndex, series: series) {
                 self.setHeader(titles: attributes)
             }
-      
+            
             
         } else {
             var titleAttr = [(title: String, color: UIColor)]()
@@ -301,7 +352,7 @@ open class CHSection: NSObject {
                     titleAttr.append(contentsOf: attributes)
                 }
                 
-
+                
             }
             
             self.setHeader(titles: titleAttr)
@@ -310,128 +361,56 @@ open class CHSection: NSObject {
         
     }
     
-    /**
-     画分区中每个系列的标题
- 
-    func drawTitlePerSerie(_ xPos: CGFloat, chartSelectedIndex: Int, series: CHSeries) -> (CGFloat, CHShapeLayer?) {
+    
+    /// 添加用户自定义的View层到主页面
+    ///
+    /// - Parameter view: 用户自定义view
+    public func addCustomView(_ view: UIView, inView mainView: UIView) {
         
-        if series.hidden {
-            return (xPos, nil)
-        }
-        
-        let serieLayer = CHShapeLayer()
-
-        var yPos: CGFloat = 0, w: CGFloat = 0
-        if titleShowOutSide {
-            yPos = self.frame.origin.y - self.padding.top + 2
-        } else {
-            yPos = self.frame.origin.y + 2
-        }
-        
-        let startX = xPos
-        
-        //绘画系列的标题
-        
-        if !series.title.isEmpty {
-            let seriesTitle = series.title + "  "
-            let point = CGPoint(x: startX + w, y: yPos)
-            let textSize = seriesTitle.ch_sizeWithConstrained(self.labelFont)
+        if self.titleView !== view {
             
-            let titleText = CHTextLayer()
-            titleText.frame = CGRect(origin: point, size: textSize)
-            titleText.string = seriesTitle
-            titleText.fontSize = self.labelFont.pointSize
-            titleText.foregroundColor =  self.titleColor.cgColor
-            titleText.backgroundColor = UIColor.clear.cgColor
-            titleText.contentsScale = UIScreen.main.scale
+            //移除以前的view
+            self.titleView?.removeFromSuperview()
+            self.titleView = nil
             
-            serieLayer.addSublayer(titleText)
-
-            
-            w += seriesTitle.ch_sizeWithConstrained(self.labelFont).width
-        }
-        
-        for model in series.chartModels {
-            var title = ""
-            let item = model[chartSelectedIndex]
-            switch model {
-            case is CHCandleModel:
-                
-                title += NSLocalizedString("O", comment: "") + ": " +
-                    item.openPrice.ch_toString(maxF: self.decimal) + "  "   //开始
-                title += NSLocalizedString("H", comment: "") + ": " +
-                    item.highPrice.ch_toString(maxF: self.decimal) + "  "   //最高
-                title += NSLocalizedString("L", comment: "") + ": " +
-                    item.lowPrice.ch_toString(maxF: self.decimal) + "  "    //最低
-                title += NSLocalizedString("C", comment: "") + ": " +
-                    item.closePrice.ch_toString(maxF: self.decimal) + "  "  //收市
-                
-            case is CHColumnModel:
-                title += model.title + ": " + item.vol.ch_toString(maxF: self.decimal) + "  "
-            default:
-                if item.value != nil {
-                    title += model.title + ": " + item.value!.ch_toString(maxF: self.decimal) + "  "
-                }  else {
-                    title += model.title + ": --  "
-                }
-                
-            }
-            
-            var textColor: UIColor
-            
-            if model.useTitleColor {    //是否用标题颜色
-                textColor = model.titleColor
-//                context?.setFillColor(model.titleColor.cgColor)
+            var yPos: CGFloat = 0
+            if titleShowOutSide {
+                yPos = self.frame.origin.y - self.padding.top
             } else {
-                switch item.trend {
-                case .up, .equal:
-                    textColor = model.upStyle.color
-                case .down:
-                    textColor = model.downStyle.color
-                }
+                yPos = self.frame.origin.y
             }
             
-            let point = CGPoint(x: startX + w, y: yPos)
-            let textSize = title.ch_sizeWithConstrained(self.labelFont)
+            let startX = self.frame.origin.x + self.padding.left
+            let containerWidth = self.frame.width - self.padding.left - self.padding.right
             
-            let titleText = CHTextLayer()
-            titleText.frame = CGRect(origin: point, size: textSize)
-            titleText.string = title
-            titleText.fontSize = self.labelFont.pointSize
-            titleText.foregroundColor =  textColor.cgColor
-            titleText.backgroundColor = UIColor.clear.cgColor
-            titleText.contentsScale = UIScreen.main.scale
+            var frame = view.frame
+            frame.origin.x = startX
+            frame.origin.y = yPos
+            frame.size.width = containerWidth
+            view.frame = frame
             
-            serieLayer.addSublayer(titleText)
+            self.titleView = view
+            mainView.addSubview(view)
             
-//            let fontAttributes = [
-//                NSFontAttributeName: self.labelFont,
-//                NSForegroundColorAttributeName: textColor
-//                ] as [String : Any]
-//            
-//            
-//            NSString(string: title).draw(at: point,
-//                                         withAttributes: fontAttributes)
-            
-            w += title.ch_sizeWithConstrained(self.labelFont).width
         }
-        return (startX + w, serieLayer)
+        
+        mainView.bringSubview(toFront: self.titleView!)
+        
     }
-     */
     
     /// 设置分区头部文本显示内容
     ///
     /// - Parameters:
     ///   - titles: 文本内容及颜色元组
-    open func setHeader(titles: [(title: String, color: UIColor)])  {
-
+    public func setHeader(titles: [(title: String, color: UIColor)])  {
+        
         var start = 0
         let titleString = NSMutableAttributedString()
         for (title, color) in titles {
             titleString.append(NSAttributedString(string: title))
             let range = NSMakeRange(start, title.ch_length)
-//            NSLog("title = \(title)")
-//            NSLog("range = \(range)")
+            //            NSLog("title = \(title)")
+            //            NSLog("range = \(range)")
             let colorAttribute: [String: AnyObject] = [NSForegroundColorAttributeName: color]
             titleString.addAttributes(colorAttribute, range: range)
             start += title.ch_length
@@ -447,7 +426,7 @@ open class CHSection: NSObject {
     ///   - chartSelectedIndex: 图表选中位置
     ///   - series: 线
     /// - Returns: 标题属性
-    open func getTitleAttributesByIndex(_ chartSelectedIndex: Int, series: CHSeries) -> [(title: String, color: UIColor)]? {
+    public func getTitleAttributesByIndex(_ chartSelectedIndex: Int, series: CHSeries) -> [(title: String, color: UIColor)]? {
         
         if series.hidden {
             return nil
@@ -456,7 +435,7 @@ open class CHSection: NSObject {
         guard series.showTitle else {
             return nil
         }
- 
+        
         if chartSelectedIndex == -1 {
             return nil      //没有数据返回
         }
@@ -509,59 +488,25 @@ open class CHSection: NSObject {
             }
             
             titleAttr.append((title: title, color: textColor))
-           
+            
         }
         
         return titleAttr
     }
     
     
-    
-    /// 绘制header上的标题信息
+    /// 查找线段对象
     ///
-    /// - Parameter title: 标题内容
-    func drawTitleForHeader(title: NSMutableAttributedString) {
-        
-        guard self.showTitle else {
-            return
+    /// - Parameter key: 线段唯一key
+    /// - Returns: 线段对象
+    public func getSeries(key: String) -> CHSeries? {
+        var series: CHSeries?
+        for s in self.series {
+            if s.key == key {
+                series = s
+                break
+            }
         }
-        
-        _ = self.titleLayer.sublayers?.map { $0.removeFromSuperlayer() }
-        self.titleLayer.sublayers?.removeAll()
-        
-        var yPos: CGFloat = 0, w: CGFloat = 0
-        if titleShowOutSide {
-            yPos = self.frame.origin.y - self.padding.top + 2
-        } else {
-            yPos = self.frame.origin.y + 2
-        }
-        
-        let startX = self.frame.origin.x + self.padding.left + 2
-        let containerWidth = self.frame.width - self.padding.left - self.padding.right
-        
-        let point = CGPoint(x: startX + w, y: yPos)
-        
-        let textSize = title.string.ch_sizeWithConstrained(self.labelFont)
-        
-        let titleText = CHTextLayer()
-        titleText.frame = CGRect(origin: point, size: CGSize(width: containerWidth, height: textSize.height + 20))
-        titleText.string = title
-        titleText.fontSize = self.labelFont.pointSize
-//        titleText.foregroundColor =  self.titleColor.cgColor
-        titleText.backgroundColor = UIColor.clear.cgColor
-        titleText.contentsScale = UIScreen.main.scale
-        titleText.isWrapped = true
-        
-        self.titleLayer.addSublayer(titleText)
-        
-    }
-    
-    //切换到下一个系列显示
-    func nextPage() {
-        if(self.selectedIndex < self.series.count - 1){
-            self.selectedIndex += 1
-        } else {
-            self.selectedIndex = 0
-        }
+        return series
     }
 }

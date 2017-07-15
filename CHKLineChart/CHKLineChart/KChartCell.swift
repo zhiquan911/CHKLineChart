@@ -129,8 +129,10 @@ extension CHKLineChartStyle {
         priceSection.titleShowOutSide = false
         //是否显示选中点的数据文字
         priceSection.showTitle = false
-        //分区的数值类型
-        priceSection.valueType = .price
+        //分区的类型
+        priceSection.valueType = .master
+        //分区唯一键值
+        priceSection.key = "price"
         //是否隐藏分区
         priceSection.hidden = false
         //分区所占图表的比重，0代表不使用比重，采用固定高度
@@ -169,7 +171,7 @@ extension CHKLineChartStyle {
             ultimateValueStyle: .arrow(UIColor(white: 0.5, alpha: 1)))
         
         //MA线
-        let priceMASeries = CHSeries.getMA(
+        let priceMASeries = CHSeries.getPriceMA(
             isEMA: false,
             num: [5,10,30],
             colors:maColor,
@@ -178,7 +180,7 @@ extension CHKLineChartStyle {
         priceMASeries.hidden = false
         
         //EMA线
-        let priceEMASeries = CHSeries.getMA(
+        let priceEMASeries = CHSeries.getPriceMA(
             isEMA: true,
             num: [5,10,30],
             colors: maColor,

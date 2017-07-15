@@ -19,7 +19,13 @@ public protocol CHChartAlgorithmProtocol {
     /// - Parameter datas: 传入K线数据模型集合
     /// - Returns: 算法的结果记录到CHChartItem的extVal字典中，返回一个处理后的集合
     func handleAlgorithm(_ datas: [CHChartItem]) -> [CHChartItem]
+    
 }
+
+//MARK: - Equatable
+//public func ==(lhs: CHChartAlgorithm, rhs: CHChartAlgorithm) -> Bool {
+//    return lhs.hashValue == rhs.hashValue
+//}
 
 /**
  常用技术指标算法
@@ -32,6 +38,7 @@ public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
     case ema(Int)                               //指数移动平均数
     case kdj(Int, Int, Int)                     //随机指标
     case macd(Int, Int, Int)                    //指数平滑异同平均线
+    case boll(Int, Int)                         //布林线
     
     /**
      获取Key值的名称
@@ -45,15 +52,17 @@ public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
         case .none:
             return ""
         case .timeline:
-            return "Timeline_\(name)"
+            return "\(CHSeriesKey.timeline)_\(name)"
         case let .ma(num):
-            return "MA\(num)_\(name)"
+            return "\(CHSeriesKey.ma)_\(num)_\(name)"
         case let .ema(num):
-            return "EMA\(num)_\(name)"
+            return "\(CHSeriesKey.ema)_\(num)_\(name)"
         case .kdj(_, _, _):
-            return "KDJ_\(name)"
+            return "\(CHSeriesKey.kdj)_\(name)"
         case .macd(_, _, _):
-            return "MACD_\(name)"
+            return "\(CHSeriesKey.macd)_\(name)"
+        case .boll(_, _):
+            return "\(CHSeriesKey.boll)_\(name)"
         
         }
     }
@@ -79,7 +88,8 @@ public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
             return self.handleKDJ(p1, p2: p2, p3: p3, datas: datas)
         case let .macd(p1, p2, p3):
             return self.handleMACD(p1, p2: p2, p3: p3, datas: datas)
-            
+        case let .boll(num, k):
+            return self.handleBOLL(num, k: k, datas: datas)
         }
     }
     
@@ -96,8 +106,8 @@ extension CHChartAlgorithm {
      */
     fileprivate func handleTimeline(datas: [CHChartItem]) -> [CHChartItem] {
         for (_, data) in datas.enumerated() {
-            data.extVal["\(self.key(CHSectionValueType.price.key))"] = data.closePrice
-            data.extVal["\(self.key(CHSectionValueType.volume.key))"] = data.vol
+            data.extVal["\(self.key(CHSeriesKey.timeline))"] = data.closePrice
+            data.extVal["\(self.key(CHSeriesKey.volume))"] = data.vol
         }
         return datas
     }
@@ -116,8 +126,8 @@ extension CHChartAlgorithm {
     fileprivate func handleMA(_ num: Int, datas: [CHChartItem]) -> [CHChartItem] {
         for (index, data) in datas.enumerated() {
             let value = self.getMAValue(num, index: index, datas: datas)
-            data.extVal["\(self.key(CHSectionValueType.price.key))"] = value.0
-            data.extVal["\(self.key(CHSectionValueType.volume.key))"] = value.1
+            data.extVal["\(self.key(CHSeriesKey.timeline))"] = value.0
+            data.extVal["\(self.key(CHSeriesKey.volume))"] = value.1
         }
         return datas
     }
@@ -187,8 +197,8 @@ extension CHChartAlgorithm {
                 ema_vol = v
             }
             
-            data.extVal["\(self.key(CHSectionValueType.price.key))"] = ema_price
-            data.extVal["\(self.key(CHSectionValueType.volume.key))"] = ema_vol
+            data.extVal["\(self.key(CHSeriesKey.timeline))"] = ema_price
+            data.extVal["\(self.key(CHSeriesKey.volume))"] = ema_vol
             
             prev_ema_price = ema_price
             prev_ema_vol = ema_vol
@@ -329,9 +339,94 @@ extension CHChartAlgorithm {
     fileprivate func getEMA(_ num: Int, index: Int, datas: [CHChartItem]) -> (CGFloat?, CGFloat?) {
         let ema = CHChartAlgorithm.ema(num)
         let data = datas[index]
-        let ema_price = data.extVal["\(ema.key(CHSectionValueType.price.key))"]
-        let ema_vol = data.extVal["\(ema.key(CHSectionValueType.volume.key))"]
+        let ema_price = data.extVal["\(ema.key(CHSeriesKey.timeline))"]
+        let ema_vol = data.extVal["\(ema.key(CHSeriesKey.volume))"]
         return (ema_price, ema_vol)
     }
     
+    /**
+     获取某日的MA数据
+     
+     - parameter num:   天数周期
+     - parameter index:
+     - parameter datas:
+     
+     - returns: //MA的成交价和成交量
+     */
+    fileprivate func getMA(_ num: Int, index: Int, datas: [CHChartItem]) -> (CGFloat?, CGFloat?) {
+        let ma = CHChartAlgorithm.ma(num)
+        let data = datas[index]
+        let ma_price = data.extVal["\(ma.key(CHSeriesKey.timeline))"]
+        let ma_vol = data.extVal["\(ma.key(CHSeriesKey.volume))"]
+        return (ma_price, ma_vol)
+    }
+}
+
+// MARK: - 《BOLL布林线》 处理算法
+extension CHChartAlgorithm {
+    
+    
+    /// 布林线处理方法
+    ///
+    /// 计算公式
+    /// 中轨线=N日的移动平均线
+    /// 上轨线=中轨线+两倍的标准差
+    /// 下轨线=中轨线－两倍的标准差
+    /// 计算过程
+    /// （1）计算MA
+    /// MA=N日内的收盘价之和÷N
+    /// （2）计算标准差MD
+    /// MD=平方根（N）日的（C－MA）的两次方之和除以N
+    /// （3）计算MB、UP、DN线
+    /// MB=（N）日的MA
+    /// UP=MB+k×MD
+    /// DN=MB－k×MD
+    /// （K为参数，可根据股票的特性来做相应的调整，一般默认为2）
+    ///
+    /// - Parameters:
+    ///   - num: 天数
+    ///   - k: 参数默认为2
+    ///   - datas: 待处理的数据
+    /// - Returns: 处理后的数据
+    fileprivate func handleBOLL(_ num: Int, k: Int = 2, datas: [CHChartItem]) -> [CHChartItem] {
+        var md: CGFloat = 0, mb: CGFloat = 0, up: CGFloat = 0, dn: CGFloat = 0
+        for (index, data) in datas.enumerated() {
+            //计算标准差
+            md = self.handleBOLLSTD(num, index: index, datas: datas)
+            mb = self.getMA(num, index: index, datas: datas).0 ?? 0
+            up = mb + CGFloat(k) * md
+            dn = mb - CGFloat(k) * md
+            
+            data.extVal["\(self.key("BOLL"))"] = mb
+            data.extVal["\(self.key("UP"))"] = up
+            data.extVal["\(self.key("LB"))"] = dn
+        }
+        
+        return datas
+    }
+    
+    
+    /// 计算布林线中的MA平方差
+    ///
+    /// - Parameters:
+    ///   - num: 累计的天数
+    ///   - index: 当天日期
+    ///   - datas: 数据集合
+    /// - Returns: 结果
+    fileprivate func handleBOLLSTD(_ num: Int, index: Int, datas: [CHChartItem]) -> CGFloat {
+        var dx: CGFloat = 0, md: CGFloat = 0
+        let ma = self.getMA(num, index: index, datas: datas).0 ?? 0
+        if index + 1 >= num {       //index + 1 >= N，计算N日的平方差
+            for i in stride(from: index, through: index + 1 - num, by: -1) {
+                dx += pow(datas[i].closePrice - ma, 2)
+            }
+            md = dx / CGFloat(num)
+        } else {                    //index + 1 < N，计算index + 1日的平方差
+            for i in stride(from: index, through: 0, by: -1) {
+                dx += pow(datas[i].closePrice - ma, 2)
+            }
+            md = dx / CGFloat(index + 1)
+        }
+        return md
+    }
 }
