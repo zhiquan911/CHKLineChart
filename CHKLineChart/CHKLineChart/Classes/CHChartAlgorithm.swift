@@ -398,7 +398,7 @@ extension CHChartAlgorithm {
             dn = mb - CGFloat(k) * md
             
             data.extVal["\(self.key("BOLL"))"] = mb
-            data.extVal["\(self.key("UP"))"] = up
+            data.extVal["\(self.key("UB"))"] = up
             data.extVal["\(self.key("LB"))"] = dn
         }
         
@@ -427,6 +427,8 @@ extension CHChartAlgorithm {
             }
             md = dx / CGFloat(index + 1)
         }
+        //平方根
+        md = pow(md, 0.5)
         return md
     }
 }

@@ -205,6 +205,13 @@ extension CHSection {
 // MARK: - 公开方法
 extension CHSection {
     
+    
+    /// 建立Y轴的数值范围
+    ///
+    /// - Parameters:
+    ///   - startIndex: 计算范围的开始数据点
+    ///   - endIndex: 计算范围的结束数据点
+    ///   - datas: 数据集合
     public func buildYAxis(startIndex: Int, endIndex: Int, datas: [CHChartItem]) {
         self.yAxis.isUsed = false
         var baseValueSticky = false
@@ -222,6 +229,12 @@ extension CHSection {
             }
         } else {
             for serie in self.series {   //不分页，计算所有系列作为坐标系的数据源
+                
+                //隐藏的不计算
+                if serie.hidden {
+                    continue
+                }
+                
                 baseValueSticky = serie.baseValueSticky
                 symmetrical = serie.symmetrical
                 for serieModel in serie.chartModels {
@@ -508,5 +521,18 @@ extension CHSection {
             }
         }
         return series
+    }
+    
+    
+    /// 删除线段
+    ///
+    /// - Parameter key: 线段主键名
+    public func removeSeries(key: String) {
+        for (index, s) in self.series.enumerated() {
+            if s.key == key {
+                self.series.remove(at: index)
+                break
+            }
+        }
     }
 }

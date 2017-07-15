@@ -65,7 +65,7 @@ extension CHSeries {
     public class func getTimelinePrice(color: UIColor, section: CHSection, showGuide: Bool = false, ultimateValueStyle: CHUltimateValueStyle = .none, lineWidth: CGFloat = 1) -> CHSeries {
         let series = CHSeries()
         series.key = CHSeriesKey.timeline
-        let timeline = CHChartModel.getLine(color, title: NSLocalizedString("Price", comment: ""), key: "\(CHSeriesKey.timeline)_\(section.key)")
+        let timeline = CHChartModel.getLine(color, title: NSLocalizedString("Price", comment: ""), key: "\(CHSeriesKey.timeline)_\(CHSeriesKey.timeline)")
         timeline.section = section
         timeline.useTitleColor = false
         timeline.ultimateValueStyle = ultimateValueStyle
@@ -185,6 +185,22 @@ extension CHSeries {
         let bar = CHChartModel.getBar(upStyle: upStyle, downStyle: downStyle, titleColor: barc, title: "MACD", key: "\(CHSeriesKey.macd)_BAR")
         bar.section = section
         series.chartModels = [bar, dif, dea]
+        return series
+    }
+    
+    /**
+     返回一个BOLL系列样式
+     */
+    public class func getBOLL(_ bollc: UIColor, ubc: UIColor, lbc: UIColor, section: CHSection) -> CHSeries {
+        let series = CHSeries()
+        series.key = CHSeriesKey.boll
+        let boll = CHChartModel.getLine(bollc, title: "BOLL", key: "\(CHSeriesKey.boll)_BOLL")
+        boll.section = section
+        let ub = CHChartModel.getLine(ubc, title: "UB", key: "\(CHSeriesKey.boll)_UB")
+        ub.section = section
+        let lb = CHChartModel.getLine(lbc, title: "LB", key: "\(CHSeriesKey.boll)_LB")
+        lb.section = section
+        series.chartModels = [boll, ub, lb]
         return series
     }
 }

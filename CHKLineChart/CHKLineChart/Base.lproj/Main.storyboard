@@ -36,36 +36,23 @@
                                 <items>
                                     <barButtonItem style="plain" id="Rgp-bV-acI">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="1" id="86l-Gr-tLi">
-                                            <rect key="frame" x="16" y="7" width="130" height="30"/>
+                                            <rect key="frame" x="16" y="7" width="255" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="N/A"/>
                                                 <segment title="MA"/>
                                                 <segment title="EMA"/>
+                                                <segment title="BOLL"/>
                                             </segments>
                                             <connections>
                                                 <action selector="handleSegmentChangeWithSender:" destination="BYZ-38-t0r" eventType="valueChanged" id="bOM-t4-cIo"/>
                                             </connections>
                                         </segmentedControl>
                                     </barButtonItem>
-                                    <barButtonItem style="plain" id="wal-UK-a0X">
-                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="1" id="Avt-ge-BGH">
-                                            <rect key="frame" x="156" y="7" width="139" height="30"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <segments>
-                                                <segment title="N/A"/>
-                                                <segment title="KDJ"/>
-                                                <segment title="MACD"/>
-                                            </segments>
-                                            <connections>
-                                                <action selector="handleSegmentChangeWithSender:" destination="BYZ-38-t0r" eventType="valueChanged" id="Cep-bW-koc"/>
-                                            </connections>
-                                        </segmentedControl>
-                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="ZDC-4f-VT5"/>
                                     <barButtonItem style="plain" id="3mU-M6-osR">
                                         <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="SKL-Qu-Dqd">
-                                            <rect key="frame" x="313" y="7" width="46" height="30"/>
+                                            <rect key="frame" x="317" y="7" width="42" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <state key="normal" title="Close"/>
                                             <connections>
@@ -97,16 +84,17 @@
                                         </segmentedControl>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="PN9-EM-Ixd"/>
-                                    <barButtonItem style="plain" id="yeC-lj-rpk">
-                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="g4z-09-g3N">
-                                            <rect key="frame" x="225" y="7" width="134" height="30"/>
+                                    <barButtonItem style="plain" id="wal-UK-a0X">
+                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="1" id="Avt-ge-BGH">
+                                            <rect key="frame" x="214" y="7" width="145" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
-                                                <segment title="BTC/CNY"/>
-                                                <segment title="ETH/BTC"/>
+                                                <segment title="N/A"/>
+                                                <segment title="KDJ"/>
+                                                <segment title="MACD"/>
                                             </segments>
                                             <connections>
-                                                <action selector="handleExPairsSegmentChangeWithSender:" destination="BYZ-38-t0r" eventType="valueChanged" id="wYX-R6-9vY"/>
+                                                <action selector="handleSegmentChangeWithSender:" destination="BYZ-38-t0r" eventType="valueChanged" id="Cep-bW-koc"/>
                                             </connections>
                                         </segmentedControl>
                                     </barButtonItem>

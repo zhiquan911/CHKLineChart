@@ -1492,6 +1492,37 @@ extension CHKLineChartView {
         //设置标题
         section.setHeader(titles: titles)
     }
+    
+    
+    /// 向分区添加新线段
+    ///
+    /// - Parameters:
+    ///   - series: 线段
+    ///   - section: 分区位置
+    open func addSeries(_ series: CHSeries, inSection section: Int) {
+        guard let section = self.sections[safe: section] else {
+            return
+        }
+        section.series.append(series)
+        
+        self.drawLayerView()
+    }
+    
+    
+    /// 通过主键名向分区删除线段
+    ///
+    /// - Parameters:
+    ///   - key: 主键
+    ///   - section: 分区位置
+    open func removeSeries(key: String, inSection section: Int) {
+        guard let section = self.sections[safe: section] else {
+            return
+        }
+        
+        section.removeSeries(key: key)
+        
+        self.drawLayerView()
+    }
 }
 
 

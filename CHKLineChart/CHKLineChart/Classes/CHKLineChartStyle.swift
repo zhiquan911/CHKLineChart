@@ -119,12 +119,14 @@ public extension CHKLineChartStyle {
             CHChartAlgorithm.timeline,
             CHChartAlgorithm.ma(5),
             CHChartAlgorithm.ma(10),
+            CHChartAlgorithm.ma(20),        //计算BOLL，必须先计算到同周期的MA
             CHChartAlgorithm.ma(30),
             CHChartAlgorithm.ema(5),
             CHChartAlgorithm.ema(10),
             CHChartAlgorithm.ema(12),       //计算MACD，必须先计算到同周期的EMA
             CHChartAlgorithm.ema(26),       //计算MACD，必须先计算到同周期的EMA
             CHChartAlgorithm.ema(30),
+            CHChartAlgorithm.boll(20, 2),
             CHChartAlgorithm.macd(12, 26, 9),
             CHChartAlgorithm.kdj(9, 3, 3),
         ]
@@ -186,7 +188,22 @@ public extension CHKLineChartStyle {
             section: priceSection)
         
         priceEMASeries.hidden = true
-        priceSection.series = [timelineSeries, priceSeries, priceMASeries, priceEMASeries]
+        
+        let priceBOLLSeries = CHSeries.getBOLL(
+            UIColor.ch_hex(0xDDDDDD),
+            ubc: UIColor.ch_hex(0xF9EE30),
+            lbc: UIColor.ch_hex(0xF600FF),
+            section: priceSection)
+        
+        priceBOLLSeries.hidden = true
+        
+        priceSection.series = [
+            timelineSeries,
+            priceSeries,
+            priceMASeries,
+            priceEMASeries,
+            priceBOLLSeries
+        ]
         
         let volumeSection = CHSection()
         volumeSection.backgroundColor = style.backgroundColor

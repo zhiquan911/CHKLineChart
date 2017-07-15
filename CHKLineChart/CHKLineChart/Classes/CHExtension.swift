@@ -96,8 +96,21 @@ extension CGFloat {
     }
 }
 
-extension Array {
+extension Array where Element: Equatable {
+    
     subscript (safe index: Int) -> Element? {
         return (0..<count).contains(index) ? self[index] : nil
+    }
+    
+    mutating func ch_removeObject(_ object: Element) {
+        if let index = self.index(of: object) {
+            self.remove(at: index)
+        }
+    }
+    
+    mutating func ch_removeObjectsInArray(_ array: [Element]) {
+        for object in array {
+            self.ch_removeObject(object)
+        }
     }
 }
