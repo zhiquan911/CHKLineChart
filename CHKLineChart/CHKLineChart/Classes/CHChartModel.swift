@@ -75,17 +75,21 @@ open class CHChartModel {
     open var key: String = ""                                     //key的名字
     open var ultimateValueStyle: CHUltimateValueStyle = .none       // 最大最小值显示样式
     open var lineWidth: CGFloat = 0.6                                     //线段宽度
+    open var plotPaddingExt: CGFloat =  0.165                     //点与点之间间断所占点宽的比例
     
     weak var section: CHSection!
     
     
-    convenience init(upStyle: (color: UIColor, isSolid: Bool),
-                     downStyle: (color: UIColor, isSolid: Bool),
-                     title: String = "",
-                     titleColor: UIColor,
-                     datas: [CHChartItem] = [CHChartItem](),
-                     decimal: Int = 2
+    convenience init(
+        upStyle: (color: UIColor, isSolid: Bool),
+        downStyle: (color: UIColor, isSolid: Bool),
+        title: String = "",
+        titleColor: UIColor,
+        datas: [CHChartItem] = [CHChartItem](),
+        decimal: Int = 2,
+        plotPaddingExt: CGFloat =  0.165
         ) {
+        
         self.init()
         self.upStyle = upStyle
         self.downStyle = downStyle
@@ -93,6 +97,7 @@ open class CHChartModel {
         self.title = title
         self.datas = datas
         self.decimal = decimal
+        self.plotPaddingExt = plotPaddingExt
     }
     
     /**
@@ -102,7 +107,7 @@ open class CHChartModel {
      - parameter endIndex:       结束索引
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
-    open func drawSerie(_ startIndex: Int, endIndex: Int, plotPaddingExt: CGFloat = 0.165) -> CAShapeLayer {
+    open func drawSerie(_ startIndex: Int, endIndex: Int) -> CAShapeLayer {
         return CAShapeLayer()
     }
 }
@@ -113,7 +118,7 @@ open class CHChartModel {
  */
 open class CHLineModel: CHChartModel {
     
- 
+    
     /**
      画点线
      
@@ -121,8 +126,7 @@ open class CHLineModel: CHChartModel {
      - parameter endIndex:       结束索引
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
-    open override func drawSerie(_ startIndex: Int, endIndex: Int,
-                                   plotPaddingExt: CGFloat = 0.165) -> CAShapeLayer {
+    open override func drawSerie(_ startIndex: Int, endIndex: Int) -> CAShapeLayer {
         
         let serieLayer = CAShapeLayer()
         
@@ -157,11 +161,11 @@ open class CHLineModel: CHChartModel {
             //开始X
             let ix = self.section.frame.origin.x + self.section.padding.left + CGFloat(i - startIndex) * plotWidth
             //结束X
-//            let iNx = self.section.frame.origin.x + self.section.padding.left + CGFloat(i + 1 - startIndex) * plotWidth
+            //            let iNx = self.section.frame.origin.x + self.section.padding.left + CGFloat(i + 1 - startIndex) * plotWidth
             
             //把具体的数值转为坐标系的y值
             let iys = self.section.getLocalY(value)
-//            let iye = self.section.getLocalY(valueNext!)
+            //            let iye = self.section.getLocalY(valueNext!)
             let point = CGPoint(x: ix + plotWidth / 2, y: iys)
             //第一个点移动路径起始
             if !isStartDraw {
@@ -222,8 +226,7 @@ open class CHCandleModel: CHChartModel {
      - parameter endIndex:       结束索引
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
-    open override func drawSerie(_ startIndex: Int, endIndex: Int,
-                                   plotPaddingExt: CGFloat = 0.165) -> CAShapeLayer {
+    open override func drawSerie(_ startIndex: Int, endIndex: Int) -> CAShapeLayer {
         
         let serieLayer = CAShapeLayer()
         
@@ -231,7 +234,7 @@ open class CHCandleModel: CHChartModel {
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
-        var plotPadding = plotWidth * plotPaddingExt
+        var plotPadding = plotWidth * self.plotPaddingExt
         plotPadding = plotPadding < 0.25 ? 0.25 : plotPadding
         
         var maxValue: CGFloat = 0       //最大值的项
@@ -287,7 +290,7 @@ open class CHCandleModel: CHChartModel {
             //1.先画最高和最低价格的线
             shadowPath.move(to: CGPoint(x: ix + plotWidth / 2, y: iyh))
             shadowPath.addLine(to: CGPoint(x: ix + plotWidth / 2, y: iyl))
-
+            
             
             //2.画蜡烛柱的矩形，空心的刚好覆盖上面的线
             switch item.trend {
@@ -372,8 +375,7 @@ open class CHColumnModel: CHChartModel {
      - parameter endIndex:       结束索引
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
-    open override func drawSerie(_ startIndex: Int, endIndex: Int,
-                                   plotPaddingExt: CGFloat = 0.165) -> CAShapeLayer {
+    open override func drawSerie(_ startIndex: Int, endIndex: Int) -> CAShapeLayer {
         
         let serieLayer = CAShapeLayer()
         
@@ -381,18 +383,18 @@ open class CHColumnModel: CHChartModel {
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
-        var plotPadding = plotWidth * plotPaddingExt
+        var plotPadding = plotWidth * self.plotPaddingExt
         plotPadding = plotPadding < 0.25 ? 0.25 : plotPadding
         
         let iybase = self.section.getLocalY(section.yAxis.baseValue)
         
         //循环起始到终结
         for i in stride(from: startIndex, to: endIndex, by: 1) {
-//            let value = self[i].value
-//            
-//            if value == nil{
-//                continue  //无法计算的值不绘画
-//            }
+            //            let value = self[i].value
+            //
+            //            if value == nil{
+            //                continue  //无法计算的值不绘画
+            //            }
             var isSolid = true
             let columnLayer = CAShapeLayer()
             
@@ -450,8 +452,7 @@ open class CHBarModel: CHChartModel {
      - parameter endIndex:       结束索引
      - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
      */
-    open override func drawSerie(_ startIndex: Int, endIndex: Int,
-                                 plotPaddingExt: CGFloat = 0.165) -> CAShapeLayer{
+    open override func drawSerie(_ startIndex: Int, endIndex: Int) -> CAShapeLayer{
         
         let serieLayer = CAShapeLayer()
         
@@ -459,14 +460,14 @@ open class CHBarModel: CHChartModel {
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
-        var plotPadding = plotWidth * plotPaddingExt
+        var plotPadding = plotWidth * self.plotPaddingExt
         plotPadding = plotPadding < 0.25 ? 0.25 : plotPadding
         
         let iybase = self.section.getLocalY(section.yAxis.baseValue)
         
-//        let context = UIGraphicsGetCurrentContext()
-//        context?.setShouldAntialias(false)
-//        context?.setLineWidth(1)
+        //        let context = UIGraphicsGetCurrentContext()
+        //        context?.setShouldAntialias(false)
+        //        context?.setLineWidth(1)
         
         //循环起始到终结
         for i in stride(from: startIndex, to: endIndex, by: 1) {
@@ -505,7 +506,7 @@ open class CHBarModel: CHChartModel {
                 } else {
                     isSolid = self.downStyle.isSolid
                 }
-
+                
             }
             
             if isSolid {
@@ -531,6 +532,119 @@ open class CHBarModel: CHChartModel {
     
 }
 
+/**
+ *  圆点样式模型
+ */
+open class CHRoundModel: CHChartModel {
+    
+    
+    /**
+     画点线
+     
+     - parameter startIndex:     起始索引
+     - parameter endIndex:       结束索引
+     - parameter plotPaddingExt: 点与点之间间断所占点宽的比例
+     */
+    open override func drawSerie(_ startIndex: Int, endIndex: Int) -> CAShapeLayer {
+        
+        let serieLayer = CAShapeLayer()
+        
+        let modelLayer = CAShapeLayer()
+        modelLayer.strokeColor = self.upStyle.color.cgColor
+        modelLayer.fillColor = UIColor.clear.cgColor
+        modelLayer.lineWidth = self.lineWidth
+        modelLayer.lineCap = kCALineCapRound
+        modelLayer.lineJoin = kCALineJoinBevel
+        
+        //每个点的间隔宽度
+        let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
+        var plotPadding = plotWidth * self.plotPaddingExt
+        plotPadding = plotPadding < 0.25 ? 0.25 : plotPadding
+        
+        var maxValue: CGFloat = 0       //最大值的项
+        var maxPoint: CGPoint?          //最大值所在坐标
+        var minValue: CGFloat = CGFloat.greatestFiniteMagnitude       //最小值的项
+        var minPoint: CGPoint?          //最小值所在坐标
+        
+        //循环起始到终结
+        for i in stride(from: startIndex, to: endIndex, by: 1) {
+            
+            //开始的点
+            guard let value = self[i].value else {
+                continue //无法计算的值不绘画
+            }
+            
+            let item = datas[i]
+            
+            //开始X
+            let ix = self.section.frame.origin.x + self.section.padding.left + CGFloat(i - startIndex) * plotWidth
+            
+            //把具体的数值转为坐标系的y值
+            let iys = self.section.getLocalY(value)
+            
+            let roundLayer = CAShapeLayer()
+            
+            let roundPoint = CGPoint(x: ix + plotPadding, y: iys)
+            let roundSize = CGSize(width: plotWidth - 2 * plotPadding, height: plotWidth - 2 * plotPadding)
+            let roundPath = UIBezierPath(ovalIn: CGRect(origin: roundPoint, size: roundSize))
+            
+            roundLayer.lineWidth = self.lineWidth
+            roundLayer.path = roundPath.cgPath
+            
+            //收盘价大于指导价
+            var fillColor: (color: UIColor, isSolid: Bool)
+            if item.closePrice > value {
+                fillColor = self.upStyle
+            } else {
+                fillColor = self.downStyle
+            }
+            
+            roundLayer.strokeColor = fillColor.color.cgColor
+            roundLayer.fillColor = fillColor.color.cgColor
+            
+            //设置为空心
+            if !fillColor.isSolid {
+                roundLayer.fillColor = section.backgroundColor.cgColor
+            }
+            
+            modelLayer.addSublayer(roundLayer)
+            
+            //记录最大值信息
+            if value > maxValue {
+                maxValue = value
+                maxPoint = roundPoint
+            }
+            
+            //记录最小值信息
+            if value < minValue {
+                minValue = value
+                minPoint = roundPoint
+            }
+        }
+        
+        serieLayer.addSublayer(modelLayer)
+        
+        //显示最大最小值
+        if self.showMaxVal && maxValue != 0 {
+            let highPrice = maxValue.ch_toString(maxF: section.decimal)
+            let maxLayer = self.drawGuideValue(value: highPrice, section: section, point: maxPoint!, trend: CHChartItemTrend.up)
+            
+            serieLayer.addSublayer(maxLayer)
+        }
+        
+        //显示最大最小值
+        if self.showMinVal && minValue != CGFloat.greatestFiniteMagnitude {
+            let lowPrice = minValue.ch_toString(maxF: section.decimal)
+            let minLayer = self.drawGuideValue(value: lowPrice, section: section, point: minPoint!, trend: CHChartItemTrend.down)
+            
+            serieLayer.addSublayer(minLayer)
+        }
+        
+        return serieLayer
+    }
+    
+    
+}
 
 // MARK: - 扩展公共方法
 public extension CHChartModel {
@@ -561,8 +675,8 @@ public extension CHChartModel {
         }
         
         
-//        context.setShouldAntialias(true)
-//        context.setStrokeColor(self.titleColor.cgColor)
+        //        context.setShouldAntialias(true)
+        //        context.setStrokeColor(self.titleColor.cgColor)
         var fillColor: UIColor = self.upStyle.color
         switch trend {
         case .up:
@@ -617,10 +731,10 @@ public extension CHChartModel {
             arrowLayer.path = arrowPath.cgPath
             arrowLayer.fillColor = fillColor.cgColor
             guideValueLayer.addSublayer(arrowLayer)
-
+            
             let tagPath = UIBezierPath(
                 roundedRect: CGRect(x: maxPriceStartX - arrowLineWidth, y: tagStartY, width: fontSize.width + arrowLineWidth * 2, height: fontSize.height + arrowLineWidth), cornerRadius: arrowLineWidth * 2)
-//            tagPath.fill()
+            //            tagPath.fill()
             
             tagLayer.path = tagPath.cgPath
             tagLayer.fillColor = fillColor.cgColor
@@ -640,11 +754,11 @@ public extension CHChartModel {
             let circlePath = UIBezierPath(ovalIn: CGRect(origin: circlePoint, size: circleSize))
             
             
-//            fillColor.set()
-//            circlePath.stroke()
-//            
-//            self.section.backgroundColor.set()
-//            circlePath.fill()
+            //            fillColor.set()
+            //            circlePath.stroke()
+            //
+            //            self.section.backgroundColor.set()
+            //            circlePath.fill()
             
             circleLayer.lineWidth = self.lineWidth
             circleLayer.path = circlePath.cgPath
@@ -660,10 +774,10 @@ public extension CHChartModel {
         
         if isShowValue {
             
-//            let fontAttributes = [
-//                NSFontAttributeName: section.labelFont,
-//                NSForegroundColorAttributeName: guideValueTextColor
-//                ] as [String : Any]
+            //            let fontAttributes = [
+            //                NSFontAttributeName: section.labelFont,
+            //                NSForegroundColorAttributeName: guideValueTextColor
+            //                ] as [String : Any]
             
             //计算画文字的位置
             let point = CGPoint(x: maxPriceStartX, y: maxPriceStartY)
@@ -681,15 +795,15 @@ public extension CHChartModel {
             guideValueLayer.addSublayer(valueText)
             
             
-//            NSString(string: value)
-//                .draw(at: point,
-//                      withAttributes: fontAttributes)
+            //            NSString(string: value)
+            //                .draw(at: point,
+            //                      withAttributes: fontAttributes)
             
         }
         
         
         return guideValueLayer
-//        context.setShouldAntialias(false)
+        //        context.setShouldAntialias(false)
         
     }
     
@@ -732,7 +846,20 @@ extension CHChartModel {
                       downStyle: (color: UIColor, isSolid: Bool),
                       titleColor: UIColor, title: String, key: String) -> CHBarModel {
         let model = CHBarModel(upStyle: upStyle, downStyle: downStyle,
-                                  titleColor: titleColor)
+                               titleColor: titleColor)
+        model.title = title
+        model.key = key
+        return model
+    }
+    
+    //生成一个圆点样式
+    class func getRound(upStyle: (color: UIColor, isSolid: Bool),
+                        downStyle: (color: UIColor, isSolid: Bool),
+                        titleColor: UIColor, title: String,
+                        plotPaddingExt: CGFloat,
+                        key: String) -> CHRoundModel {
+        let model = CHRoundModel(upStyle: upStyle, downStyle: downStyle,
+                                 titleColor: titleColor, plotPaddingExt: plotPaddingExt)
         model.title = title
         model.key = key
         return model
@@ -743,11 +870,11 @@ extension CHChartModel {
 extension CHChartModel {
     
     public subscript (index: Int) -> CHChartItem {
-            var value: CGFloat?
-            let item = self.datas[index]
-            value = item.extVal[self.key]
-            item.value = value
-            return item
-        }
+        var value: CGFloat?
+        let item = self.datas[index]
+        value = item.extVal[self.key]
+        item.value = value
+        return item
+    }
     
 }

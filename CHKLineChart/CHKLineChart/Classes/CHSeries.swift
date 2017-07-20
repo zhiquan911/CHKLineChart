@@ -20,6 +20,7 @@ public struct CHSeriesKey {
     public static let kdj = "KDJ"
     public static let macd = "MACD"
     public static let boll = "BOLL"
+    public static let sar = "SAR"
 }
 
 
@@ -32,7 +33,7 @@ public struct CHSeriesKey {
 /// KDJ线段：包含3个线点线模型（CHLineModel），3个点线的数值根据KDJ指标算法计算所得
 /// MACD线段：包含2个线点线模型（CHLineModel），1个条形点线模型
 open class CHSeries: NSObject {
- 
+    
     open var key = ""
     open var title: String = ""
     open var chartModels = [CHChartModel]()          //每个系列包含多个点线模型
@@ -201,6 +202,26 @@ extension CHSeries {
         let lb = CHChartModel.getLine(lbc, title: "LB", key: "\(CHSeriesKey.boll)_LB")
         lb.section = section
         series.chartModels = [boll, ub, lb]
+        return series
+    }
+    
+    
+    /**
+     返回一个SAR系列样式
+     */
+    public class func getSAR(
+        upStyle: (color: UIColor, isSolid: Bool),
+        downStyle: (color: UIColor, isSolid: Bool),
+        titleColor: UIColor,
+        plotPaddingExt: CGFloat = 0.3,
+        section: CHSection) -> CHSeries {
+        
+        let series = CHSeries()
+        series.key = CHSeriesKey.sar
+        let sar = CHChartModel.getRound(upStyle: upStyle, downStyle: downStyle, titleColor: titleColor, title: "SAR", plotPaddingExt: plotPaddingExt, key: "\(CHSeriesKey.sar)")
+        sar.section = section
+        sar.useTitleColor = true
+        series.chartModels = [sar]
         return series
     }
 }

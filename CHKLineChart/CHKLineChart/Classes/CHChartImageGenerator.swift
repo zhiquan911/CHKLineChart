@@ -79,7 +79,7 @@ extension CHKLineChartStyle {
         //分区框线颜色
         style.lineColor = UIColor.clear
         //背景颜色
-        style.backgroundColor = UIColor.white
+        style.backgroundColor = UIColor.ch_hex(0xF5F5F5)
         //文字颜色
         style.textColor = UIColor(white: 0.8, alpha: 1)
         //整个图表的内边距
@@ -127,7 +127,7 @@ extension CHKLineChartStyle {
         
         /// 时分线
         let timelineSeries = CHSeries.getTimelinePrice(
-            color: UIColor.lightGray,
+            color: UIColor.ch_hex(0xA4AAB3),
             section: priceSection,
             showGuide: true,
             ultimateValueStyle: .none,

@@ -39,6 +39,7 @@ public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
     case kdj(Int, Int, Int)                     //随机指标
     case macd(Int, Int, Int)                    //指数平滑异同平均线
     case boll(Int, Int)                         //布林线
+    case sar(Int, CGFloat, CGFloat)             //停损转向操作点指标(判定周期，加速因子初值，加速因子最大值)
     
     /**
      获取Key值的名称
@@ -63,6 +64,8 @@ public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
             return "\(CHSeriesKey.macd)_\(name)"
         case .boll(_, _):
             return "\(CHSeriesKey.boll)_\(name)"
+        case .sar(_, _, _):
+            return "\(CHSeriesKey.sar)\(name)"
         
         }
     }
@@ -90,6 +93,8 @@ public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
             return self.handleMACD(p1, p2: p2, p3: p3, datas: datas)
         case let .boll(num, k):
             return self.handleBOLL(num, k: k, datas: datas)
+        case let .sar(num, minAF, maxAF):
+            return self.handleSAR(num,minAF: minAF, maxAF: maxAF, datas: datas)
         }
     }
     
@@ -430,5 +435,183 @@ extension CHChartAlgorithm {
         //平方根
         md = pow(md, 0.5)
         return md
+    }
+}
+
+// MARK: - 《SAR指标》 处理算法
+extension CHChartAlgorithm {
+    
+    
+    
+    /// SAR指标又叫抛物线指标或停损转向操作点指标
+    ///
+    /// 计算Tn周期的SAR值为例，计算公式如下：
+    /// SAR(Tn)=SAR(Tn-1)+AF(Tn)*[EP(Tn-1)-SAR(Tn-1)]
+    /// 其中，SAR(Tn)为第Tn周期的SAR值，SAR(Tn-1)为第(Tn-1)周期的值
+    /// AF为加速因子(或叫加速系数)，EP为极点价(最高价或最低价)
+    /// 在计算SAR值时，要注意以下几项原则：
+    /// 1、初始值SAR(T0)的确定
+    /// 若T1周期中SAR(T1)上涨趋势，则SAR(T0)为T0周期的最低价，若T1周期下跌趋势，则SAR(T0)为T0周期 的最高价；
+    /// 2、极点价EP的确定
+    /// 若Tn周期为上涨趋势（SAR在K线下方），EP(Tn-1)为Tn-1周期的最高价，若Tn周期为下跌趋势（SAR在K线上方），EP(Tn-1)为Tn-1周期的最低价；
+    /// 3、加速因子AF的确定
+    /// (a)加速因子初始值为0.02，即AF(T0)=0.02；
+    /// (b)若Tn-1，Tn周期都为上涨趋势时，当Tn周期的最高价>Tn-1周期的最高价,则AF(Tn)=AF(Tn-1)+0.02， 当Tn周期的最高价<=Tn-1周期的最高价,则AF(Tn)=AF(Tn-1)，但加速因子AF最高不超过0.2；
+    /// (c)若Tn-1，Tn周期都为下跌趋势时，当Tn周期的最低价<Tn-1周期的最低价,则AF(Tn)=AF(Tn-1)+0.02， 当Tn周期的最低价>=Tn-1周期的最低价,则AF(Tn)=AF(Tn-1)；
+    /// (d)任何一次行情的转变，加速因子AF都必须重新由0.02起算；
+    /// 比如，Tn-1周期为上涨趋势，Tn周期为下跌趋势(或Tn-1下跌，Tn上涨)，AF(Tn)需重新由0.02为基础进 行计算，即AF(Tn)=AF(T0)=0.02；
+    /// (e)加速因子AF最高不超过0.2,当AF>0.2时，维持最大值；
+    /// 4、确定今天的SAR值
+    /// (a)通过公式SAR(Tn)=SAR(Tn-1)+AF(Tn)*[EP(Tn-1)-SAR(Tn-1)]，计算出Tn周期的值；
+    /// (b)若Tn周期为上涨趋势，当SAR(Tn)>Tn周期的收盘价，则Tn周期最终 SAR值应为基准周期段的最高价中的最大值，
+    /// 当SAR(Tn)<=Tn周期的收盘价，则Tn周期最终SAR值为SAR(Tn)，即 SAR=SAR(Tn)；
+    /// (c)若Tn周期为下跌趋势，当SAR(Tn)<Tn周期的收盘价，则Tn周期最终 SAR值应为基准周期段的最低价中的最小值，
+    /// 当SAR(Tn)>=Tn周期的收盘价，则Tn周期最终SAR值为SAR(Tn)，即 SAR=SAR(Tn)；
+    /// 5、SAR指标周期的计算基准周期的参数为2，如2日、2周、2月等，其计算周期的参数变动范围为2—8。（多数推荐4）
+    /// 6、SAR指标的计算方法和过程比较烦琐，对于投资者来说只要掌握其演算过程和原理，在实际操作中并不 需要投资者自己计算SAR值，更重要的是投资者要灵活掌握和运用SAR指标的研判方法和功能。
+    ///
+    /// - Parameter num: 基准周期数N
+    /// - Parameter minAF: 加速因子AF最小值（初始值）
+    /// - Parameter maxAF: 加速因子AF最大值
+    /// - Parameter datas: 待处理的数据集合
+    /// - Returns: 处理后的数据集合
+    fileprivate func handleSAR(_ num: Int, minAF: CGFloat, maxAF: CGFloat, datas: [CHChartItem]) -> [CHChartItem] {
+        
+        var sar: CGFloat = 0, af: CGFloat = minAF, ep: CGFloat = 0
+        var pre_data: CHChartItem!
+        var isUP: Bool = true              //true：上涨趋势，false：下跌趋势
+        
+        //这个指标至少2条数据才显示
+        guard num >= 2 && datas.count >= 2 else {
+            return datas
+        }
+        
+        /// 1、初始值SAR(T0)的确定
+        /// 若T1周期中SAR(T1)上涨趋势，则SAR(T0)为T0周期的最低价，若T1周期下跌趋势，则SAR(T0)为T0周期 的最高价；
+        if datas[1].closePrice > datas[0].closePrice {
+            sar = datas[0].lowPrice
+            isUP = true
+        } else {
+            sar = datas[0].highPrice
+            isUP = false
+        }
+        
+        //记录第1日
+        pre_data = datas[0]
+        
+        for (index, data) in datas.enumerated() {
+            
+            if index > 0 {      //忽略第一天
+                
+                //确定今天的SAR值
+                let finalSAR = self.getFinalSAR(num: num, sar: sar, index: index, isUP: isUP, datas: datas)
+                
+                //出现行情反转，充值AF加速因子
+                if isUP != finalSAR.1 {
+                    af = minAF
+                }
+                
+                sar = finalSAR.0
+                isUP = finalSAR.1
+                
+            }
+            
+            data.extVal["\(self.key())"] = sar
+            
+            //预算下一天的sar值
+            
+            /// SAR(Tn)=SAR(Tn-1)+AF(Tn)*[EP(Tn-1)-SAR(Tn-1)]
+            /// SAR(1) = SAR(0) + AF(1)*[EP(0)-SAR(0)] 第1天
+            /// 2、极点价EP的确定
+            /// 若Tn周期为上涨趋势（SAR在K线下方），EP(Tn-1)为Tn-1周期的最高价，若Tn周期为下跌趋势（SAR在K线上方），EP(Tn-1)为Tn-1周期的最低价；
+            
+            if isUP {
+                ep = pre_data.highPrice
+            } else {
+                ep = pre_data.lowPrice
+            }
+            
+            /// 3、加速因子AF的确定
+            /// (a)加速因子初始值为0.02，即AF(T0)=0.02；
+            /// (b)若Tn-1，Tn周期都为上涨趋势时，当Tn周期的最高价>Tn-1周期的最高价,则AF(Tn)=AF(Tn-1)+0.02， 当Tn周期的最高价<=Tn-1周期的最高价,则AF(Tn)=AF(Tn-1)，但加速因子AF最高不超过0.2；
+            /// (c)若Tn-1，Tn周期都为下跌趋势时，当Tn周期的最低价<Tn-1周期的最低价,则AF(Tn)=AF(Tn-1)+0.02， 当Tn周期的最低价>=Tn-1周期的最低价,则AF(Tn)=AF(Tn-1)；
+            /// (d)任何一次行情的转变，加速因子AF都必须重新由0.02起算；
+            /// 比如，Tn-1周期为上涨趋势，Tn周期为下跌趋势(或Tn-1下跌，Tn上涨)，AF(Tn)需重新由0.02为基础进 行计算，即AF(Tn)=AF(T0)=0.02；
+            /// (e)加速因子AF最高不超过0.2,当AF>0.2时，维持最大值；
+            if isUP {
+                if data.highPrice > pre_data.highPrice {
+                    af = af + minAF
+                }
+            } else {
+                if data.lowPrice < pre_data.lowPrice {
+                    af = af + minAF
+                }
+            }
+            
+            if af > maxAF {
+                af = maxAF
+            }
+            
+
+            sar = sar + af * (ep - sar)
+            
+            //记录明天的sar值
+            data.extVal["\(self.key("tomorrow"))"] = sar
+            
+
+            pre_data = data
+            
+            
+        }
+        
+        return datas
+    }
+    
+    
+    /// 确定当天最终的SAR值
+    ///
+    /// - Parameters:
+    ///   - num: 趋势判断周期
+    ///   - sar: 预算的sar值
+    ///   - index: 该周期位置
+    ///   - isUP: 趋势
+    ///   - datas: 数据集合
+    /// - Returns: 最终值，是否行情翻转
+    func getFinalSAR(num: Int, sar: CGFloat, index: Int, isUP: Bool, datas: [CHChartItem]) -> (CGFloat, Bool) {
+        
+        /// 4、确定今天的SAR值
+        /// (a)通过公式SAR(Tn)=SAR(Tn-1)+AF(Tn)*[EP(Tn-1)-SAR(Tn-1)]，计算出Tn周期的值；
+        /// (b)若Tn周期为上涨趋势，当SAR(Tn)>Tn周期的收盘价，则Tn周期最终 SAR值应为num天周期段的最高价中的最大值，
+        /// 当SAR(Tn)<=Tn周期的收盘价，则Tn周期最终SAR值为SAR(Tn)，即 SAR=SAR(Tn)；
+        /// (c)若Tn周期为下跌趋势，当SAR(Tn)<Tn周期的收盘价，则Tn周期最终 SAR值应为num天周期的最低价中的最小值，
+        /// 当SAR(Tn)>=Tn周期的收盘价，则Tn周期最终SAR值为SAR(Tn)，即 SAR=SAR(Tn)；
+        
+        
+        var finalSAR: CGFloat = sar
+        var finalIsUP: Bool = isUP
+        var start = index
+        if isUP {
+            if sar > datas[index].closePrice {  //收盘跌破SAR，转向做空
+                //以今天开始数前num天的最高价
+                repeat {
+                    finalSAR = max(datas[start].highPrice, finalSAR) //获取最大值
+                    start -= 1  //递减直到num天前
+                } while start >= max(index - num + 1, 0)
+                
+                finalIsUP = false
+            }
+        } else {
+            if sar < datas[index].closePrice {  //收盘突破SAR，转向做多
+                //以今天开始数前num天的最低价
+                repeat {
+                    finalSAR = min(datas[start].lowPrice, finalSAR) //获取最小值
+                    start -= 1  //递减直到num天前
+                } while start >= max(index - num + 1, 0)
+                
+                finalIsUP = true
+            }
+        }
+        
+        return (finalSAR, finalIsUP)
     }
 }

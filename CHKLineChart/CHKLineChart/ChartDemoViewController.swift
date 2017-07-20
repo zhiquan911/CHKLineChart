@@ -139,18 +139,27 @@ class ChartDemoViewController: UIViewController {
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.ma)
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.ema)
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.boll)
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.sar)
             case 1:
                 self.chartView.setSerie(hidden: false, by: CHSeriesKey.ma)
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.ema)
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.boll)
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.sar)
             case 2:
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.ma)
                 self.chartView.setSerie(hidden: false, by: CHSeriesKey.ema)
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.boll)
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.sar)
             case 3:
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.ma)
                 self.chartView.setSerie(hidden: true, by: CHSeriesKey.ema)
                 self.chartView.setSerie(hidden: false, by: CHSeriesKey.boll)
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.sar)
+            case 4:
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.ma)
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.ema)
+                self.chartView.setSerie(hidden: true, by: CHSeriesKey.boll)
+                self.chartView.setSerie(hidden: false, by: CHSeriesKey.sar)
             default:
                 break
             }

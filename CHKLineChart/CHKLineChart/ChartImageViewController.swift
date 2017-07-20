@@ -103,8 +103,8 @@ extension ChartImageViewController: UITableViewDelegate, UITableViewDataSource {
         imageView?.image = CHChartImageGenerator.share.getImage(
             by: Array(data),
             lineWidth: 1,
-            backgroundColor: UIColor.white,
-            lineColor: UIColor.lightGray,
+            backgroundColor: UIColor.ch_hex(0xF5F5F5),
+            lineColor: UIColor.ch_hex(0xA4AAB3),
             size: imageSize)
         
         return cell!

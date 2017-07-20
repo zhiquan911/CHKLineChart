@@ -117,6 +117,7 @@ public extension CHKLineChartStyle {
         //配置图表处理算法
         style.algorithms = [
             CHChartAlgorithm.timeline,
+            CHChartAlgorithm.sar(4, 0.02, 0.2), //默认周期4，最小加速0.02，最大加速0.2
             CHChartAlgorithm.ma(5),
             CHChartAlgorithm.ma(10),
             CHChartAlgorithm.ma(20),        //计算BOLL，必须先计算到同周期的MA
@@ -197,12 +198,21 @@ public extension CHKLineChartStyle {
         
         priceBOLLSeries.hidden = true
         
+        let priceSARSeries = CHSeries.getSAR(
+            upStyle: upcolor,
+            downStyle: downcolor,
+            titleColor: UIColor.ch_hex(0xDDDDDD),
+            section: priceSection)
+        
+        priceSARSeries.hidden = true
+        
         priceSection.series = [
             timelineSeries,
             priceSeries,
             priceMASeries,
             priceEMASeries,
-            priceBOLLSeries
+            priceBOLLSeries,
+            priceSARSeries
         ]
         
         let volumeSection = CHSection()

@@ -43,6 +43,7 @@
                                                 <segment title="MA"/>
                                                 <segment title="EMA"/>
                                                 <segment title="BOLL"/>
+                                                <segment title="SAR"/>
                                             </segments>
                                             <connections>
                                                 <action selector="handleSegmentChangeWithSender:" destination="BYZ-38-t0r" eventType="valueChanged" id="bOM-t4-cIo"/>
@@ -302,6 +303,7 @@
                                                     </constraints>
                                                 </view>
                                             </subviews>
+                                            <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstItem="1hO-LW-EGZ" firstAttribute="centerY" secondItem="tPF-lT-5dv" secondAttribute="centerY" id="3w9-Bi-3Rf"/>
                                                 <constraint firstItem="zg3-PV-f8R" firstAttribute="centerY" secondItem="tPF-lT-5dv" secondAttribute="centerY" id="Vfn-TU-2Yx"/>
@@ -911,6 +913,134 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GCO-0E-3ZV" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="960.79999999999995" y="-368.36581709145429"/>
+        </scene>
+        <!--Chart Demo View Controller-->
+        <scene sceneID="QKo-DU-0vn">
+            <objects>
+                <viewController id="B7i-yJ-cDd" customClass="ChartDemoViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="0i4-6y-ObK"/>
+                        <viewControllerLayoutGuide type="bottom" id="3hO-DY-OS7"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="r7K-Sr-n7W">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j0w-mU-1bc" customClass="CHKLineChartView" customModule="CHKLineChart" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="64" width="375" height="559"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="NAN-zU-hP3">
+                                <rect key="frame" x="169" y="325" width="37" height="37"/>
+                            </activityIndicatorView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wIW-B2-z7i">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="rL5-ie-BZO"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem style="plain" id="oax-cB-tlZ">
+                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="1" id="4ql-di-E17">
+                                            <rect key="frame" x="16" y="7" width="255" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <segments>
+                                                <segment title="N/A"/>
+                                                <segment title="MA"/>
+                                                <segment title="EMA"/>
+                                                <segment title="BOLL"/>
+                                                <segment title="SAR"/>
+                                            </segments>
+                                            <connections>
+                                                <action selector="handleSegmentChangeWithSender:" destination="B7i-yJ-cDd" eventType="valueChanged" id="hX9-EE-E93"/>
+                                            </connections>
+                                        </segmentedControl>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="WGI-xq-YOV"/>
+                                    <barButtonItem style="plain" id="wga-BR-fCg">
+                                        <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="jW9-HG-Sdr">
+                                            <rect key="frame" x="317" y="7" width="42" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" title="Close"/>
+                                            <connections>
+                                                <action selector="handleClosePressWithSender:" destination="B7i-yJ-cDd" eventType="touchUpInside" id="GTz-FW-J6R"/>
+                                            </connections>
+                                        </button>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zcW-3Q-8yi">
+                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="tRj-2m-x2n"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem style="plain" id="NfH-io-LZU">
+                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="4qJ-yA-6pH">
+                                            <rect key="frame" x="16" y="7" width="133" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <segments>
+                                                <segment title="1M"/>
+                                                <segment title="15M"/>
+                                                <segment title="1D"/>
+                                                <segment title="T"/>
+                                            </segments>
+                                            <connections>
+                                                <action selector="handleTimeSegmentChangeWithSender:" destination="B7i-yJ-cDd" eventType="valueChanged" id="uOx-0I-dwq"/>
+                                            </connections>
+                                        </segmentedControl>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="OSO-73-RvE"/>
+                                    <barButtonItem style="plain" id="Hou-0e-m79">
+                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="1" id="sPi-UQ-TE9">
+                                            <rect key="frame" x="214" y="7" width="145" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <segments>
+                                                <segment title="N/A"/>
+                                                <segment title="KDJ"/>
+                                                <segment title="MACD"/>
+                                            </segments>
+                                            <connections>
+                                                <action selector="handleSegmentChangeWithSender:" destination="B7i-yJ-cDd" eventType="valueChanged" id="h5E-lg-pUj"/>
+                                            </connections>
+                                        </segmentedControl>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="wIW-B2-z7i" secondAttribute="trailing" id="0a9-bV-MiZ"/>
+                            <constraint firstItem="j0w-mU-1bc" firstAttribute="top" secondItem="wIW-B2-z7i" secondAttribute="bottom" id="5EX-0o-eoQ"/>
+                            <constraint firstItem="j0w-mU-1bc" firstAttribute="top" secondItem="0i4-6y-ObK" secondAttribute="bottom" id="7aj-QO-7Ag"/>
+                            <constraint firstAttribute="trailing" secondItem="zcW-3Q-8yi" secondAttribute="trailing" id="Cym-3V-AqV"/>
+                            <constraint firstItem="NAN-zU-hP3" firstAttribute="centerY" secondItem="j0w-mU-1bc" secondAttribute="centerY" id="HHG-Pc-B0C"/>
+                            <constraint firstItem="j0w-mU-1bc" firstAttribute="leading" secondItem="r7K-Sr-n7W" secondAttribute="leading" id="JP8-S6-WH2"/>
+                            <constraint firstAttribute="trailing" secondItem="j0w-mU-1bc" secondAttribute="trailing" id="RKr-l2-e1T"/>
+                            <constraint firstItem="zcW-3Q-8yi" firstAttribute="leading" secondItem="r7K-Sr-n7W" secondAttribute="leading" id="e4D-qD-zV7"/>
+                            <constraint firstItem="NAN-zU-hP3" firstAttribute="centerX" secondItem="j0w-mU-1bc" secondAttribute="centerX" id="pqh-3v-vI7"/>
+                            <constraint firstItem="wIW-B2-z7i" firstAttribute="leading" secondItem="r7K-Sr-n7W" secondAttribute="leading" id="qcV-sZ-p26"/>
+                            <constraint firstItem="zcW-3Q-8yi" firstAttribute="top" secondItem="j0w-mU-1bc" secondAttribute="bottom" id="uSm-fY-gNj"/>
+                            <constraint firstItem="wIW-B2-z7i" firstAttribute="top" secondItem="0i4-6y-ObK" secondAttribute="bottom" id="vRz-Es-AdF"/>
+                            <constraint firstItem="3hO-DY-OS7" firstAttribute="top" secondItem="zcW-3Q-8yi" secondAttribute="bottom" id="zwr-qy-o61"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="7aj-QO-7Ag"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
+                    <connections>
+                        <outlet property="chartView" destination="j0w-mU-1bc" id="Pth-SC-LHi"/>
+                        <outlet property="loadingView" destination="NAN-zU-hP3" id="q3R-zA-iz9"/>
+                        <outlet property="segAnalysis" destination="sPi-UQ-TE9" id="uRl-hd-Hed"/>
+                        <outlet property="segPrice" destination="4ql-di-E17" id="VLz-sr-cTK"/>
+                        <outlet property="segTimes" destination="4qJ-yA-6pH" id="ciz-Pt-Fbc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vsw-Ll-uCl" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1721" y="397"/>
         </scene>
     </scenes>
 </document>
