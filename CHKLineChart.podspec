@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "CHKLineChart"
-  s.version      = "2.0.0"
+  s.version      = "2.1.0"
   s.summary      = "纯Swift3.0代码编写的K线图表组件"
   s.description  = <<-DESC
                    纯Swift3.0代码编写的K线图表组件，支持：MA,EMA,KDJ,MACD等技术指标显示。集成使用简单，二次开发扩展强大
