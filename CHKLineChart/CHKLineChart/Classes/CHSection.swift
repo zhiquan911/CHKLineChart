@@ -165,18 +165,20 @@ extension CHSection {
         self.titleLayer.sublayers?.removeAll()
         
         var yPos: CGFloat = 0
+        var containerWidth: CGFloat = 0
+        let textSize = title.string.ch_sizeWithConstrained(self.labelFont, constraintRect: CGSize(width: self.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        
         if titleShowOutSide {
-            yPos = self.frame.origin.y - self.padding.top + 2
+            yPos = self.frame.origin.y - textSize.height - 6
+            containerWidth = self.frame.width
         } else {
             yPos = self.frame.origin.y + 2
+            containerWidth = self.frame.width - self.padding.left - self.padding.right
         }
         
         let startX = self.frame.origin.x + self.padding.left + 2
-        let containerWidth = self.frame.width - self.padding.left - self.padding.right
         
         let point = CGPoint(x: startX, y: yPos)
-        
-        let textSize = title.string.ch_sizeWithConstrained(self.labelFont)
         
         let titleText = CHTextLayer()
         titleText.frame = CGRect(origin: point, size: CGSize(width: containerWidth, height: textSize.height + 20))
@@ -387,14 +389,17 @@ extension CHSection {
             self.titleView = nil
             
             var yPos: CGFloat = 0
+            var containerWidth: CGFloat = 0
             if titleShowOutSide {
                 yPos = self.frame.origin.y - self.padding.top
+                containerWidth = self.frame.width
             } else {
                 yPos = self.frame.origin.y
+                containerWidth = self.frame.width - self.padding.left - self.padding.right
             }
             
             let startX = self.frame.origin.x + self.padding.left
-            let containerWidth = self.frame.width - self.padding.left - self.padding.right
+            containerWidth = self.frame.width - self.padding.left - self.padding.right
             
             var frame = view.frame
             frame.origin.x = startX

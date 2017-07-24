@@ -110,7 +110,7 @@ public extension CHKLineChartStyle {
         style.textColor = UIColor(white: 0.8, alpha: 1)
         style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
         style.selectedTextColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
-        style.padding = UIEdgeInsets(top: 16, left: 8, bottom: 4, right: 0)
+        style.padding = UIEdgeInsets(top: 32, left: 8, bottom: 4, right: 0)
         style.backgroundColor = UIColor.ch_hex(0x1D1C1C)
         style.showYAxisLabel = .right
         
