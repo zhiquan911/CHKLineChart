@@ -169,7 +169,7 @@ extension CHSection {
         let textSize = title.string.ch_sizeWithConstrained(self.labelFont, constraintRect: CGSize(width: self.frame.width, height: CGFloat.greatestFiniteMagnitude))
         
         if titleShowOutSide {
-            yPos = self.frame.origin.y - textSize.height - 6
+            yPos = self.frame.origin.y - textSize.height - 8
             containerWidth = self.frame.width
         } else {
             yPos = self.frame.origin.y + 2
