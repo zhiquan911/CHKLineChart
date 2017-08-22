@@ -117,12 +117,16 @@ public enum CHChartViewScrollPosition {
 open class CHKLineChartView: UIView {
     
     /// MARK: - 常量
-    let kMinRange = 13       //最小缩放范围
-    let kMaxRange = 133     //最大缩放范围
-    let kPerInterval = 4    //缩放的每段间隔
+    fileprivate static let kMinRange = 13       //最小缩放范围
+    fileprivate static let kMaxRange = 133     //最大缩放范围
+    fileprivate static let kPerInterval = 4    //缩放的每段间隔
     open let kYAxisLabelWidth: CGFloat = 46        //默认宽度
-    open let kXAxisHegiht: CGFloat = 16        //默认X坐标的高度
-    
+	open let kXAxisHegiht: CGFloat = 16        //默认X坐标的高度
+	
+	open var scaleRangeMin: Int = CHKLineChartView.kMinRange
+	open var scaleRangeMax: Int = CHKLineChartView.kMaxRange
+	open var pinchPerInterval: Int = CHKLineChartView.kPerInterval
+	
     /// MARK: - 成员变量
     @IBInspectable open var upColor: UIColor = UIColor.green     //升的颜色
     @IBInspectable open var downColor: UIColor = UIColor.red     //跌的颜色
@@ -1190,7 +1194,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         }
         
         //双指合拢或张开
-        let interval = self.kPerInterval / 2
+        let interval = pinchPerInterval / 2
         let scale = sender.scale
         let velocity = sender.velocity
         
@@ -1203,7 +1207,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
                 newRangeTo = self.rangeTo - interval
                 newRangeFrom = self.rangeFrom + interval
                 newRange = self.rangeTo - self.rangeFrom
-                if newRange >= kMinRange {
+                if newRange >= scaleRangeMin {
                     
                     if self.plotCount > self.rangeTo - self.rangeFrom {
                         if newRangeFrom < self.rangeTo {
@@ -1226,7 +1230,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
                 newRangeTo = self.rangeTo + interval
                 newRangeFrom = self.rangeFrom - interval
                 newRange = self.rangeTo - self.rangeFrom
-                if newRange <= kMaxRange {
+                if newRange <= scaleRangeMax {
                     
                     if newRangeFrom >= 0 {
                         self.rangeFrom = newRangeFrom
