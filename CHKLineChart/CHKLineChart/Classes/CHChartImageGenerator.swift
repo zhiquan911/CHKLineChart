@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import CHKLineChartKit
 
 /// 简单走势图生成器
 class CHChartImageGenerator: NSObject {

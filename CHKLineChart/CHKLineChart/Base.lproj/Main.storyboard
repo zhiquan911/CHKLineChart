@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="hJF-XE-bqk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="hJF-XE-bqk">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,7 +21,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I4G-E5-gDN" customClass="CHKLineChartView" customModule="CHKLineChart" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I4G-E5-gDN" customClass="CHKLineChartView" customModule="CHKLineChartKit">
                                 <rect key="frame" x="0.0" y="64" width="375" height="559"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
@@ -36,7 +36,7 @@
                                 <items>
                                     <barButtonItem style="plain" id="Rgp-bV-acI">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="1" id="86l-Gr-tLi">
-                                            <rect key="frame" x="16" y="7" width="255" height="30"/>
+                                            <rect key="frame" x="16" y="7.5" width="244" height="29"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="N/A"/>
@@ -53,7 +53,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="ZDC-4f-VT5"/>
                                     <barButtonItem style="plain" id="3mU-M6-osR">
                                         <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="SKL-Qu-Dqd">
-                                            <rect key="frame" x="317" y="7" width="42" height="30"/>
+                                            <rect key="frame" x="320" y="7" width="39" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <state key="normal" title="Close"/>
                                             <connections>
@@ -71,7 +71,7 @@
                                 <items>
                                     <barButtonItem style="plain" id="sT4-05-Sol">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="hGN-nJ-H5C">
-                                            <rect key="frame" x="16" y="7" width="133" height="30"/>
+                                            <rect key="frame" x="16" y="7.5" width="163" height="29"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="1M"/>
@@ -87,7 +87,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="PN9-EM-Ixd"/>
                                     <barButtonItem style="plain" id="wal-UK-a0X">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="1" id="Avt-ge-BGH">
-                                            <rect key="frame" x="214" y="7" width="145" height="30"/>
+                                            <rect key="frame" x="198" y="7.5" width="161" height="29"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="N/A"/>
@@ -168,7 +168,7 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qkH-le-2NZ" customClass="CHKLineChartView" customModule="CHKLineChart" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qkH-le-2NZ" customClass="CHKLineChartView" customModule="CHKLineChartKit">
                                 <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
@@ -204,7 +204,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fEc-AO-iYx" customClass="CHKLineChartView" customModule="CHKLineChart" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fEc-AO-iYx" customClass="CHKLineChartView" customModule="CHKLineChartKit">
                                 <rect key="frame" x="0.0" y="64" width="375" height="160"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -364,7 +364,7 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a3z-gM-bzF" customClass="CHDepthChartView" customModule="CHKLineChart" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a3z-gM-bzF" customClass="CHDepthChartView" customModule="CHKLineChartKit">
                                 <rect key="frame" x="0.0" y="64" width="375" height="150"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -459,7 +459,7 @@
                                                         <action selector="handleTimeSegmentChangeWithSender:" destination="KaJ-UZ-T9o" eventType="valueChanged" id="ooH-8a-8mP"/>
                                                     </connections>
                                                 </segmentedControl>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ks2-FH-G1e" customClass="CHKLineChartView" customModule="CHKLineChart" customModuleProvider="target">
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ks2-FH-G1e" customClass="CHKLineChartView" customModule="CHKLineChartKit">
                                                     <rect key="frame" x="8" y="82" width="359" height="150"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <constraints>
@@ -655,7 +655,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enable Touch" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0U8-BZ-5aH">
-                                                    <rect key="frame" x="15" y="11.5" width="103.5" height="20.5"/>
+                                                    <rect key="frame" x="15" y="11.5" width="103" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -772,7 +772,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mee-Ry-7UF" customClass="CHKLineChartView" customModule="CHKLineChart" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mee-Ry-7UF" customClass="CHKLineChartView" customModule="CHKLineChartKit">
                                 <rect key="frame" x="0.0" y="64" width="375" height="370"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
@@ -926,7 +926,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j0w-mU-1bc" customClass="CHKLineChartView" customModule="CHKLineChart" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j0w-mU-1bc" customClass="CHKLineChartView" customModule="CHKLineChartKit">
                                 <rect key="frame" x="0.0" y="64" width="375" height="559"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
@@ -976,7 +976,7 @@
                                 <items>
                                     <barButtonItem style="plain" id="NfH-io-LZU">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="4qJ-yA-6pH">
-                                            <rect key="frame" x="16" y="7" width="133" height="30"/>
+                                            <rect key="frame" x="16" y="7" width="163" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="1M"/>
@@ -992,7 +992,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="OSO-73-RvE"/>
                                     <barButtonItem style="plain" id="Hou-0e-m79">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="1" id="sPi-UQ-TE9">
-                                            <rect key="frame" x="214" y="7" width="145" height="30"/>
+                                            <rect key="frame" x="198" y="7" width="161" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="N/A"/>

@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 //String类扩展
-extension String {
+public extension String {
     
     /**
      计算文字的宽度
@@ -22,7 +22,11 @@ extension String {
      */
     func ch_sizeWithConstrained(_ font: UIFont,
                                 constraintRect: CGSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)) -> CGSize {
-        let boundingBox = self.boundingRect(with: constraintRect, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: [NSFontAttributeName: font], context: nil)
+        let boundingBox = self.boundingRect(
+            with: constraintRect,
+            options: NSStringDrawingOptions.usesLineFragmentOrigin,
+            attributes: [NSAttributedStringKey.font: font],
+            context: nil)
         return boundingBox.size
     }
     
@@ -33,7 +37,7 @@ extension String {
 }
 
 
-extension UIColor {
+public extension UIColor {
     
     /**
      16进制表示颜色
@@ -51,7 +55,7 @@ extension UIColor {
     
 }
 
-extension Date {
+public extension Date {
     
     /*!
      * @method 把时间戳转换为用户格式时间
@@ -75,7 +79,7 @@ extension Date {
 }
 
 
-extension CGFloat {
+public extension CGFloat {
     
     /**
      转化为字符串格式
@@ -96,7 +100,7 @@ extension CGFloat {
     }
 }
 
-extension Array where Element: Equatable {
+public extension Array where Element: Equatable {
     
     subscript (safe index: Int) -> Element? {
         return (0..<count).contains(index) ? self[index] : nil

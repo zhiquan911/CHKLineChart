@@ -126,8 +126,8 @@ open class CHDepthChartView: UIView {
     open let kXAxisHegiht: CGFloat = 16        //默认X坐标的高度
     
     /// MARK: - 成员变量
-    @IBInspectable open var bidColor: (stroke: UIColor, fill: UIColor, lineWidth: CGFloat) = (.green, .green, 1)
-    @IBInspectable open var askColor: (stroke: UIColor, fill: UIColor, lineWidth: CGFloat) = (.red, .red, 1)
+    open var bidColor: (stroke: UIColor, fill: UIColor, lineWidth: CGFloat) = (.green, .green, 1)
+    open var askColor: (stroke: UIColor, fill: UIColor, lineWidth: CGFloat) = (.red, .red, 1)
     @IBInspectable open var labelFont = UIFont.systemFont(ofSize: 10)
     @IBInspectable open var lineColor: UIColor = UIColor(white: 0.2, alpha: 1) //线条颜色
     @IBInspectable open var textColor: UIColor = UIColor(white: 0.8, alpha: 1) //文字颜色
@@ -1050,7 +1050,7 @@ extension CHDepthChartView: UIGestureRecognizerDelegate {
      *
      *  @param sender
      */
-    func doTapAction(_ sender: UITapGestureRecognizer) {
+    @objc func doTapAction(_ sender: UITapGestureRecognizer) {
         
         guard self.enableTap else {
             return

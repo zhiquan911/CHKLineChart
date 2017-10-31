@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CHKLineChartKit
 
 // MARK: - 扩展样式
 public extension CHKLineChartStyle {

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CHKLineChartKit
 
 class ChartFullViewController: UIViewController {
 

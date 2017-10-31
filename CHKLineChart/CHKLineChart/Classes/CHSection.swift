@@ -8,8 +8,6 @@
 
 import UIKit
 
-
-
 /// 分区图类型
 public enum CHSectionValueType {
     case master              //主图
@@ -429,7 +427,7 @@ extension CHSection {
             let range = NSMakeRange(start, title.ch_length)
             //            NSLog("title = \(title)")
             //            NSLog("range = \(range)")
-            let colorAttribute: [String: AnyObject] = [NSForegroundColorAttributeName: color]
+            let colorAttribute = [NSAttributedStringKey.foregroundColor: color]
             titleString.addAttributes(colorAttribute, range: range)
             start += title.ch_length
         }

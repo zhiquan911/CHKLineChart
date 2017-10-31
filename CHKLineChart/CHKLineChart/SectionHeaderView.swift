@@ -8,6 +8,7 @@
 
 import UIKit
 import SnapKit
+import CHKLineChartKit
 
 class SectionHeaderView: UIView {
 

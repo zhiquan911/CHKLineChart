@@ -1550,7 +1550,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
     /// 平移拖动操作
     ///
     /// - Parameter sender: 手势
-    func doPanAction(_ sender: UIPanGestureRecognizer) {
+    @objc func doPanAction(_ sender: UIPanGestureRecognizer) {
         
         guard self.enablePan else {
             return
@@ -1636,7 +1636,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
      *
      *  @param sender
      */
-    func doTapAction(_ sender: UITapGestureRecognizer) {
+    @objc func doTapAction(_ sender: UITapGestureRecognizer) {
         
         guard self.enableTap else {
             return
@@ -1662,7 +1662,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
     /// 双指手势缩放图表
     ///
     /// - Parameter sender: 手势
-    func doPinchAction(_ sender: UIPinchGestureRecognizer) {
+    @objc func doPinchAction(_ sender: UIPinchGestureRecognizer) {
         
         guard self.enablePinch else {
             return
@@ -1704,7 +1704,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
     /// 处理长按操作
     ///
     /// - Parameter sender:
-    func doLongPressAction(_ sender: UILongPressGestureRecognizer) {
+    @objc func doLongPressAction(_ sender: UILongPressGestureRecognizer) {
         let point = sender.location(in: self)
         let (_, section) = self.getSectionByTouchPoint(point)
         if section != nil {
