@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="hJF-XE-bqk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="hJF-XE-bqk">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -36,7 +36,7 @@
                                 <items>
                                     <barButtonItem style="plain" id="Rgp-bV-acI">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="1" id="86l-Gr-tLi">
-                                            <rect key="frame" x="16" y="7.5" width="244" height="29"/>
+                                            <rect key="frame" x="16" y="7" width="293" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="N/A"/>
@@ -44,6 +44,7 @@
                                                 <segment title="EMA"/>
                                                 <segment title="BOLL"/>
                                                 <segment title="SAR"/>
+                                                <segment title="SAM"/>
                                             </segments>
                                             <connections>
                                                 <action selector="handleSegmentChangeWithSender:" destination="BYZ-38-t0r" eventType="valueChanged" id="bOM-t4-cIo"/>
@@ -71,11 +72,12 @@
                                 <items>
                                     <barButtonItem style="plain" id="sT4-05-Sol">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="hGN-nJ-H5C">
-                                            <rect key="frame" x="16" y="7.5" width="163" height="29"/>
+                                            <rect key="frame" x="16" y="7" width="204" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
-                                                <segment title="1M"/>
+                                                <segment title="5M"/>
                                                 <segment title="15M"/>
+                                                <segment title="1H"/>
                                                 <segment title="1D"/>
                                                 <segment title="T"/>
                                             </segments>
@@ -87,7 +89,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="PN9-EM-Ixd"/>
                                     <barButtonItem style="plain" id="wal-UK-a0X">
                                         <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="1" id="Avt-ge-BGH">
-                                            <rect key="frame" x="198" y="7.5" width="161" height="29"/>
+                                            <rect key="frame" x="220" y="7" width="139" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="N/A"/>

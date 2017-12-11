@@ -32,7 +32,7 @@ public extension String {
     
     /// 字符串长度
     var ch_length: Int {
-        return self.characters.count;
+        return self.count;
     }
 }
 

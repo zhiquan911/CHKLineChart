@@ -40,6 +40,7 @@ public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
     case macd(Int, Int, Int)                    //指数平滑异同平均线
     case boll(Int, Int)                         //布林线
     case sar(Int, CGFloat, CGFloat)             //停损转向操作点指标(判定周期，加速因子初值，加速因子最大值)
+    case sam(Int)                               //SAM指标公式
     
     /**
      获取Key值的名称
@@ -66,6 +67,8 @@ public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
             return "\(CHSeriesKey.boll)_\(name)"
         case .sar(_, _, _):
             return "\(CHSeriesKey.sar)\(name)"
+        case let .sam(num):
+            return "\(CHSeriesKey.sam)_\(num)_\(name)"
         
         }
     }
@@ -95,6 +98,8 @@ public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
             return self.handleBOLL(num, k: k, datas: datas)
         case let .sar(num, minAF, maxAF):
             return self.handleSAR(num,minAF: minAF, maxAF: maxAF, datas: datas)
+        case let .sam(num):
+            return self.handleSAM(num, datas: datas)
         }
     }
     
@@ -614,4 +619,77 @@ extension CHChartAlgorithm {
         
         return (finalSAR, finalIsUP)
     }
+}
+
+// MARK: - 《SAM一线天指标》 处理算法
+extension CHChartAlgorithm {
+    
+    /**
+     处理SAM运算
+     1.计算每个点往后num周期内的最高交易量，最后少于num的条数，只计算最后个数的最高交易量
+     2.在主图蜡烛柱边框加颜色显示
+     3.在主图收盘价记录点线
+     4.在副图交易量柱边框加颜色显示
+     5.在副图交易量记录点线
+     - parameter num:   天数
+     - parameter datas: 数据集
+     */
+    fileprivate func handleSAM(_ num: Int, datas: [CHChartItem]) -> [CHChartItem] {
+        var max_vol_price: CGFloat = 0  //最大交易量的收盘价
+        var max_vol: CGFloat = 0        //最大交易量
+        var max_index: Int = 0          //最大交易量的位置
+        for (index, data) in datas.enumerated() {
+            
+            //超过了num周期都没找到最大值，重新在index后num个寻找
+            if index - max_index == num {
+                max_vol_price = 0
+                max_vol = 0
+                max_index = 0
+                for j in (index - num + 1)...index {
+                    
+                    let c = datas[j].closePrice
+                    let v = datas[j].vol
+                    
+                    if v > max_vol {
+                        max_vol_price = c
+                        max_vol = v
+                        max_index = j
+                    }
+                }
+                
+                //重置最大值之后的计算数值
+                for j in max_index...index {
+                    datas[j].extVal["\(self.key(CHSeriesKey.timeline))"] = max_vol_price
+                    datas[j].extVal["\(self.key(CHSeriesKey.volume))"] = max_vol
+                }
+                
+            } else {
+                //每位移一个数，计算是否最大交易量
+                let c = datas[index].closePrice
+                let v = datas[index].vol
+                
+                if v > max_vol {
+                    max_vol_price = c
+                    max_vol = v
+                    max_index = index
+                }
+                
+            }
+            
+            if index >= num - 1 {
+                data.extVal["\(self.key(CHSeriesKey.timeline))"] = max_vol_price
+                data.extVal["\(self.key(CHSeriesKey.volume))"] = max_vol
+                
+                //记录填充颜色的最大值
+                let priceName = "\(CHSeriesKey.timeline)_BAR"
+                let volumeName = "\(CHSeriesKey.volume)_BAR"
+                let maxData = datas[max_index]
+                maxData.extVal["\(self.key(priceName))"] = max_vol_price
+                maxData.extVal["\(self.key(volumeName))"] = max_vol
+            }
+            
+        }
+        return datas
+    }
+    
 }

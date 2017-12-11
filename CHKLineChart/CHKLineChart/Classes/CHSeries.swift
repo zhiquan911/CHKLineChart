@@ -21,6 +21,7 @@ public struct CHSeriesKey {
     public static let macd = "MACD"
     public static let boll = "BOLL"
     public static let sar = "SAR"
+    public static let sam = "SAM"
 }
 
 
@@ -224,4 +225,51 @@ extension CHSeries {
         series.chartModels = [sar]
         return series
     }
+    
+    /// 获取交易量的SAM线
+    ///
+    public class func getVolumeSAM(num: Int,
+                                   barStyle: (color: UIColor, isSolid: Bool),
+                                   lineColor: UIColor,
+                                   section: CHSection) -> CHSeries {
+        let valueKey = CHSeriesKey.volume
+        
+        let series = CHSeries()
+        series.key = CHSeriesKey.sam
+        
+        let sam = CHChartModel.getLine(lineColor, title: "\(CHSeriesKey.sam)\(num)", key: "\(CHSeriesKey.sam)_\(num)_\(valueKey)")
+        sam.section = section
+        sam.useTitleColor = true
+        
+        let vol = CHChartModel.getVolume(upStyle: barStyle, downStyle: barStyle, key: "\(CHSeriesKey.sam)_\(num)_\(valueKey)_BAR")
+        vol.section = section
+        
+        series.chartModels = [sam, vol]
+        
+        return series
+    }
+    
+    /// 获取主图价格的SAM线
+    ///
+    public class func getPriceSAM(num: Int,
+                                  barStyle: (color: UIColor, isSolid: Bool),
+                                  lineColor: UIColor,
+                                  section: CHSection) -> CHSeries {
+        let valueKey = CHSeriesKey.timeline
+        
+        let series = CHSeries()
+        series.key = CHSeriesKey.sam
+        
+        let sam = CHChartModel.getLine(lineColor, title: "\(CHSeriesKey.sam)\(num)", key: "\(CHSeriesKey.sam)_\(num)_\(valueKey)")
+        sam.section = section
+        sam.useTitleColor = true
+        
+        let candle = CHChartModel.getCandle(upStyle: barStyle, downStyle: barStyle, titleColor: barStyle.color, key: "\(CHSeriesKey.sam)_\(num)_\(valueKey)_BAR")
+        candle.drawShadow = false
+        candle.section = section
+        
+        series.chartModels = [sam, candle]
+        return series
+    }
+    
 }

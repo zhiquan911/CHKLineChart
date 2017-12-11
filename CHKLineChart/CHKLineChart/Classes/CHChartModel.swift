@@ -219,6 +219,9 @@ open class CHLineModel: CHChartModel {
  */
 open class CHCandleModel: CHChartModel {
     
+    
+    var drawShadow = true
+    
     /**
      画点线
      
@@ -244,6 +247,14 @@ open class CHCandleModel: CHChartModel {
         
         //循环起始到终结
         for i in stride(from: startIndex, to: endIndex, by: 1) {
+            
+            if self.key != CHSeriesKey.candle {
+                //不是蜡烛柱类型，要读取具体的数值才绘制
+                if self[i].value == nil {       //读取的值
+                    continue  //无法计算的值不绘画
+                }
+            }
+            
             
             var isSolid = true
             let candleLayer = CAShapeLayer()
@@ -288,8 +299,11 @@ open class CHCandleModel: CHChartModel {
             }
             
             //1.先画最高和最低价格的线
-            shadowPath.move(to: CGPoint(x: ix + plotWidth / 2, y: iyh))
-            shadowPath.addLine(to: CGPoint(x: ix + plotWidth / 2, y: iyl))
+            if self.drawShadow {
+                shadowPath.move(to: CGPoint(x: ix + plotWidth / 2, y: iyh))
+                shadowPath.addLine(to: CGPoint(x: ix + plotWidth / 2, y: iyl))
+            }
+            
             
             
             //2.画蜡烛柱的矩形，空心的刚好覆盖上面的线
@@ -318,7 +332,7 @@ open class CHCandleModel: CHChartModel {
                 if isSolid {
                     candleLayer.lineWidth = self.lineWidth
                 } else {
-                    candleLayer.fillColor = section.backgroundColor.cgColor
+                    candleLayer.fillColor = UIColor.clear.cgColor
                     candleLayer.lineWidth = self.lineWidth
                 }
                 
@@ -390,11 +404,14 @@ open class CHColumnModel: CHChartModel {
         
         //循环起始到终结
         for i in stride(from: startIndex, to: endIndex, by: 1) {
-            //            let value = self[i].value
-            //
-            //            if value == nil{
-            //                continue  //无法计算的值不绘画
-            //            }
+            
+            if self.key != CHSeriesKey.volume {
+                //不是蜡烛柱类型，要读取具体的数值才绘制
+                if self[i].value == nil {       //读取的值
+                    continue  //无法计算的值不绘画
+                }
+            }
+            
             var isSolid = true
             let columnLayer = CAShapeLayer()
             
@@ -425,7 +442,7 @@ open class CHColumnModel: CHChartModel {
             if isSolid {
                 columnLayer.lineWidth = self.lineWidth   //不设置为0会受到抗锯齿处理导致变大
             } else {
-                columnLayer.fillColor = section.backgroundColor.cgColor
+                columnLayer.fillColor = UIColor.clear.cgColor
                 columnLayer.lineWidth = self.lineWidth
             }
             
@@ -824,20 +841,22 @@ extension CHChartModel {
     //生成一个蜡烛样式
     class func getCandle(upStyle: (color: UIColor, isSolid: Bool),
                          downStyle: (color: UIColor, isSolid: Bool),
-                         titleColor: UIColor) -> CHCandleModel {
+                         titleColor: UIColor,
+                         key: String = CHSeriesKey.candle) -> CHCandleModel {
         let model = CHCandleModel(upStyle: upStyle, downStyle: downStyle,
                                   titleColor: titleColor)
-        model.key = CHSeriesKey.candle
+        model.key = key
         return model
     }
     
     //生成一个交易量样式
     class func getVolume(upStyle: (color: UIColor, isSolid: Bool),
-                         downStyle: (color: UIColor, isSolid: Bool)) -> CHColumnModel {
+                         downStyle: (color: UIColor, isSolid: Bool),
+                         key: String = CHSeriesKey.volume) -> CHColumnModel {
         let model = CHColumnModel(upStyle: upStyle, downStyle: downStyle,
                                   titleColor: UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1))
         model.title = NSLocalizedString("Vol", comment: "")
-        model.key = CHSeriesKey.volume
+        model.key = key
         return model
     }
     
