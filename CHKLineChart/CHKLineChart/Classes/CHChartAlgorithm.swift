@@ -676,7 +676,7 @@ extension CHChartAlgorithm {
                 
             }
             
-            if index >= num - 1 {
+            if index > num - 1 {
                 data.extVal["\(self.key(CHSeriesKey.timeline))"] = max_vol_price
                 data.extVal["\(self.key(CHSeriesKey.volume))"] = max_vol
                 
@@ -686,9 +686,22 @@ extension CHChartAlgorithm {
                 let maxData = datas[max_index]
                 maxData.extVal["\(self.key(priceName))"] = max_vol_price
                 maxData.extVal["\(self.key(volumeName))"] = max_vol
+            } else if index == num - 1 {
+                //补充开头没有画的线
+                for j in max_index...index {
+                    datas[j].extVal["\(self.key(CHSeriesKey.timeline))"] = max_vol_price
+                    datas[j].extVal["\(self.key(CHSeriesKey.volume))"] = max_vol
+                }
             }
             
         }
+        
+        //绘制最后一段的线
+        for j in max_index..<datas.count {
+            datas[j].extVal["\(self.key(CHSeriesKey.timeline))"] = max_vol_price
+            datas[j].extVal["\(self.key(CHSeriesKey.volume))"] = max_vol
+        }
+        
         return datas
     }
     
