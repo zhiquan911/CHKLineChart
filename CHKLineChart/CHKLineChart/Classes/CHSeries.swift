@@ -21,7 +21,7 @@ public struct CHSeriesKey {
     public static let macd = "MACD"
     public static let boll = "BOLL"
     public static let sar = "SAR"
-    public static let sam = "SAM"
+    public static let sam = "ONE"
 }
 
 

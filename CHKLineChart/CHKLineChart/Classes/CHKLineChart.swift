@@ -320,6 +320,9 @@ open class CHKLineChartView: UIView {
         self.selectedYAxisLabel?.backgroundColor = self.selectedBGColor
         self.selectedYAxisLabel?.isHidden = true
         self.selectedYAxisLabel?.font = self.labelFont
+        self.selectedYAxisLabel?.minimumScaleFactor = 0.5
+        self.selectedYAxisLabel?.lineBreakMode = .byClipping
+        self.selectedYAxisLabel?.adjustsFontSizeToFitWidth = true
         self.selectedYAxisLabel?.textColor = self.selectedTextColor
         self.selectedYAxisLabel?.textAlignment = NSTextAlignment.center
         self.addSubview(self.selectedYAxisLabel!)

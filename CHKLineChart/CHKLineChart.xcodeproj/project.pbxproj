@@ -190,10 +190,10 @@
 		C5E4E06C1D76CCB400C47F5A /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				C5F700001D7EA94500622E60 /* CHChartModel.swift */,
 				C5E4E06E1D76CF6200C47F5A /* CHSection.swift */,
 				C5E4E0701D76D7F800C47F5A /* CHAxisModel.swift */,
 				C5F7FFFA1D7EA57A00622E60 /* CHKLineChart.swift */,
-				C5F700001D7EA94500622E60 /* CHChartModel.swift */,
 				C559F2581D80FC22002B1E57 /* CHExtension.swift */,
 				C56F6E561D879941002320D2 /* CHSeries.swift */,
 				C54926651D8923BB0074ACD2 /* CHChartAlgorithm.swift */,

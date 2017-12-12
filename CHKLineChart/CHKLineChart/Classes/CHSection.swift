@@ -472,6 +472,17 @@ extension CHSection {
             switch model {
             case is CHCandleModel:
                 
+                if model.key != CHSeriesKey.candle {
+                    continue  //不限蜡烛柱
+                }
+                
+                //振幅
+                var amplitude: CGFloat = 0
+                if item.openPrice > 0 {
+                    amplitude = (item.closePrice - item.openPrice) / item.openPrice * 100
+                }
+                
+                
                 title += NSLocalizedString("O", comment: "") + ": " +
                     item.openPrice.ch_toString(maxF: self.decimal) + "  "   //开始
                 title += NSLocalizedString("H", comment: "") + ": " +
@@ -480,8 +491,15 @@ extension CHSection {
                     item.lowPrice.ch_toString(maxF: self.decimal) + "  "    //最低
                 title += NSLocalizedString("C", comment: "") + ": " +
                     item.closePrice.ch_toString(maxF: self.decimal) + "  "  //收市
+                title += NSLocalizedString("R", comment: "") + ": " +
+                    amplitude.ch_toString(maxF: self.decimal) + "%   "        //振幅
                 
             case is CHColumnModel:
+                
+                if model.key != CHSeriesKey.volume {
+                    continue  //不是量线
+                }
+                
                 title += model.title + ": " + item.vol.ch_toString(maxF: self.decimal) + "  "
             default:
                 if item.value != nil {

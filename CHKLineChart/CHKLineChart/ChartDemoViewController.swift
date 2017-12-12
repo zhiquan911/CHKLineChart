@@ -273,15 +273,7 @@ extension ChartDemoViewController: CHKLineChartDelegate {
     ///
     /// - returns:
     func kLineChart(chart: CHKLineChartView, decimalAt section: Int) -> Int {
-        if section == 1 {
-            return 2
-        } else {
-            if self.selectexPair == "btccny" {
-                return 2
-            } else {
-                return 8
-            }
-        }
+        return 2
     }
     
     
@@ -291,11 +283,7 @@ extension ChartDemoViewController: CHKLineChartDelegate {
     ///
     /// - returns:
     func widthForYAxisLabelInKLineChart(in chart: CHKLineChartView) -> CGFloat {
-        if self.selectexPair == "btccny" {
-            return chart.kYAxisLabelWidth
-        } else {
-            return 65
-        }
+        return chart.kYAxisLabelWidth
     }
     
     
