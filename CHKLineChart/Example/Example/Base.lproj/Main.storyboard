@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="hJF-XE-bqk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="prl-n4-Qfm">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -12,7 +12,7 @@
         <!--Chart Demo View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController storyboardIdentifier="ChartDemoViewController" id="BYZ-38-t0r" customClass="ChartDemoViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChartDemoViewController" id="BYZ-38-t0r" customClass="ChartDemoViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -142,7 +142,7 @@
         <!--Custom Style View Controller-->
         <scene sceneID="KeY-QX-U9s">
             <objects>
-                <viewController storyboardIdentifier="CustomStyleViewController" id="tLu-gc-eSg" customClass="CustomStyleViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CustomStyleViewController" id="tLu-gc-eSg" customClass="CustomStyleViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="PX2-xt-X8Q"/>
                         <viewControllerLayoutGuide type="bottom" id="z2H-Nk-vAq"/>
@@ -197,7 +197,7 @@
         <!--Chart Full View Controller-->
         <scene sceneID="SjF-wu-FkP">
             <objects>
-                <viewController storyboardIdentifier="ChartFullViewController" id="TcM-lo-9I2" customClass="ChartFullViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChartFullViewController" id="TcM-lo-9I2" customClass="ChartFullViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="9pj-m6-mdc"/>
                         <viewControllerLayoutGuide type="bottom" id="IqS-wK-Bj7"/>
@@ -255,7 +255,7 @@
         <!--Chart Image View Controller-->
         <scene sceneID="OKU-hD-Sew">
             <objects>
-                <viewController storyboardIdentifier="ChartImageViewController" id="dbK-0Z-hjt" customClass="ChartImageViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChartImageViewController" id="dbK-0Z-hjt" customClass="ChartImageViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="dUI-9e-te1"/>
                         <viewControllerLayoutGuide type="bottom" id="RnU-fA-KqV"/>
@@ -343,7 +343,7 @@
         <!--Depth Chart Demo View Controller-->
         <scene sceneID="ZNA-Qi-Um1">
             <objects>
-                <viewController storyboardIdentifier="DepthChartDemoViewController" id="ArM-jJ-fdh" customClass="DepthChartDemoViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DepthChartDemoViewController" id="ArM-jJ-fdh" customClass="DepthChartDemoViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="DGv-M9-DOf"/>
                         <viewControllerLayoutGuide type="bottom" id="oSF-gs-z2U"/>
@@ -402,7 +402,7 @@
         <!--Chart In Table View Controller-->
         <scene sceneID="t3Y-os-dZl">
             <objects>
-                <viewController storyboardIdentifier="ChartInTableViewController" id="lqQ-Ht-A1g" customClass="ChartInTableViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChartInTableViewController" id="lqQ-Ht-A1g" customClass="ChartInTableViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="UHj-Lg-FvN"/>
                         <viewControllerLayoutGuide type="bottom" id="Qxy-AB-0kW"/>
@@ -429,7 +429,7 @@
                                 <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="KChartCell" rowHeight="240" id="KaJ-UZ-T9o" customClass="KChartCell" customModule="CHKLineChart" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="KChartCell" rowHeight="240" id="KaJ-UZ-T9o" customClass="KChartCell" customModule="Example" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="240"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KaJ-UZ-T9o" id="i7O-9n-VJl">
@@ -523,7 +523,7 @@
         <!--Style Setting View Controller-->
         <scene sceneID="vCm-1V-VM2">
             <objects>
-                <tableViewController storyboardIdentifier="StyleSettingViewController" id="5zL-6G-NBu" customClass="StyleSettingViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="StyleSettingViewController" id="5zL-6G-NBu" customClass="StyleSettingViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="static" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="NX7-u9-j7P">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -728,7 +728,7 @@
         <!--Demo Select View Controller-->
         <scene sceneID="LTC-y6-SMR">
             <objects>
-                <viewController storyboardIdentifier="DemoSelectViewController" id="hJF-XE-bqk" customClass="DemoSelectViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DemoSelectViewController" id="hJF-XE-bqk" customClass="DemoSelectViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="oSl-MZ-p4W"/>
                         <viewControllerLayoutGuide type="bottom" id="ZPk-yi-ItV"/>
@@ -738,7 +738,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="woY-9j-mj4">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
                                     <outlet property="dataSource" destination="hJF-XE-bqk" id="JnX-nx-5WE"/>
@@ -754,18 +754,35 @@
                             <constraint firstItem="woY-9j-mj4" firstAttribute="leading" secondItem="sV5-tA-c6O" secondAttribute="leading" id="fY3-Gr-I1D"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="mfB-G4-D5O"/>
                     <connections>
                         <outlet property="tableView" destination="woY-9j-mj4" id="bQC-he-ZEP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OfI-93-DeR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="143" y="399"/>
+            <point key="canvasLocation" x="172" y="399"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="riS-oz-qaT">
+            <objects>
+                <navigationController id="prl-n4-Qfm" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="98M-aX-SpV">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="hJF-XE-bqk" kind="relationship" relationship="rootViewController" id="09e-Qq-FQ4"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gYR-Ie-XpM" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-535" y="399"/>
         </scene>
         <!--Chart Custom Design View Controller-->
         <scene sceneID="bXY-3M-hzd">
             <objects>
-                <viewController storyboardIdentifier="ChartCustomDesignViewController" id="Vle-XT-tBM" customClass="ChartCustomDesignViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChartCustomDesignViewController" id="Vle-XT-tBM" customClass="ChartCustomDesignViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="atF-tf-3ZT"/>
                         <viewControllerLayoutGuide type="bottom" id="QIx-Os-B7Z"/>
@@ -919,7 +936,7 @@
         <!--Chart Demo View Controller-->
         <scene sceneID="QKo-DU-0vn">
             <objects>
-                <viewController id="B7i-yJ-cDd" customClass="ChartDemoViewController" customModule="CHKLineChart" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="B7i-yJ-cDd" customClass="ChartDemoViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="0i4-6y-ObK"/>
                         <viewControllerLayoutGuide type="bottom" id="3hO-DY-OS7"/>

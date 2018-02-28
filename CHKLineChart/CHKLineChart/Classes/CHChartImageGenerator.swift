@@ -7,23 +7,22 @@
 //
 
 import UIKit
-import CHKLineChartKit
 
 /// 简单走势图生成器
-class CHChartImageGenerator: NSObject {
+public class CHChartImageGenerator: NSObject {
 
-    var values: [(Int, Double)] = [(Int, Double)]()
-    var chartView: CHKLineChartView!
-    var style: CHKLineChartStyle = CHKLineChartStyle.lineIMG
+    public var values: [(Int, Double)] = [(Int, Double)]()
+    public var chartView: CHKLineChartView!
+    public var style: CHKLineChartStyle = CHKLineChartStyle.lineIMG
     
     
     /// 创建一个全局单例用于生成图表的截图
-    static let share: CHChartImageGenerator = {
+    public static let share: CHChartImageGenerator = {
         let generator = CHChartImageGenerator()
         return generator
     }()
     
-    override init() {
+    public override init() {
         super.init()
         self.chartView = CHKLineChartView(frame: CGRect.zero)
         self.chartView.style = CHKLineChartStyle.lineIMG
@@ -40,7 +39,7 @@ class CHChartImageGenerator: NSObject {
     ///   - lineColor: 线颜色
     ///   - size: 图片大小
     /// - Returns: 图表图片
-    func getImage(by values: [(Int, Double)],
+    public func getImage(by values: [(Int, Double)],
                   lineWidth: CGFloat = 1,
                   backgroundColor: UIColor = UIColor.white,
                   lineColor: UIColor = UIColor.lightGray,
@@ -70,7 +69,7 @@ extension CHKLineChartStyle {
    
     
     //实现一个点线简单图表用于图片显示
-    static var lineIMG: CHKLineChartStyle {
+    public static var lineIMG: CHKLineChartStyle {
         
         
         let style = CHKLineChartStyle()
@@ -147,11 +146,11 @@ extension CHKLineChartStyle {
 // MARK: - 实现委托方法
 extension CHChartImageGenerator: CHKLineChartDelegate {
     
-    func numberOfPointsInKLineChart(chart: CHKLineChartView) -> Int {
+    public func numberOfPointsInKLineChart(chart: CHKLineChartView) -> Int {
         return self.values.count
     }
     
-    func kLineChart(chart: CHKLineChartView, valueForPointAtIndex index: Int) -> CHChartItem {
+    public func kLineChart(chart: CHKLineChartView, valueForPointAtIndex index: Int) -> CHChartItem {
         let data = self.values[index]
         let item = CHChartItem()
         item.time = Int(data.0 / 1000)
@@ -164,20 +163,20 @@ extension CHChartImageGenerator: CHKLineChartDelegate {
     /// - parameter chart:
     ///
     /// - returns:
-    func widthForYAxisLabelInKLineChart(in chart: CHKLineChartView) -> CGFloat {
+    public func widthForYAxisLabelInKLineChart(in chart: CHKLineChartView) -> CGFloat {
         return chart.kYAxisLabelWidth
     }
     
-    func kLineChart(chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, atIndex index: Int, section: CHSection) -> String {
+    public func kLineChart(chart: CHKLineChartView, labelOnYAxisForValue value: CGFloat, atIndex index: Int, section: CHSection) -> String {
 //        let strValue = value.ch_toString(maxF: section.decimal)
         return ""
     }
     
-    func kLineChart(chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String {
+    public func kLineChart(chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String {
         return ""
     }
     
-    func heightForXAxisInKLineChart(in chart: CHKLineChartView) -> CGFloat {
+    public func heightForXAxisInKLineChart(in chart: CHKLineChartView) -> CGFloat {
         return 0
     }
 

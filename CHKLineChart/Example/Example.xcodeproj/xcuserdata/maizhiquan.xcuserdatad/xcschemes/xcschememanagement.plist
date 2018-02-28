@@ -4,18 +4,10 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>CHKLineChartKit.xcscheme</key>
+		<key>Example.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>5</integer>
-		</dict>
-	</dict>
-	<key>SuppressBuildableAutocreation</key>
-	<dict>
-		<key>C5E4E0561D76CC7E00C47F5A</key>
-		<dict>
-			<key>primary</key>
-			<true/>
+			<integer>6</integer>
 		</dict>
 	</dict>
 </dict>

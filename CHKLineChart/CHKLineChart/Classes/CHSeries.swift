@@ -123,6 +123,30 @@ extension CHSeries {
         return series
     }
     
+    /**
+     返回一个交易量+MA组合系列样式
+     */
+    public class func getVolumeWithMA(upStyle: (color: UIColor, isSolid: Bool),
+                                       downStyle: (color: UIColor, isSolid: Bool),
+                                       isEMA: Bool = false,
+                                       num: [Int],
+                                       colors: [UIColor],
+                                       section: CHSection) -> CHSeries {
+        let series = CHSeries()
+        series.key = CHSeriesKey.volume
+        let volumeSeries = CHSeries.getDefaultVolume(upStyle: upStyle, downStyle: downStyle, section: section)
+        
+        let volumeMASeries = CHSeries.getVolumeMA(
+            isEMA: isEMA,
+            num: num,
+            colors: colors,
+            section: section)
+        
+        series.chartModels.append(contentsOf: volumeSeries.chartModels)
+        series.chartModels.append(contentsOf: volumeMASeries.chartModels)
+        return series
+    }
+    
     /// 获取交易量的MA线
     ///
     public class func getPriceMA(isEMA: Bool = false, num: [Int], colors: [UIColor], section: CHSection) -> CHSeries {

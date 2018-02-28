@@ -1301,7 +1301,8 @@ extension CHKLineChartView {
     
     /// 通过key隐藏或显示线系列
     /// inSection = -1时，全section都隐藏，否则只隐藏对应的索引的section
-    public func setSerie(hidden: Bool, by key: String, inSection: Int = -1) {
+    /// key = "" 时，设置全部线显示或隐藏
+    public func setSerie(hidden: Bool, by key: String = "", inSection: Int = -1) {
         
         var hideSections = [CHSection]()
         if inSection < 0 {
@@ -1314,8 +1315,14 @@ extension CHKLineChartView {
         }
         for section in hideSections {
             for (index, serie)  in section.series.enumerated() {
-                if serie.key == key {
-                    
+                
+                if key == "" {
+                    if section.paging {
+                        section.selectedIndex = 0
+                    } else {
+                        serie.hidden = hidden
+                    }
+                } else if serie.key == key {
                     if section.paging {
                         if hidden == false {
                             section.selectedIndex = index
