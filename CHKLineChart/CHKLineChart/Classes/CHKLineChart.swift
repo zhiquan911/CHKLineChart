@@ -1284,9 +1284,11 @@ extension CHKLineChartView {
     /**
      刷新视图
      */
-    public func reloadData(toPosition: CHChartViewScrollPosition = .none) {
+    public func reloadData(toPosition: CHChartViewScrollPosition = .none, resetData: Bool = true) {
         self.scrollToPosition = toPosition
-        self.resetData()
+        if resetData {
+            self.resetData()
+        }
         self.drawLayerView()
     }
     
@@ -1334,9 +1336,10 @@ extension CHKLineChartView {
                     break
                 }
             }
+        
         }
   
-        self.drawLayerView()
+//        self.drawLayerView()
     }
     
     /**
@@ -1352,7 +1355,7 @@ extension CHKLineChartView {
         }
 
         
-        self.drawLayerView()
+//        self.drawLayerView()
     }
     
     /**
@@ -1367,7 +1370,7 @@ extension CHKLineChartView {
         section.hidden = hidden
         
         
-        self.drawLayerView()
+//        self.drawLayerView()
     }
     
     

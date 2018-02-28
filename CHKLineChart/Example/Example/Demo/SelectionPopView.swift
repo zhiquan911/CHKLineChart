@@ -82,7 +82,7 @@ class SelectionPopView: UIViewController {
     func show(from: UIViewController) {
         
         let sheetController = MZFormSheetPresentationViewController(contentViewController: self)
-        sheetController.contentViewCornerRadius = 0//弹出视图圆角
+        sheetController.contentViewCornerRadius = 5//弹出视图圆角
         sheetController.presentationController?.backgroundColor = UIColor(white: 0, alpha: 0.5)
         sheetController.dismiss(animated: false, completion: nil)
         sheetController.presentationController?.shouldDismissOnBackgroundViewTap = true
@@ -115,7 +115,7 @@ extension SelectionPopView: UITableViewDataSource, UITableViewDelegate {
         let section = self.sections[indexPath.section]
         let rows = self.items[section]!
         let item = rows[indexPath.row]
-        cell?.textLabel?.text = item
+        cell?.textLabel?.text = item.isEmpty ? "N/A" : item
         
         if self.selectedIndexPaths.contains(indexPath) {
             cell?.accessoryType = .checkmark

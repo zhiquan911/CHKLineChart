@@ -21,7 +21,7 @@ public struct CHSeriesKey {
     public static let macd = "MACD"
     public static let boll = "BOLL"
     public static let sar = "SAR"
-    public static let sam = "ONE"
+    public static let sam = "SAM"
 }
 
 
@@ -144,6 +144,26 @@ extension CHSeries {
         
         series.chartModels.append(contentsOf: volumeSeries.chartModels)
         series.chartModels.append(contentsOf: volumeMASeries.chartModels)
+        return series
+    }
+    
+    /**
+     返回一个交易量+SAM组合系列样式
+     */
+    public class func getVolumeWithSAM(upStyle: (color: UIColor, isSolid: Bool),
+                                      downStyle: (color: UIColor, isSolid: Bool),
+                                      num: Int,
+                                      barStyle: (color: UIColor, isSolid: Bool),
+                                      lineColor: UIColor,
+                                      section: CHSection) -> CHSeries {
+        let series = CHSeries()
+        series.key = CHSeriesKey.sam
+        let volumeSeries = CHSeries.getDefaultVolume(upStyle: upStyle, downStyle: downStyle, section: section)
+        
+        let volumeSAMSeries = CHSeries.getVolumeSAM(num: num, barStyle: barStyle, lineColor: lineColor, section: section)
+        
+        series.chartModels.append(contentsOf: volumeSeries.chartModels)
+        series.chartModels.append(contentsOf: volumeSAMSeries.chartModels)
         return series
     }
     

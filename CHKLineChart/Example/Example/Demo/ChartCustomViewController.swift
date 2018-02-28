@@ -12,7 +12,7 @@ import CHKLineChartKit
 class ChartCustomViewController: UIViewController {
     
     /// 不显示
-    static let Hide: String = "N/A"
+    static let Hide: String = ""
     
     //选择时间
     let times: [String] = [
@@ -33,7 +33,7 @@ class ChartCustomViewController: UIViewController {
     
     /// 副图指标
     let assistIndex: [String] = [
-        CHSeriesKey.volume, CHSeriesKey.kdj, CHSeriesKey.macd, Hide
+        CHSeriesKey.volume, CHSeriesKey.sam, CHSeriesKey.kdj, CHSeriesKey.macd, Hide
     ]
     
     //选择交易对
@@ -88,7 +88,7 @@ class ChartCustomViewController: UIViewController {
     /// 选择时间周期
     lazy var buttonTime: UIButton = {
         let btn = UIButton()
-        btn.setTitleColor(.white, for: .normal)
+        btn.setTitleColor(UIColor(hex: 0xfe9d25), for: .normal)
         btn.addTarget(self, action: #selector(self.handleShowTimeSelection), for: .touchUpInside)
         return btn
     }()
@@ -97,7 +97,7 @@ class ChartCustomViewController: UIViewController {
     lazy var buttonIndex: UIButton = {
         let btn = UIButton()
         btn.setTitle("指标", for: .normal)
-        btn.setTitleColor(.white, for: .normal)
+        btn.setTitleColor(UIColor(hex: 0xfe9d25), for: .normal)
         btn.addTarget(self, action: #selector(self.handleShowIndex), for: .touchUpInside)
         return btn
     }()
@@ -106,7 +106,7 @@ class ChartCustomViewController: UIViewController {
     lazy var buttonSetting: UIButton = {
         let btn = UIButton()
         btn.setTitle("参数", for: .normal)
-        btn.setTitleColor(.white, for: .normal)
+        btn.setTitleColor(UIColor(hex: 0xfe9d25), for: .normal)
         return btn
     }()
     
@@ -117,12 +117,38 @@ class ChartCustomViewController: UIViewController {
         return view
     }()
     
+    ///周期弹出窗
+    lazy var selectionViewForTime: SelectionPopView = {
+        let view = SelectionPopView() {
+            (vc, indexPath) in
+            self.selectedTime = indexPath.row
+            self.fetchChartDatas()
+        }
+        return view
+    }()
     
+    
+    ///指标弹出窗
+    lazy var selectionViewForIndex: SelectionPopView = {
+        let view = SelectionPopView() {
+            (vc, indexPath) in
+            self.didSelectChartIndex(indexPath: indexPath)
+        }
+        return view
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
-        self.prepareChart()
+        
+        self.selectedTime = 0
+        self.selectedMasterLine = 0
+        self.selectedMasterIndex = 0
+        self.selectedAssistIndex = 0
+        self.selectedAssistIndex2 = 2
+        self.selectedSymbol = self.exPairs[0]
+        
+        self.handleChartIndexChanged()
         self.fetchChartDatas()
     }
     
@@ -141,24 +167,6 @@ class ChartCustomViewController: UIViewController {
 
 // MARK: - 图表
 extension ChartCustomViewController {
-    
-    /// 准备显示图标
-    func prepareChart() {
-        
-        self.selectedTime = 0
-        self.selectedMasterLine = 0
-        self.selectedMasterIndex = 0
-        self.selectedAssistIndex = 0
-        self.selectedAssistIndex2 = 1
-        self.selectedSymbol = self.exPairs[0]
-        
-//        if let serise = self.chartView.sections[0].getSeries(key: self.masterLine[self.selectedMasterLine]) {
-//            serise.hidden = false
-//        }
-//        
-//        self.chartView.sections[1].selectedIndex = self.selectedAssistIndex
-//        self.chartView.sections[2].selectedIndex = self.selectedAssistIndex2
-    }
     
     /// 拉取数据
     func fetchChartDatas() {
@@ -231,21 +239,16 @@ extension ChartCustomViewController {
     
     /// 选择周期
     @objc func handleShowTimeSelection() {
-        let view = SelectionPopView() {
-            (vc, indexPath) in
-            self.selectedTime = indexPath.row
-            self.fetchChartDatas()
-        }
+        let view = self.selectionViewForTime
+        view.clear()
         view.addItems(section: "周期选择", items: self.times, selectedIndex: self.selectedTime)
         view.show(from: self)
     }
     
     /// 选择指标
     @objc func handleShowIndex() {
-        let view = SelectionPopView() {
-            (vc, indexPath) in
-            self.didSelectChartIndex(indexPath: indexPath)
-        }
+        let view = self.selectionViewForIndex
+        view.clear()
         view.addItems(section: "主图线", items: self.masterLine, selectedIndex: self.selectedMasterLine)
         view.addItems(section: "主图指标", items: self.masterIndex, selectedIndex: self.selectedMasterIndex)
         view.addItems(section: "副图指标1", items: self.assistIndex, selectedIndex: self.selectedAssistIndex)
@@ -258,49 +261,43 @@ extension ChartCustomViewController {
         switch indexPath.section {
         case 0:
             self.selectedMasterLine = indexPath.row
-            let lineKey = self.masterLine[indexPath.row]
-            let indexKey = self.masterIndex[self.selectedMasterIndex]
-            
-            self.chartView.setSerie(hidden: true, inSection: 0)
-            self.chartView.setSerie(hidden: false, by: lineKey, inSection: 0)
-            self.chartView.setSerie(hidden: false, by: indexKey, inSection: 0)
         case 1:
             self.selectedMasterIndex = indexPath.row
-            let lineKey = self.masterLine[self.selectedMasterLine]
-            let indexKey = self.masterIndex[indexPath.row]
-            
-            self.chartView.setSerie(hidden: true, inSection: 0)
-            self.chartView.setSerie(hidden: false, by: lineKey, inSection: 0)
-            
-            if indexKey != ChartCustomViewController.Hide {
-                self.chartView.setSerie(hidden: false, by: indexKey, inSection: 0)
-            }
-            
-            
         case 2:
             self.selectedAssistIndex = indexPath.row
-            let indexKey = self.assistIndex[indexPath.row]
-            
-            if indexKey == ChartCustomViewController.Hide {
-                self.chartView.setSection(hidden: true, byIndex: 1)
-            } else {
-                self.chartView.setSection(hidden: false, byIndex: 1)
-                self.chartView.setSerie(hidden: false, by: indexKey, inSection: 1)
-            }
-            self.chartView.setSerie(hidden: false, by: indexKey, inSection: 1)
         case 3:
             self.selectedAssistIndex2 = indexPath.row
-            let indexKey = self.assistIndex[indexPath.row]
-            
-            if indexKey == ChartCustomViewController.Hide {
-                self.chartView.setSection(hidden: true, byIndex: 2)
-            } else {
-                self.chartView.setSection(hidden: false, byIndex: 2)
-                self.chartView.setSerie(hidden: false, by: indexKey, inSection: 2)
-            }
         default: break
         }
         
+        //重新渲染
+        self.handleChartIndexChanged()
+    }
+    
+    /// 处理指标的变更
+    func handleChartIndexChanged() {
+        
+        let lineKey = self.masterLine[self.selectedMasterLine]
+        let masterKey = self.masterIndex[self.selectedMasterIndex]
+        let assistKey = self.assistIndex[self.selectedAssistIndex]
+        let assist2Key = self.assistIndex[self.selectedAssistIndex2]
+        
+        self.chartView.setSection(hidden: assistKey == ChartCustomViewController.Hide, byIndex: 1)
+        self.chartView.setSection(hidden: assist2Key == ChartCustomViewController.Hide, byIndex: 2)
+        
+        //先隐藏所有线段
+        self.chartView.setSerie(hidden: true, inSection: 0)
+        self.chartView.setSerie(hidden: true, inSection: 1)
+        self.chartView.setSerie(hidden: true, inSection: 2)
+        
+        //显示当前选中的线段
+        self.chartView.setSerie(hidden: false, by: masterKey, inSection: 0)
+        self.chartView.setSerie(hidden: false, by: assistKey, inSection: 1)
+        self.chartView.setSerie(hidden: false, by: assist2Key, inSection: 2)
+        self.chartView.setSerie(hidden: false, by: lineKey, inSection: 0)
+        
+        //重新渲染
+        self.chartView.reloadData(resetData: false)
     }
 }
 
@@ -372,7 +369,7 @@ extension ChartCustomViewController: CHKLineChartDelegate {
     ///
     /// - returns:
     func widthForYAxisLabelInKLineChart(in chart: CHKLineChartView) -> CGFloat {
-        return 65
+        return 60
     }
     
     
@@ -556,7 +553,7 @@ public extension CHKLineChartStyle {
         assistSection.yAxis.tickInterval = 4
         assistSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
         
-        let volSeries = CHSeries.getVolumeWithMA(upStyle: upcolor,
+        let volWithMASeries = CHSeries.getVolumeWithMA(upStyle: upcolor,
                                                  downStyle: downcolor,
                                                  isEMA: false,
                                                  num: [5,10,30],
@@ -565,6 +562,13 @@ public extension CHKLineChartStyle {
                                                     UIColor.ch_hex(0xF9EE30),
                                                     UIColor.ch_hex(0xF600FF),
                                                     ],
+                                                 section: assistSection)
+        
+        let volWithSAMSeries = CHSeries.getVolumeWithSAM(upStyle: upcolor,
+                                                 downStyle: downcolor,
+                                                 num: 60,
+                                                 barStyle: (UIColor.yellow, false),
+                                                 lineColor: UIColor(white: 0.4, alpha: 1),
                                                  section: assistSection)
         
         let kdjSeries = CHSeries.getKDJ(
@@ -583,7 +587,8 @@ public extension CHKLineChartStyle {
         macdSeries.title = "MACD(12,26,9)"
         macdSeries.symmetrical = true
         assistSection.series = [
-            volSeries,
+            volWithMASeries,
+            volWithSAMSeries,
             kdjSeries,
             macdSeries]
         
