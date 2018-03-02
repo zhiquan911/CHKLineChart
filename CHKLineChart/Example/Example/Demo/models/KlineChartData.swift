@@ -9,7 +9,7 @@
 import UIKit
 import SwiftyJSON
 
-class KlineChartData: NSObject {
+class KlineChartData: NSObject, Codable {
 
     var time: Int = 0
     var lowPrice: Double = 0
@@ -39,6 +39,8 @@ class KlineChartData: NSObject {
             self.amplitude = self.closePrice - self.openPrice
             self.amplitudeRatio = self.amplitude / self.openPrice * 100
         }
+        
     }
     
 }
+

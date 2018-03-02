@@ -96,7 +96,7 @@ class ChartCustomViewController: UIViewController {
     /// 股票指标
     lazy var buttonIndex: UIButton = {
         let btn = UIButton()
-        btn.setTitle("指标", for: .normal)
+        btn.setTitle("Index", for: .normal)
         btn.setTitleColor(UIColor(hex: 0xfe9d25), for: .normal)
         btn.addTarget(self, action: #selector(self.handleShowIndex), for: .touchUpInside)
         return btn
@@ -105,8 +105,27 @@ class ChartCustomViewController: UIViewController {
     /// 指标设置
     lazy var buttonSetting: UIButton = {
         let btn = UIButton()
-        btn.setTitle("参数", for: .normal)
+        btn.setTitle("Params", for: .normal)
         btn.setTitleColor(UIColor(hex: 0xfe9d25), for: .normal)
+        btn.addTarget(self, action: #selector(self.gotoSettingList), for: .touchUpInside)
+        return btn
+    }()
+    
+    /// 风格设置
+    lazy var buttonStyle: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Style", for: .normal)
+        btn.setTitleColor(UIColor(hex: 0xfe9d25), for: .normal)
+//        btn.addTarget(self, action: #selector(self.gotoSettingList), for: .touchUpInside)
+        return btn
+    }()
+    
+    /// 市场设置
+    lazy var buttonMarket: UIButton = {
+        let btn = UIButton()
+        btn.setTitle("Markets", for: .normal)
+        btn.setTitleColor(UIColor(hex: 0xfe9d25), for: .normal)
+        //        btn.addTarget(self, action: #selector(self.gotoSettingList), for: .touchUpInside)
         return btn
     }()
     
@@ -135,6 +154,11 @@ class ChartCustomViewController: UIViewController {
             self.didSelectChartIndex(indexPath: indexPath)
         }
         return view
+    }()
+    
+    lazy var loadingView: UIActivityIndicatorView = {
+        let v = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        return v
     }()
     
     override func viewDidLoad() {
@@ -170,6 +194,8 @@ extension ChartCustomViewController {
     
     /// 拉取数据
     func fetchChartDatas() {
+        self.loadingView.startAnimating()
+        self.loadingView.isHidden = false
         ChartDatasFetcher.shared.getRemoteChartData(
             symbol: self.selectedSymbol,
             timeType: self.times[self.selectedTime],
@@ -181,6 +207,9 @@ extension ChartCustomViewController {
                     
                     //显示最后一条数据
                     self?.topView.update(data: chartsData.last!)
+                    
+                    self?.loadingView.stopAnimating()
+                    self?.loadingView.isHidden = true
                 }
         }
     }
@@ -192,9 +221,14 @@ extension ChartCustomViewController {
         self.view.addSubview(self.topView)
         self.view.addSubview(self.chartView)
         self.view.addSubview(self.toolbar)
+        self.view.addSubview(self.loadingView)
         self.toolbar.addSubview(self.buttonIndex)
         self.toolbar.addSubview(self.buttonTime)
         self.toolbar.addSubview(self.buttonSetting)
+        
+        self.loadingView.snp.makeConstraints { (make) in
+            make.center.equalTo(self.chartView)
+        }
         
         self.topView.snp.makeConstraints { (make) in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(4)
@@ -299,6 +333,12 @@ extension ChartCustomViewController {
         //重新渲染
         self.chartView.reloadData(resetData: false)
     }
+    
+    /// 进入参数设置
+    @objc func gotoSettingList() {
+        let vc = SettingListViewController()
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
 // MARK: - 实现K线图表的委托方法
@@ -359,7 +399,12 @@ extension ChartCustomViewController: CHKLineChartDelegate {
     ///
     /// - returns:
     func kLineChart(chart: CHKLineChartView, decimalAt section: Int) -> Int {
-        return 4
+        if section == 0 {
+            return 4
+        } else {
+            return 2
+        }
+        
     }
     
     
@@ -372,7 +417,36 @@ extension ChartCustomViewController: CHKLineChartDelegate {
         return 60
     }
     
-    
+    /// 自定义分区图标题
+    ///
+    func kLineChart(chart: CHKLineChartView, titleForHeaderInSection section: Int, index: Int, item: CHChartItem) -> NSAttributedString? {
+        let sec = self.chartView.sections[section]
+        var start = 0
+        let titleString = NSMutableAttributedString()
+        var key = ""
+        switch section {
+        case 0:
+            key = self.masterIndex[self.selectedMasterIndex]
+        default:
+            key = sec.series[sec.selectedIndex].key
+        }
+        
+        //获取该线段的标题值及颜色，可以继续自定义
+        guard let attributes = sec.getTitleAttributesByIndex(index, seriesKey: key) else {
+            return nil
+        }
+        
+        //合并为完整字符串
+        for (title, color) in attributes {
+            titleString.append(NSAttributedString(string: title))
+            let range = NSMakeRange(start, title.ch_length)
+            let colorAttribute = [NSAttributedStringKey.foregroundColor: color]
+            titleString.addAttributes(colorAttribute, range: range)
+            start += title.ch_length
+        }
+        
+        return titleString
+    }
     
     /// 点击图标返回点击的位置和数据对象
     ///
@@ -381,7 +455,8 @@ extension ChartCustomViewController: CHKLineChartDelegate {
     ///   - index:
     ///   - item:
     func kLineChart(chart: CHKLineChartView, didSelectAt index: Int, item: CHChartItem) {
-//        NSLog("selected index = \(index)")
+        let data = self.klineDatas[index]
+        self.topView.update(data: data)
     }
     
 }
@@ -405,8 +480,131 @@ extension ChartCustomViewController {
     
 }
 
+extension ChartCustomViewController {
+    
+    func loadUserStyle() {
+        
+        let seriesParams = SeriesParamList.shared.loadUserData()
+        
+        let style = CHKLineChartStyle()
+        style.labelFont = UIFont.systemFont(ofSize: 10)
+        style.lineColor = UIColor(white: 0.2, alpha: 1)
+        style.textColor = UIColor(white: 0.8, alpha: 1)
+        style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
+        style.selectedTextColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
+        style.padding = UIEdgeInsets(top: 16, left: 8, bottom: 4, right: 0)
+        style.backgroundColor = UIColor(hex: 0x232732)
+        style.showYAxisLabel = .right
+        style.algorithms.append(CHChartAlgorithm.timeline)
+        
+        //分区点线样式
+        let upcolor = (UIColor.ch_hex(0x00bd9a), true)
+        let downcolor = (UIColor.ch_hex(0xff6960), true)
+        let priceSection = CHSection()
+        priceSection.backgroundColor = style.backgroundColor
+        priceSection.titleShowOutSide = true
+        priceSection.valueType = .master
+        priceSection.key = "master"
+        priceSection.hidden = false
+        priceSection.ratios = 3
+        priceSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
+        
+        /************** 主图指标 **************/
+        
+        /// 时分线
+        let timelineSeries = CHSeries.getTimelinePrice(
+            color: UIColor.ch_hex(0xAE475C),
+            section: priceSection,
+            showGuide: true,
+            ultimateValueStyle: .circle(UIColor.ch_hex(0xAE475C), true),
+            lineWidth: 2)
+        
+        timelineSeries.hidden = true
+        
+        /// 蜡烛线
+        let priceSeries = CHSeries.getCandlePrice(
+            upStyle: upcolor,
+            downStyle: downcolor,
+            titleColor: UIColor(white: 0.8, alpha: 1),
+            section: priceSection,
+            showGuide: true,
+            ultimateValueStyle: .arrow(UIColor(white: 0.8, alpha: 1)))
+        
+        priceSeries.showTitle = true
+        priceSeries.chartModels.first?.ultimateValueStyle = .arrow(UIColor(white: 0.8, alpha: 1))
+        
+        /************** 读取用户配置中线段 **************/
+        
+        for series in seriesParams {
+            
+            //添加指标算法
+            style.algorithms.append(contentsOf: series.getAlgorithms())
+            
+            //添加指标线段
+            
+        }
+        
+        
+        
+        let priceMASeries = CHSeries.getPriceMA(
+            isEMA: false,
+            num: [5,10,30],
+            colors: [
+                UIColor.ch_hex(0xDDDDDD),
+                UIColor.ch_hex(0xF9EE30),
+                UIColor.ch_hex(0xF600FF),
+                ],
+            section: priceSection)
+        priceMASeries.hidden = false
+        
+        let priceEMASeries = CHSeries.getPriceMA(
+            isEMA: true,
+            num: [5,10,30],
+            colors: [
+                UIColor.ch_hex(0xDDDDDD),
+                UIColor.ch_hex(0xF9EE30),
+                UIColor.ch_hex(0xF600FF),
+                ],
+            section: priceSection)
+        
+        priceEMASeries.hidden = true
+        
+        let priceBOLLSeries = CHSeries.getBOLL(
+            UIColor.ch_hex(0xDDDDDD),
+            ubc: UIColor.ch_hex(0xF9EE30),
+            lbc: UIColor.ch_hex(0xF600FF),
+            section: priceSection)
+        
+        priceBOLLSeries.hidden = true
+        
+        let priceSARSeries = CHSeries.getSAR(
+            upStyle: upcolor,
+            downStyle: downcolor,
+            titleColor: UIColor.ch_hex(0xDDDDDD),
+            section: priceSection)
+        
+        priceSARSeries.hidden = true
+        
+        let priceSAMSeries = CHSeries.getPriceSAM(num: 60, barStyle: (UIColor.yellow, false), lineColor: UIColor(white: 0.4, alpha: 1), section: priceSection)
+        
+        priceSAMSeries.hidden = true
+        
+        priceSection.series = [
+            timelineSeries,
+            priceSeries,
+            priceMASeries,
+            priceEMASeries,
+            priceBOLLSeries,
+            priceSARSeries,
+            priceSAMSeries,
+        ]
+        
+    }
+}
+
 // MARK: - 扩展样式
 public extension CHKLineChartStyle {
+    
     
     //实现一个最基本的样式，开发者可以自由扩展配置样式
     public static var myChart: CHKLineChartStyle {
@@ -416,7 +614,7 @@ public extension CHKLineChartStyle {
         style.textColor = UIColor(white: 0.8, alpha: 1)
         style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
         style.selectedTextColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
-        style.padding = UIEdgeInsets(top: 32, left: 8, bottom: 4, right: 0)
+        style.padding = UIEdgeInsets(top: 16, left: 8, bottom: 4, right: 0)
         style.backgroundColor = UIColor(hex: 0x232732)
         style.showYAxisLabel = .right
         

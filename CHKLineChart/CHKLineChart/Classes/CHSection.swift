@@ -153,7 +153,7 @@ extension CHSection {
     /// 绘制header上的标题信息
     ///
     /// - Parameter title: 标题内容
-    func drawTitleForHeader(title: NSMutableAttributedString) {
+    func drawTitleForHeader(title: NSAttributedString) {
         
         guard self.showTitle else {
             return
@@ -167,7 +167,7 @@ extension CHSection {
         let textSize = title.string.ch_sizeWithConstrained(self.labelFont, constraintRect: CGSize(width: self.frame.width, height: CGFloat.greatestFiniteMagnitude))
         
         if titleShowOutSide {
-            yPos = self.frame.origin.y - textSize.height - 8
+            yPos = self.frame.origin.y - textSize.height - 4
             containerWidth = self.frame.width
         } else {
             yPos = self.frame.origin.y + 2
@@ -435,6 +435,14 @@ extension CHSection {
         self.drawTitleForHeader(title: titleString)
     }
     
+    /// 根据seriesKey获取线段的数值标题
+    ///
+    public func getTitleAttributesByIndex(_ chartSelectedIndex: Int, seriesKey: String) -> [(title: String, color: UIColor)]? {
+        guard let series = self.getSeries(key: seriesKey) else {
+            return nil
+        }
+        return self.getTitleAttributesByIndex(chartSelectedIndex, series: series)
+    }
     
     /// 获取标题属性元组
     ///

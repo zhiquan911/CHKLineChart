@@ -138,7 +138,13 @@ public enum CHChartSelectedPosition {
     /// - Returns: 自定义的View
     @objc optional func kLineChart(chart: CHKLineChartView, viewForHeaderInSection section: Int) -> UIView?
     
-
+    /// 自定义section的头部View显示内容
+    ///
+    /// - Parameters:
+    ///   - chart: 图表
+    ///   - section: 分区的索引位
+    /// - Returns: 自定义的View
+    @objc optional func kLineChart(chart: CHKLineChartView, titleForHeaderInSection section: Int, index: Int, item: CHChartItem) -> NSAttributedString?
 }
 
 open class CHKLineChartView: UIView {
@@ -617,12 +623,21 @@ open class CHKLineChartView: UIView {
         let item = self.datas[index]
         
         //显示分区的header标题
-        for section in self.sections {
+        for (i, section) in self.sections.enumerated() {
             if section.hidden {
                 continue
             }
             
-            section.drawTitle(index)
+            if let titleString = self.delegate?.kLineChart?(chart: self,
+                                                            titleForHeaderInSection: i,
+                                                            index: index,
+                                                            item: self.datas[index]) {
+                //显示用户自定义的title
+                section.drawTitleForHeader(title: titleString)
+            } else {
+                //显示默认
+                section.drawTitle(index)
+            }
         }
         
         
@@ -699,8 +714,19 @@ extension CHKLineChartView {
                     section.addCustomView(titleView, inView: self)
                     
                 } else {
-                    //显示范围最后一个点的内容
-                    section.drawTitle(self.selectedIndex)
+                    
+                    if let titleString = self.delegate?.kLineChart?(chart: self,
+                                                                   titleForHeaderInSection: index,
+                                                                   index: self.selectedIndex,
+                                                                   item: self.datas[self.selectedIndex]) {
+                        //显示用户自定义的section title
+                        section.drawTitleForHeader(title: titleString)
+                    } else {
+                        //显示范围最后一个点的内容
+                        section.drawTitle(self.selectedIndex)
+                    }
+                    
+                    
                 }
                 
             }

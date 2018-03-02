@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C53B14602048193600289E85 /* SettingDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53B145F2048193600289E85 /* SettingDetailViewController.swift */; };
+		C56EE2842048E5DE004CFC65 /* SeriesSettingDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56EE2832048E5DE004CFC65 /* SeriesSettingDetailCell.swift */; };
+		C58173E62047DAF400598AE2 /* SettingListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58173E52047DAF400598AE2 /* SettingListViewController.swift */; };
+		C58173E82047E47800598AE2 /* SeriesParam.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58173E72047E47800598AE2 /* SeriesParam.swift */; };
+		C58173EA2047E64300598AE2 /* SeriesSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58173E92047E64300598AE2 /* SeriesSettingCell.swift */; };
 		C5DAC4132044F25500D16B84 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DAC4122044F25500D16B84 /* AppDelegate.swift */; };
 		C5DAC4182044F25500D16B84 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C5DAC4162044F25500D16B84 /* Main.storyboard */; };
 		C5DAC41A2044F25500D16B84 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C5DAC4192044F25500D16B84 /* Assets.xcassets */; };
@@ -69,7 +74,12 @@
 		1B442F95CFE9EA0B2B1C0BE5 /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Example/Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
 		2638DFE8B9DCAD20AACBB229 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C5EB2820267D31519C777AE /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
+		C53B145F2048193600289E85 /* SettingDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingDetailViewController.swift; sourceTree = "<group>"; };
 		C55110A720464BDC00B0BC91 /* Example_bridging_Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Example_bridging_Header.h; sourceTree = "<group>"; };
+		C56EE2832048E5DE004CFC65 /* SeriesSettingDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesSettingDetailCell.swift; sourceTree = "<group>"; };
+		C58173E52047DAF400598AE2 /* SettingListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingListViewController.swift; sourceTree = "<group>"; };
+		C58173E72047E47800598AE2 /* SeriesParam.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesParam.swift; sourceTree = "<group>"; };
+		C58173E92047E64300598AE2 /* SeriesSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesSettingCell.swift; sourceTree = "<group>"; };
 		C5DAC40F2044F25500D16B84 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5DAC4122044F25500D16B84 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C5DAC4172044F25500D16B84 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -197,6 +207,8 @@
 				C5DAC43D2044F70B00D16B84 /* StyleSettingViewController.swift */,
 				C5DAC457204500F100D16B84 /* ChartCustomViewController.swift */,
 				C5DAC46D2045791E00D16B84 /* SelectionPopView.swift */,
+				C58173E52047DAF400598AE2 /* SettingListViewController.swift */,
+				C53B145F2048193600289E85 /* SettingDetailViewController.swift */,
 			);
 			path = Demo;
 			sourceTree = "<group>";
@@ -207,6 +219,8 @@
 				C5DAC4382044F70B00D16B84 /* KChartCell.swift */,
 				C5DAC4392044F70B00D16B84 /* SectionHeaderView.swift */,
 				C5DAC46020453EF700D16B84 /* TickerTopView.swift */,
+				C58173E92047E64300598AE2 /* SeriesSettingCell.swift */,
+				C56EE2832048E5DE004CFC65 /* SeriesSettingDetailCell.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -233,6 +247,7 @@
 			children = (
 				C5DAC459204505BF00D16B84 /* ChartDatasFetcher.swift */,
 				C5DAC45C20450B1300D16B84 /* KlineChartData.swift */,
+				C58173E72047E47800598AE2 /* SeriesParam.swift */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -427,10 +442,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C56EE2842048E5DE004CFC65 /* SeriesSettingDetailCell.swift in Sources */,
 				C5DAC46120453EF700D16B84 /* TickerTopView.swift in Sources */,
 				C5DAC44A2044F70B00D16B84 /* ChartCustomDesignViewController.swift in Sources */,
 				C5DAC4132044F25500D16B84 /* AppDelegate.swift in Sources */,
 				C5DAC46A20455C0200D16B84 /* Double+exension.swift in Sources */,
+				C53B14602048193600289E85 /* SettingDetailViewController.swift in Sources */,
 				C5DAC4442044F70B00D16B84 /* DepthChartDemoViewController.swift in Sources */,
 				C5DAC4492044F70B00D16B84 /* StyleSettingViewController.swift in Sources */,
 				C5DAC46E2045791E00D16B84 /* SelectionPopView.swift in Sources */,
@@ -446,8 +463,11 @@
 				C5DAC4452044F70B00D16B84 /* KChartCell.swift in Sources */,
 				C5DAC4482044F70B00D16B84 /* ChartStyles.swift in Sources */,
 				C5DAC4472044F70B00D16B84 /* ChartDemoViewController.swift in Sources */,
+				C58173E62047DAF400598AE2 /* SettingListViewController.swift in Sources */,
 				C5DAC45D20450B1300D16B84 /* KlineChartData.swift in Sources */,
 				C5DAC4412044F70B00D16B84 /* CustomStyleViewController.swift in Sources */,
+				C58173E82047E47800598AE2 /* SeriesParam.swift in Sources */,
+				C58173EA2047E64300598AE2 /* SeriesSettingCell.swift in Sources */,
 				C5DAC46920455C0200D16B84 /* UIColor+extension.swift in Sources */,
 				C5DAC46C20455C0200D16B84 /* Int+extension.swift in Sources */,
 			);
