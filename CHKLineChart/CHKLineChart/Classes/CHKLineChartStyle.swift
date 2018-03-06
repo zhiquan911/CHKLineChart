@@ -28,10 +28,10 @@ public enum CHUltimateValueStyle {
 open class CHKLineChartStyle {
     
     /// 分区样式配置
-    open var sections: [CHSection]!
+    open var sections: [CHSection] = [CHSection]()
     
     /// 要处理的算法
-    open var algorithms: [CHChartAlgorithmProtocol]!
+    open var algorithms: [CHChartAlgorithmProtocol] = [CHChartAlgorithmProtocol]()
     
     
     /// 背景颜色

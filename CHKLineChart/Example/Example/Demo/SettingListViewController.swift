@@ -8,9 +8,16 @@
 
 import UIKit
 
+@objc protocol SettingListViewDelegate {
+    
+    @objc optional func didCompletedParamsSetting()
+}
+
 class SettingListViewController: UIViewController {
     
     var seriesParam: [SeriesParam] = [SeriesParam]()
+    
+    weak var delegate: SettingListViewDelegate?
     
     lazy var tableView: UITableView = {
         let table = UITableView(frame: CGRect.zero, style: .plain)
@@ -41,6 +48,11 @@ class SettingListViewController: UIViewController {
         super.viewDidLoad()
         self.setupUI()
         self.seriesParam = SeriesParamList.shared.loadUserData()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.delegate?.didCompletedParamsSetting?()
     }
 
     override func didReceiveMemoryWarning() {

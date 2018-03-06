@@ -86,60 +86,142 @@ class SeriesParam: NSObject, Codable {
     }
     
     /// 获取指标线段组
-    /*
-    func getSeries(section: CHSection) -> [CHSeries] {
-        var series: [CHSeries] = [CHSeries]()
+    func appendIn(masterSection: CHSection,
+                   assistSections: CHSection...) {
+        
+        //分区点线样式
+        let upcolor = (UIColor(hex: 0x00bd9a), true)
+        let downcolor = (UIColor(hex: 0xff6960), true)
+        
+        let lineColors = [
+            UIColor(hex: 0xDDDDDD),
+            UIColor(hex: 0xF9EE30),
+            UIColor(hex: 0xF600FF),
+        ]
+        
         switch seriesKey {
         case CHSeriesKey.ma:
             
+            var maColor = [UIColor]()
+            for i in 0..<self.params.count {
+                maColor.append(lineColors[i])
+            }
+            
             let series = CHSeries.getPriceMA(
                 isEMA: false,
-                num: [5,10,30],
-                colors: [
-                    UIColor.ch_hex(0xDDDDDD),
-                    UIColor.ch_hex(0xF9EE30),
-                    UIColor.ch_hex(0xF600FF),
-                    ],
-                section: section)
+                num: self.params.map {Int($0.value)},
+                colors: maColor,
+                section: masterSection)
             
-            for p in self.params {
-                let a = CHChartAlgorithm.ma(Int(p.value))
-                algorithms.append(a)
+            
+            masterSection.series.append(series)
+            
+            for assistSection in assistSections {
+                
+                let volWithMASeries = CHSeries.getVolumeWithMA(upStyle: upcolor,
+                                                               downStyle: downcolor,
+                                                               isEMA: false,
+                                                               num: self.params.map {Int($0.value)},
+                                                               colors: maColor,
+                                                               section: assistSection)
+                
+                assistSection.series.append(volWithMASeries)
             }
             
         case CHSeriesKey.ema:
-            for p in self.params {
-                let a = CHChartAlgorithm.ema(Int(p.value))
-                algorithms.append(a)
+            
+            var emaColor = [UIColor]()
+            for i in 0..<self.params.count {
+                emaColor.append(lineColors[i])
             }
+            
+            let series = CHSeries.getPriceMA(
+                isEMA: true,
+                num: self.params.map {Int($0.value)},
+                colors: emaColor,
+                section: masterSection)
+            
+            
+            masterSection.series.append(series)
+            
         case CHSeriesKey.kdj:
-            let a = CHChartAlgorithm.kdj(Int(self.params[0].value), Int(self.params[1].value), Int(self.params[2].value))
-            algorithms.append(a)
-        case CHSeriesKey.macd:
-            for p in self.params {
-                let a = CHChartAlgorithm.ema(Int(p.value))
-                algorithms.append(a)
+            
+            for assistSection in assistSections {
+                
+                let kdjSeries = CHSeries.getKDJ(
+                    lineColors[0],
+                    dc: lineColors[1],
+                    jc: lineColors[2],
+                    section: assistSection)
+                kdjSeries.title = "KDJ(\(self.params[0].value.toString()),\(self.params[1].value.toString()),\(self.params[2].value.toString()))"
+                
+                assistSection.series.append(kdjSeries)
             }
-            let a = CHChartAlgorithm.macd(Int(self.params[0].value), Int(self.params[1].value), Int(self.params[2].value))
-            algorithms.append(a)
+            
+        case CHSeriesKey.macd:
+            for assistSection in assistSections {
+                
+                let macdSeries = CHSeries.getMACD(
+                    UIColor.ch_hex(0xDDDDDD),
+                    deac: UIColor.ch_hex(0xF9EE30),
+                    barc: UIColor.ch_hex(0xF600FF),
+                    upStyle: upcolor, downStyle: downcolor,
+                    section: assistSection)
+                macdSeries.title = "MACD(\(self.params[0].value.toString()),\(self.params[1].value.toString()),\(self.params[2].value.toString()))"
+                macdSeries.symmetrical = true
+                
+                assistSection.series.append(macdSeries)
+            }
         case CHSeriesKey.boll:
-            let a = CHChartAlgorithm.boll(Int(self.params[0].value), Int(self.params[1].value))
-            algorithms.append(a)
+            
+            let priceBOLLSeries = CHSeries.getBOLL(
+                lineColors[0],
+                ubc: lineColors[1],
+                lbc: lineColors[2],
+                section: masterSection)
+            
+            priceBOLLSeries.hidden = true
+            
+            masterSection.series.append(priceBOLLSeries)
+            
         case CHSeriesKey.sar:
-            let a = CHChartAlgorithm.sar(Int(self.params[0].value), CGFloat(self.params[1].value), CGFloat(self.params[2].value))
-            algorithms.append(a)
+            
+            let priceSARSeries = CHSeries.getSAR(
+                upStyle: upcolor,
+                downStyle: downcolor,
+                titleColor: lineColors[0],
+                section: masterSection)
+            
+            priceSARSeries.hidden = true
+            
+            masterSection.series.append(priceSARSeries)
+            
         case CHSeriesKey.sam:
-            let a = CHChartAlgorithm.sam(Int(self.params[0].value))
-            algorithms.append(a)
-        default:
-            let a = CHChartAlgorithm.none
-            algorithms.append(a)
+            
+            let priceSAMSeries = CHSeries.getPriceSAM(num: Int(self.params[0].value), barStyle: (UIColor.yellow, false), lineColor: UIColor(white: 0.4, alpha: 1), section: masterSection)
+            
+            priceSAMSeries.hidden = true
+            
+            masterSection.series.append(priceSAMSeries)
+            
+            for assistSection in assistSections {
+                
+                let volWithSAMSeries = CHSeries.getVolumeWithSAM(upStyle: upcolor,
+                                                                 downStyle: downcolor,
+                                                                 num: Int(self.params[0].value),
+                                                                 barStyle: (UIColor.yellow, false),
+                                                                 lineColor: UIColor(white: 0.4, alpha: 1),
+                                                                 section: assistSection)
+                
+                assistSection.series.append(volWithSAMSeries)
+            }
+            
+            
+            
+        default:break
         }
-        
-        
-        return series
     }
-    */
+
 }
 
 class SeriesParamList: NSObject, Codable{

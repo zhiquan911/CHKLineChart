@@ -144,7 +144,12 @@ public enum CHChartSelectedPosition {
     ///   - chart: 图表
     ///   - section: 分区的索引位
     /// - Returns: 自定义的View
-    @objc optional func kLineChart(chart: CHKLineChartView, titleForHeaderInSection section: Int, index: Int, item: CHChartItem) -> NSAttributedString?
+    @objc optional func kLineChart(chart: CHKLineChartView, titleForHeaderInSection section: CHSection, index: Int, item: CHChartItem) -> NSAttributedString?
+    
+    
+    /// 切换分区用分页方式展示的线组
+    ///
+    @objc optional func kLineChart(chart: CHKLineChartView, didFlipPageSeries section: CHSection, series: CHSeries, seriesIndex: Int)
 }
 
 open class CHKLineChartView: UIView {
@@ -623,13 +628,13 @@ open class CHKLineChartView: UIView {
         let item = self.datas[index]
         
         //显示分区的header标题
-        for (i, section) in self.sections.enumerated() {
+        for (_, section) in self.sections.enumerated() {
             if section.hidden {
                 continue
             }
             
             if let titleString = self.delegate?.kLineChart?(chart: self,
-                                                            titleForHeaderInSection: i,
+                                                            titleForHeaderInSection: section,
                                                             index: index,
                                                             item: self.datas[index]) {
                 //显示用户自定义的title
@@ -716,7 +721,7 @@ extension CHKLineChartView {
                 } else {
                     
                     if let titleString = self.delegate?.kLineChart?(chart: self,
-                                                                   titleForHeaderInSection: index,
+                                                                   titleForHeaderInSection: section,
                                                                    index: self.selectedIndex,
                                                                    item: self.datas[self.selectedIndex]) {
                         //显示用户自定义的section title
@@ -1688,6 +1693,7 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
                 //显示下一页
                 section!.nextPage()
                 self.drawLayerView()
+                self.delegate?.kLineChart?(chart: self, didFlipPageSeries: section!, series: section!.series[section!.selectedIndex], seriesIndex: section!.selectedIndex)
             } else {
                 //显示点击选中的内容
                 self.setSelectedIndexByPoint(point)

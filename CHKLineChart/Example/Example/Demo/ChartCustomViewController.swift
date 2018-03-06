@@ -74,7 +74,7 @@ class ChartCustomViewController: UIViewController {
     /// 图表
     lazy var chartView: CHKLineChartView = {
         let chartView = CHKLineChartView(frame: CGRect.zero)
-        chartView.style = .myChart
+        chartView.style = self.loadUserStyle()
         chartView.delegate = self
         return chartView
     }()
@@ -225,6 +225,7 @@ extension ChartCustomViewController {
         self.toolbar.addSubview(self.buttonIndex)
         self.toolbar.addSubview(self.buttonTime)
         self.toolbar.addSubview(self.buttonSetting)
+        self.toolbar.addSubview(self.buttonStyle)
         
         self.loadingView.snp.makeConstraints { (make) in
             make.center.equalTo(self.chartView)
@@ -256,6 +257,13 @@ extension ChartCustomViewController {
             make.centerY.equalToSuperview()
         }
         
+        self.buttonIndex.snp.makeConstraints { (make) in
+            make.left.equalTo(self.buttonTime.snp.right)
+            make.width.equalTo(80)
+            make.height.equalTo(30)
+            make.centerY.equalToSuperview()
+        }
+        
         self.buttonSetting.snp.makeConstraints { (make) in
             make.right.equalToSuperview().inset(8)
             make.width.equalTo(80)
@@ -263,12 +271,13 @@ extension ChartCustomViewController {
             make.centerY.equalToSuperview()
         }
         
-        self.buttonIndex.snp.makeConstraints { (make) in
+        self.buttonStyle.snp.makeConstraints { (make) in
             make.right.equalTo(self.buttonSetting.snp.left)
             make.width.equalTo(80)
             make.height.equalTo(30)
             make.centerY.equalToSuperview()
         }
+        
     }
     
     /// 选择周期
@@ -337,7 +346,14 @@ extension ChartCustomViewController {
     /// 进入参数设置
     @objc func gotoSettingList() {
         let vc = SettingListViewController()
+        vc.delegate = self
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    /// 更新指标算法和样式风格
+    func updateUserStyle() {
+        self.chartView.resetStyle(style: self.loadUserStyle())
+        self.handleChartIndexChanged()
     }
 }
 
@@ -419,20 +435,19 @@ extension ChartCustomViewController: CHKLineChartDelegate {
     
     /// 自定义分区图标题
     ///
-    func kLineChart(chart: CHKLineChartView, titleForHeaderInSection section: Int, index: Int, item: CHChartItem) -> NSAttributedString? {
-        let sec = self.chartView.sections[section]
+    func kLineChart(chart: CHKLineChartView, titleForHeaderInSection section: CHSection, index: Int, item: CHChartItem) -> NSAttributedString? {
         var start = 0
         let titleString = NSMutableAttributedString()
         var key = ""
-        switch section {
+        switch section.index {
         case 0:
             key = self.masterIndex[self.selectedMasterIndex]
         default:
-            key = sec.series[sec.selectedIndex].key
+            key = section.series[section.selectedIndex].key
         }
         
         //获取该线段的标题值及颜色，可以继续自定义
-        guard let attributes = sec.getTitleAttributesByIndex(index, seriesKey: key) else {
+        guard let attributes = section.getTitleAttributesByIndex(index, seriesKey: key) else {
             return nil
         }
         
@@ -459,6 +474,17 @@ extension ChartCustomViewController: CHKLineChartDelegate {
         self.topView.update(data: data)
     }
     
+    /// 切换可分页分区的线组
+    ///
+    func kLineChart(chart: CHKLineChartView, didFlipPageSeries section: CHSection, series: CHSeries, seriesIndex: Int) {
+        switch section.index {
+        case 1:
+            self.selectedAssistIndex = self.assistIndex.index(of: series.key) ?? self.selectedAssistIndex
+        case 2:
+            self.selectedAssistIndex2 = self.assistIndex.index(of: series.key) ?? self.selectedAssistIndex2
+        default:break
+        }
+    }
 }
 
 // MARK: - 竖屏切换重载方法实现
@@ -480,9 +506,13 @@ extension ChartCustomViewController {
     
 }
 
+// MARK: - 自定义样式
 extension ChartCustomViewController {
     
-    func loadUserStyle() {
+    /// 读取用户自定义样式
+    ///
+    /// - Returns:
+    func loadUserStyle() -> CHKLineChartStyle {
         
         let seriesParams = SeriesParamList.shared.loadUserData()
         
@@ -497,7 +527,9 @@ extension ChartCustomViewController {
         style.showYAxisLabel = .right
         style.algorithms.append(CHChartAlgorithm.timeline)
         
-        //分区点线样式
+        /************** 配置分区样式 **************/
+        
+        /// 主图
         let upcolor = (UIColor.ch_hex(0x00bd9a), true)
         let downcolor = (UIColor.ch_hex(0xff6960), true)
         let priceSection = CHSection()
@@ -509,7 +541,30 @@ extension ChartCustomViewController {
         priceSection.ratios = 3
         priceSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
         
-        /************** 主图指标 **************/
+        
+        /// 副图1
+        let assistSection1 = CHSection()
+        assistSection1.backgroundColor = style.backgroundColor
+        assistSection1.valueType = .assistant
+        assistSection1.key = "assist1"
+        assistSection1.hidden = false
+        assistSection1.ratios = 1
+        assistSection1.paging = true
+        assistSection1.yAxis.tickInterval = 4
+        assistSection1.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
+        
+        /// 副图2
+        let assistSection2 = CHSection()
+        assistSection2.backgroundColor = style.backgroundColor
+        assistSection2.valueType = .assistant
+        assistSection2.key = "assist2"
+        assistSection2.hidden = false
+        assistSection2.ratios = 1
+        assistSection2.paging = true
+        assistSection2.yAxis.tickInterval = 4
+        assistSection2.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
+        
+        /************** 添加主图固定的线段 **************/
         
         /// 时分线
         let timelineSeries = CHSeries.getTimelinePrice(
@@ -532,6 +587,9 @@ extension ChartCustomViewController {
         
         priceSeries.showTitle = true
         priceSeries.chartModels.first?.ultimateValueStyle = .arrow(UIColor(white: 0.8, alpha: 1))
+        
+        priceSection.series.append(timelineSeries)
+        priceSection.series.append(priceSeries)
         
         /************** 读取用户配置中线段 **************/
         
@@ -541,255 +599,19 @@ extension ChartCustomViewController {
             style.algorithms.append(contentsOf: series.getAlgorithms())
             
             //添加指标线段
-            
+            series.appendIn(masterSection: priceSection, assistSections: assistSection1, assistSection2)
         }
         
-        
-        
-        let priceMASeries = CHSeries.getPriceMA(
-            isEMA: false,
-            num: [5,10,30],
-            colors: [
-                UIColor.ch_hex(0xDDDDDD),
-                UIColor.ch_hex(0xF9EE30),
-                UIColor.ch_hex(0xF600FF),
-                ],
-            section: priceSection)
-        priceMASeries.hidden = false
-        
-        let priceEMASeries = CHSeries.getPriceMA(
-            isEMA: true,
-            num: [5,10,30],
-            colors: [
-                UIColor.ch_hex(0xDDDDDD),
-                UIColor.ch_hex(0xF9EE30),
-                UIColor.ch_hex(0xF600FF),
-                ],
-            section: priceSection)
-        
-        priceEMASeries.hidden = true
-        
-        let priceBOLLSeries = CHSeries.getBOLL(
-            UIColor.ch_hex(0xDDDDDD),
-            ubc: UIColor.ch_hex(0xF9EE30),
-            lbc: UIColor.ch_hex(0xF600FF),
-            section: priceSection)
-        
-        priceBOLLSeries.hidden = true
-        
-        let priceSARSeries = CHSeries.getSAR(
-            upStyle: upcolor,
-            downStyle: downcolor,
-            titleColor: UIColor.ch_hex(0xDDDDDD),
-            section: priceSection)
-        
-        priceSARSeries.hidden = true
-        
-        let priceSAMSeries = CHSeries.getPriceSAM(num: 60, barStyle: (UIColor.yellow, false), lineColor: UIColor(white: 0.4, alpha: 1), section: priceSection)
-        
-        priceSAMSeries.hidden = true
-        
-        priceSection.series = [
-            timelineSeries,
-            priceSeries,
-            priceMASeries,
-            priceEMASeries,
-            priceBOLLSeries,
-            priceSARSeries,
-            priceSAMSeries,
-        ]
-        
-    }
-}
-
-// MARK: - 扩展样式
-public extension CHKLineChartStyle {
-    
-    
-    //实现一个最基本的样式，开发者可以自由扩展配置样式
-    public static var myChart: CHKLineChartStyle {
-        let style = CHKLineChartStyle()
-        style.labelFont = UIFont.systemFont(ofSize: 10)
-        style.lineColor = UIColor(white: 0.2, alpha: 1)
-        style.textColor = UIColor(white: 0.8, alpha: 1)
-        style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
-        style.selectedTextColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
-        style.padding = UIEdgeInsets(top: 16, left: 8, bottom: 4, right: 0)
-        style.backgroundColor = UIColor(hex: 0x232732)
-        style.showYAxisLabel = .right
-        
-        //配置图表处理算法
-        style.algorithms = [
-            CHChartAlgorithm.timeline,
-            CHChartAlgorithm.sar(4, 0.02, 0.2), //默认周期4，最小加速0.02，最大加速0.2
-            CHChartAlgorithm.ma(5),
-            CHChartAlgorithm.ma(10),
-            CHChartAlgorithm.ma(20),        //计算BOLL，必须先计算到同周期的MA
-            CHChartAlgorithm.ma(30),
-            CHChartAlgorithm.ema(5),
-            CHChartAlgorithm.ema(10),
-            CHChartAlgorithm.ema(12),       //计算MACD，必须先计算到同周期的EMA
-            CHChartAlgorithm.ema(26),       //计算MACD，必须先计算到同周期的EMA
-            CHChartAlgorithm.ema(30),
-            CHChartAlgorithm.boll(20, 2),
-            CHChartAlgorithm.macd(12, 26, 9),
-            CHChartAlgorithm.kdj(9, 3, 3),
-            CHChartAlgorithm.sam(60),
-        ]
-        
-        //分区点线样式
-        let upcolor = (UIColor.ch_hex(0x00bd9a), true)
-        let downcolor = (UIColor.ch_hex(0xff6960), true)
-        let priceSection = CHSection()
-        priceSection.backgroundColor = style.backgroundColor
-        priceSection.titleShowOutSide = true
-        priceSection.valueType = .master
-        priceSection.key = "master"
-        priceSection.hidden = false
-        priceSection.ratios = 3
-        priceSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
-        
-        /// 时分线
-        let timelineSeries = CHSeries.getTimelinePrice(
-            color: UIColor.ch_hex(0xAE475C),
-            section: priceSection,
-            showGuide: true,
-            ultimateValueStyle: .circle(UIColor.ch_hex(0xAE475C), true),
-            lineWidth: 2)
-        
-        timelineSeries.hidden = true
-        
-        /// 蜡烛线
-        let priceSeries = CHSeries.getCandlePrice(
-            upStyle: upcolor,
-            downStyle: downcolor,
-            titleColor: UIColor(white: 0.8, alpha: 1),
-            section: priceSection,
-            showGuide: true,
-            ultimateValueStyle: .arrow(UIColor(white: 0.8, alpha: 1)))
-        
-        priceSeries.showTitle = true
-        
-        priceSeries.chartModels.first?.ultimateValueStyle = .arrow(UIColor(white: 0.8, alpha: 1))
-        
-        let priceMASeries = CHSeries.getPriceMA(
-            isEMA: false,
-            num: [5,10,30],
-            colors: [
-                UIColor.ch_hex(0xDDDDDD),
-                UIColor.ch_hex(0xF9EE30),
-                UIColor.ch_hex(0xF600FF),
-                ],
-            section: priceSection)
-        priceMASeries.hidden = false
-        
-        let priceEMASeries = CHSeries.getPriceMA(
-            isEMA: true,
-            num: [5,10,30],
-            colors: [
-                UIColor.ch_hex(0xDDDDDD),
-                UIColor.ch_hex(0xF9EE30),
-                UIColor.ch_hex(0xF600FF),
-                ],
-            section: priceSection)
-        
-        priceEMASeries.hidden = true
-        
-        let priceBOLLSeries = CHSeries.getBOLL(
-            UIColor.ch_hex(0xDDDDDD),
-            ubc: UIColor.ch_hex(0xF9EE30),
-            lbc: UIColor.ch_hex(0xF600FF),
-            section: priceSection)
-        
-        priceBOLLSeries.hidden = true
-        
-        let priceSARSeries = CHSeries.getSAR(
-            upStyle: upcolor,
-            downStyle: downcolor,
-            titleColor: UIColor.ch_hex(0xDDDDDD),
-            section: priceSection)
-        
-        priceSARSeries.hidden = true
-        
-        let priceSAMSeries = CHSeries.getPriceSAM(num: 60, barStyle: (UIColor.yellow, false), lineColor: UIColor(white: 0.4, alpha: 1), section: priceSection)
-        
-        priceSAMSeries.hidden = true
-        
-        priceSection.series = [
-            timelineSeries,
-            priceSeries,
-            priceMASeries,
-            priceEMASeries,
-            priceBOLLSeries,
-            priceSARSeries,
-            priceSAMSeries,
-        ]
-        
-        
-        let assistSection = style.assistSection
-        let assistSection2 = style.assistSection
-        
-        style.sections = [priceSection, assistSection, assistSection2]
-        
+        style.sections = [priceSection, assistSection1, assistSection2]
         
         return style
     }
+}
+
+extension ChartCustomViewController: SettingListViewDelegate {
     
-    var assistSection: CHSection {
-        
-        //分区点线样式
-        let upcolor = (UIColor.ch_hex(0x00bd9a), true)
-        let downcolor = (UIColor.ch_hex(0xff6960), true)
-        
-        let assistSection = CHSection()
-        assistSection.backgroundColor = self.backgroundColor
-        assistSection.valueType = .assistant
-        assistSection.key = "analysis"
-        assistSection.hidden = false
-        assistSection.ratios = 1
-        assistSection.paging = true
-        assistSection.yAxis.tickInterval = 4
-        assistSection.padding = UIEdgeInsets(top: 16, left: 0, bottom: 8, right: 0)
-        
-        let volWithMASeries = CHSeries.getVolumeWithMA(upStyle: upcolor,
-                                                 downStyle: downcolor,
-                                                 isEMA: false,
-                                                 num: [5,10,30],
-                                                 colors: [
-                                                    UIColor.ch_hex(0xDDDDDD),
-                                                    UIColor.ch_hex(0xF9EE30),
-                                                    UIColor.ch_hex(0xF600FF),
-                                                    ],
-                                                 section: assistSection)
-        
-        let volWithSAMSeries = CHSeries.getVolumeWithSAM(upStyle: upcolor,
-                                                 downStyle: downcolor,
-                                                 num: 60,
-                                                 barStyle: (UIColor.yellow, false),
-                                                 lineColor: UIColor(white: 0.4, alpha: 1),
-                                                 section: assistSection)
-        
-        let kdjSeries = CHSeries.getKDJ(
-            UIColor.ch_hex(0xDDDDDD),
-            dc: UIColor.ch_hex(0xF9EE30),
-            jc: UIColor.ch_hex(0xF600FF),
-            section: assistSection)
-        kdjSeries.title = "KDJ(9,3,3)"
-        
-        let macdSeries = CHSeries.getMACD(
-            UIColor.ch_hex(0xDDDDDD),
-            deac: UIColor.ch_hex(0xF9EE30),
-            barc: UIColor.ch_hex(0xF600FF),
-            upStyle: upcolor, downStyle: downcolor,
-            section: assistSection)
-        macdSeries.title = "MACD(12,26,9)"
-        macdSeries.symmetrical = true
-        assistSection.series = [
-            volWithMASeries,
-            volWithSAMSeries,
-            kdjSeries,
-            macdSeries]
-        
-        return assistSection
+    func didCompletedParamsSetting() {
+        self.updateUserStyle()
     }
 }
+
