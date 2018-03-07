@@ -9,6 +9,92 @@
 import UIKit
 import CHKLineChartKit
 
+class StyleParam: NSObject, Codable {
+    
+    var theme: String = ""   //风格名，Dark，Light
+    
+    var showYAxisLabel = "right"
+    
+    var upColor: Int = 0x00bd9a
+
+    var downColor: Int = 0xff6960
+
+    var lineColors: [Int] = [
+        0xDDDDDD,
+        0xF9EE30,
+        0xF600FF,
+    ]
+    
+    var isInnerYAxis: Bool = false
+    
+    var defaultParam: StyleParam {
+        let style = StyleParam()
+        style.theme = "Dark"   //风格名，Dark，Light
+        style.showYAxisLabel = "right"
+        style.upColor = 0x00bd9a
+        style.downColor = 0xff6960
+        style.lineColors = [
+            0xDDDDDD,
+            0xF9EE30,
+            0xF600FF,
+            ]
+        style.isInnerYAxis = false
+        return style
+    }
+    
+    static var shared: StyleParam = {
+        let instance = StyleParam()
+        return instance
+    }()
+    
+    /// 读取用户风格配置
+    ///
+    /// - Returns:
+    func loadUserData() -> StyleParam {
+        
+        guard let json = UserDefaults.standard.value(forKey: "StyleParam") as? String else {
+            return StyleParam.shared.defaultParam
+        }
+        
+        guard let jsonData = json.data(using: String.Encoding.utf8) else {
+            return StyleParam.shared.defaultParam
+        }
+        
+        let jsonDecoder = JSONDecoder()
+        do {
+            let sp = try jsonDecoder.decode(StyleParam.self, from: jsonData)
+            return sp
+        } catch _ {
+            return StyleParam.shared.defaultParam
+        }
+    }
+    
+    /// 重置为默认
+    static func resetDefault() {
+        StyleParam.shared = StyleParam.shared.defaultParam
+        _ = StyleParam.shared.saveUserData()
+    }
+    
+    /// 保存用户设置指标数据
+    ///
+    /// - Parameter data:
+    /// - Returns:
+    func saveUserData() -> Bool {
+        
+        let jsonEncoder = JSONEncoder()
+        do {
+            let jsonData = try jsonEncoder.encode(self)
+            let jsonString = String(data: jsonData, encoding: .utf8)
+            UserDefaults.standard.set(jsonString, forKey: "StyleParam")
+            UserDefaults.standard.synchronize()
+            return true
+        } catch _ {
+            return false
+        }
+    }
+}
+
+
 // MARK: - 扩展样式
 public extension CHKLineChartStyle {
     

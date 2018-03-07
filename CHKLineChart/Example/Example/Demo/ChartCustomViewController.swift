@@ -62,6 +62,15 @@ class ChartCustomViewController: UIViewController {
     /// 已选副图指标2
     var selectedAssistIndex2: Int = 0
     
+    /// 选择的风格
+    var selectedTheme: Int = 0
+    
+    /// y轴显示方向
+    var selectedYAxisSide: Int = 1
+    
+    /// 蜡烛柱颜色
+    var selectedCandleColor: Int = 1
+    
     var selectedSymbol: String = ""
     
     /// 数据源
@@ -116,7 +125,7 @@ class ChartCustomViewController: UIViewController {
         let btn = UIButton()
         btn.setTitle("Style", for: .normal)
         btn.setTitleColor(UIColor(hex: 0xfe9d25), for: .normal)
-//        btn.addTarget(self, action: #selector(self.gotoSettingList), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(self.gotoStyleSetting), for: .touchUpInside)
         return btn
     }()
     
@@ -354,6 +363,12 @@ extension ChartCustomViewController {
     func updateUserStyle() {
         self.chartView.resetStyle(style: self.loadUserStyle())
         self.handleChartIndexChanged()
+    }
+    
+    @objc func gotoStyleSetting() {
+        let vc = ChartStyleSettingViewController()
+        vc.delegate = self
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -611,6 +626,13 @@ extension ChartCustomViewController {
 extension ChartCustomViewController: SettingListViewDelegate {
     
     func didCompletedParamsSetting() {
+        self.updateUserStyle()
+    }
+}
+
+extension ChartCustomViewController: ChartStyleSettingViewDelegate {
+    
+    func didChartStyleChanged(theme: Int, yAxisSide: Int, candleColor: Int) {
         self.updateUserStyle()
     }
 }

@@ -43,6 +43,7 @@
 		C5DAC46B20455C0200D16B84 /* NSDate+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DAC46620455C0200D16B84 /* NSDate+extension.swift */; };
 		C5DAC46C20455C0200D16B84 /* Int+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DAC46720455C0200D16B84 /* Int+extension.swift */; };
 		C5DAC46E2045791E00D16B84 /* SelectionPopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DAC46D2045791E00D16B84 /* SelectionPopView.swift */; };
+		C5DC618D204E902700241CD8 /* ChartStyleSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DC618C204E902700241CD8 /* ChartStyleSettingViewController.swift */; };
 		EAC91950E4ADF8C3243794DC /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2638DFE8B9DCAD20AACBB229 /* Pods_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +115,7 @@
 		C5DAC46620455C0200D16B84 /* NSDate+extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSDate+extension.swift"; sourceTree = "<group>"; };
 		C5DAC46720455C0200D16B84 /* Int+extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+extension.swift"; sourceTree = "<group>"; };
 		C5DAC46D2045791E00D16B84 /* SelectionPopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionPopView.swift; sourceTree = "<group>"; };
+		C5DC618C204E902700241CD8 /* ChartStyleSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartStyleSettingViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -209,6 +211,7 @@
 				C5DAC46D2045791E00D16B84 /* SelectionPopView.swift */,
 				C58173E52047DAF400598AE2 /* SettingListViewController.swift */,
 				C53B145F2048193600289E85 /* SettingDetailViewController.swift */,
+				C5DC618C204E902700241CD8 /* ChartStyleSettingViewController.swift */,
 			);
 			path = Demo;
 			sourceTree = "<group>";
@@ -465,6 +468,7 @@
 				C5DAC4472044F70B00D16B84 /* ChartDemoViewController.swift in Sources */,
 				C58173E62047DAF400598AE2 /* SettingListViewController.swift in Sources */,
 				C5DAC45D20450B1300D16B84 /* KlineChartData.swift in Sources */,
+				C5DC618D204E902700241CD8 /* ChartStyleSettingViewController.swift in Sources */,
 				C5DAC4412044F70B00D16B84 /* CustomStyleViewController.swift in Sources */,
 				C58173E82047E47800598AE2 /* SeriesParam.swift in Sources */,
 				C58173EA2047E64300598AE2 /* SeriesSettingCell.swift in Sources */,
