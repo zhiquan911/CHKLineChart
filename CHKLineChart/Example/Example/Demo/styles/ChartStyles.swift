@@ -15,11 +15,11 @@ class StyleParam: NSObject, Codable {
     
     var showYAxisLabel = "right"
     
-    var upColor: Int = 0x00bd9a
+    var upColor: UInt = 0x00bd9a
 
-    var downColor: Int = 0xff6960
+    var downColor: UInt = 0xff6960
 
-    var lineColors: [Int] = [
+    var lineColors: [UInt] = [
         0xDDDDDD,
         0xF9EE30,
         0xF600FF,
@@ -27,7 +27,7 @@ class StyleParam: NSObject, Codable {
     
     var isInnerYAxis: Bool = false
     
-    var defaultParam: StyleParam {
+    static var defaultParam: StyleParam {
         let style = StyleParam()
         style.theme = "Dark"   //风格名，Dark，Light
         style.showYAxisLabel = "right"
@@ -43,21 +43,21 @@ class StyleParam: NSObject, Codable {
     }
     
     static var shared: StyleParam = {
-        let instance = StyleParam()
+        let instance = StyleParam.loadUserData()
         return instance
     }()
     
     /// 读取用户风格配置
     ///
     /// - Returns:
-    func loadUserData() -> StyleParam {
+    static func loadUserData() -> StyleParam {
         
         guard let json = UserDefaults.standard.value(forKey: "StyleParam") as? String else {
-            return StyleParam.shared.defaultParam
+            return StyleParam.defaultParam
         }
         
         guard let jsonData = json.data(using: String.Encoding.utf8) else {
-            return StyleParam.shared.defaultParam
+            return StyleParam.defaultParam
         }
         
         let jsonDecoder = JSONDecoder()
@@ -65,13 +65,13 @@ class StyleParam: NSObject, Codable {
             let sp = try jsonDecoder.decode(StyleParam.self, from: jsonData)
             return sp
         } catch _ {
-            return StyleParam.shared.defaultParam
+            return StyleParam.defaultParam
         }
     }
     
     /// 重置为默认
     static func resetDefault() {
-        StyleParam.shared = StyleParam.shared.defaultParam
+        StyleParam.shared = StyleParam.defaultParam
         _ = StyleParam.shared.saveUserData()
     }
     

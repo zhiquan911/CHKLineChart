@@ -10,7 +10,7 @@ import UIKit
 
 @objc protocol ChartStyleSettingViewDelegate {
     
-    @objc optional func didChartStyleChanged(theme: Int, yAxisSide: Int, candleColor: Int)
+    @objc optional func didChartStyleChanged(styleParam: StyleParam)
 }
 
 class ChartStyleSettingViewController: UIViewController {
@@ -44,10 +44,17 @@ class ChartStyleSettingViewController: UIViewController {
         return view
     }()
     
+    var themes: [String] {
+        return [
+            "Dark",
+            "Light"
+        ]
+    }
+    
     lazy var segmentTheme: UISegmentedControl = {
         let view = UISegmentedControl()
-        view.insertSegment(withTitle: "Dark", at: 0, animated: true)
-        view.insertSegment(withTitle: "Light", at: 1, animated: true)
+        view.insertSegment(withTitle: self.themes[0], at: 0, animated: true)
+        view.insertSegment(withTitle: self.themes[1], at: 1, animated: true)
         return view
     }()
     
@@ -58,10 +65,17 @@ class ChartStyleSettingViewController: UIViewController {
         return view
     }()
     
+    var yAxisSides: [String] {
+        return [
+            "Left",
+            "Right"
+        ]
+    }
+    
     lazy var segmentYAxisSide: UISegmentedControl = {
         let view = UISegmentedControl()
-        view.insertSegment(withTitle: "Left", at: 0, animated: true)
-        view.insertSegment(withTitle: "Right", at: 1, animated: true)
+        view.insertSegment(withTitle: self.yAxisSides[0], at: 0, animated: true)
+        view.insertSegment(withTitle: self.yAxisSides[1], at: 1, animated: true)
         return view
     }()
     
@@ -71,10 +85,17 @@ class ChartStyleSettingViewController: UIViewController {
         return view
     }()
     
+    var candleColors: [String] {
+        return [
+            "Red/Green",
+            "Green/Red"
+        ]
+    }
+    
     lazy var segmentCandleColor: UISegmentedControl = {
         let view = UISegmentedControl()
-        view.insertSegment(withTitle: "Red/Green", at: 0, animated: true)
-        view.insertSegment(withTitle: "Green/Red", at: 1, animated: true)
+        view.insertSegment(withTitle: self.candleColors[0], at: 0, animated: true)
+        view.insertSegment(withTitle: self.candleColors[1], at: 1, animated: true)
         return view
     }()
     
@@ -86,24 +107,28 @@ class ChartStyleSettingViewController: UIViewController {
     
     var delegate: ChartStyleSettingViewDelegate?
 
+    var styleParam = StyleParam.shared
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
-        self.segmentTheme.selectedSegmentIndex = self.selectedTheme
-        self.segmentYAxisSide.selectedSegmentIndex = self.selectedYAxisSide
+        
+        self.segmentTheme.selectedSegmentIndex = self.themes.index(of: self.styleParam.theme) ?? self.selectedTheme
+        self.segmentYAxisSide.selectedSegmentIndex = self.yAxisSides.index(of: self.styleParam.showYAxisLabel) ?? self.selectedYAxisSide
         self.segmentCandleColor.selectedSegmentIndex = self.selectedCandleColor
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.delegate?.didChartStyleChanged?(theme: self.selectedTheme, yAxisSide: self.selectedYAxisSide, candleColor: self.selectedCandleColor)
+        self.saveStyle()
+        self.delegate?.didChartStyleChanged?(styleParam: self.styleParam)
+        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
 
 }
 
@@ -156,5 +181,47 @@ extension ChartStyleSettingViewController {
             make.height.equalTo(CGFloat(self.rowCount) * self.rowHeight)
             make.width.equalTo(self.view.snp.width).multipliedBy(0.9)
         }
+    }
+    
+    /// 保存已选风格
+    func saveStyle() {
+        let theme = self.themes[self.segmentTheme.selectedSegmentIndex]
+        let yAxisSide = self.yAxisSides[self.segmentYAxisSide.selectedSegmentIndex]
+//        let candleColor = self.themes[self.segmentCandleColor.selectedSegmentIndex]
+        
+        self.styleParam.theme = theme
+        self.styleParam.showYAxisLabel = yAxisSide
+        
+        var upcolor: UInt, downcolor: UInt
+        var lineColors: [UInt]
+        
+        if theme == "Dark" {
+            upcolor = 0x00bd9a
+            downcolor = 0xff6960
+            lineColors = [
+                0xDDDDDD,
+                0xF9EE30,
+                0xF600FF,
+            ]
+        } else {
+            upcolor = 0x1E932B
+            downcolor = 0xF80D1F
+            lineColors = [
+                0x4E9CC1,
+                0xF7A23B,
+                0xF600FF,
+            ]
+        }
+        
+        if self.segmentCandleColor.selectedSegmentIndex == 0 {
+            self.styleParam.upColor = downcolor
+            self.styleParam.downColor = upcolor
+        } else {
+            self.styleParam.upColor = upcolor
+            self.styleParam.downColor = downcolor
+        }
+        
+        self.styleParam.lineColors = lineColors
+        _ = self.styleParam.saveUserData()
     }
 }

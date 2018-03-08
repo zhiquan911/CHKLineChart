@@ -530,6 +530,7 @@ extension ChartCustomViewController {
     func loadUserStyle() -> CHKLineChartStyle {
         
         let seriesParams = SeriesParamList.shared.loadUserData()
+        let styleParam = StyleParam.shared
         
         let style = CHKLineChartStyle()
         style.labelFont = UIFont.systemFont(ofSize: 10)
@@ -545,8 +546,8 @@ extension ChartCustomViewController {
         /************** 配置分区样式 **************/
         
         /// 主图
-        let upcolor = (UIColor.ch_hex(0x00bd9a), true)
-        let downcolor = (UIColor.ch_hex(0xff6960), true)
+        let upcolor = (UIColor.ch_hex(styleParam.upColor), true)
+        let downcolor = (UIColor.ch_hex(styleParam.downColor), true)
         let priceSection = CHSection()
         priceSection.backgroundColor = style.backgroundColor
         priceSection.titleShowOutSide = true
@@ -632,7 +633,7 @@ extension ChartCustomViewController: SettingListViewDelegate {
 
 extension ChartCustomViewController: ChartStyleSettingViewDelegate {
     
-    func didChartStyleChanged(theme: Int, yAxisSide: Int, candleColor: Int) {
+    func didChartStyleChanged(styleParam: StyleParam) {
         self.updateUserStyle()
     }
 }

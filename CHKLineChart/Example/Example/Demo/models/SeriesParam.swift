@@ -89,14 +89,16 @@ class SeriesParam: NSObject, Codable {
     func appendIn(masterSection: CHSection,
                    assistSections: CHSection...) {
         
+        let styleParam = StyleParam.shared
+        
         //分区点线样式
-        let upcolor = (UIColor(hex: 0x00bd9a), true)
-        let downcolor = (UIColor(hex: 0xff6960), true)
+        let upcolor = (UIColor(hex: styleParam.upColor), true)
+        let downcolor = (UIColor(hex: styleParam.downColor), true)
         
         let lineColors = [
-            UIColor(hex: 0xDDDDDD),
-            UIColor(hex: 0xF9EE30),
-            UIColor(hex: 0xF600FF),
+            UIColor(hex: styleParam.lineColors[0]),
+            UIColor(hex: styleParam.lineColors[1]),
+            UIColor(hex: styleParam.lineColors[2]),
         ]
         
         switch seriesKey {
@@ -162,9 +164,9 @@ class SeriesParam: NSObject, Codable {
             for assistSection in assistSections {
                 
                 let macdSeries = CHSeries.getMACD(
-                    UIColor.ch_hex(0xDDDDDD),
-                    deac: UIColor.ch_hex(0xF9EE30),
-                    barc: UIColor.ch_hex(0xF600FF),
+                    lineColors[0],
+                    deac: lineColors[1],
+                    barc: lineColors[2],
                     upStyle: upcolor, downStyle: downcolor,
                     section: assistSection)
                 macdSeries.title = "MACD(\(self.params[0].value.toString()),\(self.params[1].value.toString()),\(self.params[2].value.toString()))"
