@@ -1,24 +1,24 @@
 # CHKLineChart
 
-![demo2.png](https://github.com/zhiquan911/CHKLineChart/blob/master/demo.png)
+![s1.png](/screenshots/s1.png)
+![s2.png](/screenshots/s2.png)![s3.png](/screenshots/s3.png)
+![s4.png](/screenshots/s4.png)![s5.png](/screenshots/s5.png)
 
-> 纯Swift3.0代码编写的K线图表组件，支持：MA,EMA,KDJ,MACD等技术指标显示。集成使用简单，二次开发扩展强大。
+> 纯Swift4.0代码编写的K线图表组件，支持：MA,EMA,KDJ,MACD等技术指标显示。集成使用简单，二次开发扩展强大。
 
 ## Features
 
-- 完美支持Swift3.0编译
+- 完美支持Swift4.0编译
 - 支持显示蜡烛图，交易量图，及MA,EMA,KDJ,MACD等技术指标图表
 - 支持使用代码创建视图或使用xib/storyboard创建视图
 - 集成使用简单，二次开发扩展强大
-
 
 ## Requirements
 
 - iOS 8+
 - Xcode 8+
-- Swift 3.0+
+- Swift 4.0+
 - iPhone/iPad
-
 
 ## Installation
 
@@ -46,7 +46,7 @@ pod 'CHKLineChart'
 
 ```swift
 
-import CHKLineChart
+import CHKLineChartKit
 
 ```
 
