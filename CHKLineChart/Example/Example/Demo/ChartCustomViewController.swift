@@ -16,9 +16,7 @@ class ChartCustomViewController: UIViewController {
     
     //选择时间
     let times: [String] = [
-        "5min", "15min", "30min",
-        "1hour", "2hour", "4hour",
-        "1day", "1week"
+        "5min", "15min", "1hour", "6hour","1day",
     ]
 
     /// 主图线段
@@ -38,8 +36,8 @@ class ChartCustomViewController: UIViewController {
     
     //选择交易对
     let exPairs: [String] = [
-        "btc_usdt", "eth_usdt", "ltc_usdt",
-        "ltc_btc", "eth_btc", "etc_btc",
+        "BTC-USD", "ETH-USD", "LTC-USD",
+        "LTC-BTC", "ETH-BTC", "BCH-BTC",
         ]
     
     /// 已选周期
@@ -71,7 +69,7 @@ class ChartCustomViewController: UIViewController {
     /// 蜡烛柱颜色
     var selectedCandleColor: Int = 1
     
-    var selectedSymbol: String = ""
+    var selectedSymbol: Int = 0
     
     /// 数据源
     var klineDatas = [KlineChartData]()
@@ -131,10 +129,10 @@ class ChartCustomViewController: UIViewController {
     
     /// 市场设置
     lazy var buttonMarket: UIButton = {
-        let btn = UIButton()
-        btn.setTitle("Markets", for: .normal)
+        let btn = UIButton(frame: CGRect(x: 0, y: 0, width: 70, height: 40))
+        btn.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         btn.setTitleColor(UIColor(hex: 0xfe9d25), for: .normal)
-        //        btn.addTarget(self, action: #selector(self.gotoSettingList), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(self.handleTitlePress(_:)), for: .touchUpInside)
         return btn
     }()
     
@@ -155,6 +153,17 @@ class ChartCustomViewController: UIViewController {
         return view
     }()
     
+    ///市场弹出窗
+    lazy var selectionViewForMarket: SelectionPopView = {
+        let view = SelectionPopView() {
+            (vc, indexPath) in
+            let symbol = self.exPairs[indexPath.row]
+            self.selectedSymbol = indexPath.row
+            self.buttonMarket.setTitle(symbol + "📈", for: .normal)
+            self.fetchChartDatas()
+        }
+        return view
+    }()
     
     ///指标弹出窗
     lazy var selectionViewForIndex: SelectionPopView = {
@@ -179,8 +188,9 @@ class ChartCustomViewController: UIViewController {
         self.selectedMasterIndex = 0
         self.selectedAssistIndex = 0
         self.selectedAssistIndex2 = 2
-        self.selectedSymbol = self.exPairs[0]
-        
+        self.selectedSymbol = 0
+        let symbol = self.exPairs[self.selectedSymbol]
+        self.buttonMarket.setTitle(symbol + "📈", for: .normal)
         self.handleChartIndexChanged()
         self.fetchChartDatas()
     }
@@ -205,8 +215,9 @@ extension ChartCustomViewController {
     func fetchChartDatas() {
         self.loadingView.startAnimating()
         self.loadingView.isHidden = false
+        let symbol = self.exPairs[self.selectedSymbol]
         ChartDatasFetcher.shared.getRemoteChartData(
-            symbol: self.selectedSymbol,
+            symbol: symbol,
             timeType: self.times[self.selectedTime],
             size: 1000) {
                 [weak self](flag, chartsData) in
@@ -227,6 +238,7 @@ extension ChartCustomViewController {
     func setupUI() {
         
         self.view.backgroundColor = UIColor(hex: 0x232732)
+        self.navigationItem.titleView = self.buttonMarket
         self.view.addSubview(self.topView)
         self.view.addSubview(self.chartView)
         self.view.addSubview(self.toolbar)
@@ -293,7 +305,7 @@ extension ChartCustomViewController {
     @objc func handleShowTimeSelection() {
         let view = self.selectionViewForTime
         view.clear()
-        view.addItems(section: "周期选择", items: self.times, selectedIndex: self.selectedTime)
+        view.addItems(section: "Time", items: self.times, selectedIndex: self.selectedTime)
         view.show(from: self)
     }
     
@@ -301,10 +313,10 @@ extension ChartCustomViewController {
     @objc func handleShowIndex() {
         let view = self.selectionViewForIndex
         view.clear()
-        view.addItems(section: "主图线", items: self.masterLine, selectedIndex: self.selectedMasterLine)
-        view.addItems(section: "主图指标", items: self.masterIndex, selectedIndex: self.selectedMasterIndex)
-        view.addItems(section: "副图指标1", items: self.assistIndex, selectedIndex: self.selectedAssistIndex)
-        view.addItems(section: "副图指标2", items: self.assistIndex, selectedIndex: self.selectedAssistIndex2)
+        view.addItems(section: "Chart Line", items: self.masterLine, selectedIndex: self.selectedMasterLine)
+        view.addItems(section: "Master Index", items: self.masterIndex, selectedIndex: self.selectedMasterIndex)
+        view.addItems(section: "Assist Index 1", items: self.assistIndex, selectedIndex: self.selectedAssistIndex)
+        view.addItems(section: "Assist Index 2", items: self.assistIndex, selectedIndex: self.selectedAssistIndex2)
         view.show(from: self)
     }
     
@@ -370,6 +382,13 @@ extension ChartCustomViewController {
         vc.delegate = self
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    
+    @IBAction func handleTitlePress(_ sender: Any) {
+        let view = self.selectionViewForMarket
+        view.clear()
+        view.addItems(section: "Markets", items: self.exPairs, selectedIndex: self.selectedSymbol)
+        view.show(from: self)
+    }
 }
 
 // MARK: - 实现K线图表的委托方法
@@ -382,7 +401,7 @@ extension ChartCustomViewController: CHKLineChartDelegate {
     func kLineChart(chart: CHKLineChartView, valueForPointAtIndex index: Int) -> CHChartItem {
         let data = self.klineDatas[index]
         let item = CHChartItem()
-        item.time = data.time / 1000
+        item.time = data.time
         item.openPrice = CGFloat(data.openPrice)
         item.highPrice = CGFloat(data.highPrice)
         item.lowPrice = CGFloat(data.lowPrice)
@@ -408,7 +427,7 @@ extension ChartCustomViewController: CHKLineChartDelegate {
     
     func kLineChart(chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String {
         let data = self.klineDatas[index]
-        let timestamp = data.time / 1000
+        let timestamp = data.time
         let dayText = Date.ch_getTimeByStamp(timestamp, format: "MM-dd")
         let timeText = Date.ch_getTimeByStamp(timestamp, format: "HH:mm")
         var text = ""
@@ -534,13 +553,23 @@ extension ChartCustomViewController {
         
         let style = CHKLineChartStyle()
         style.labelFont = UIFont.systemFont(ofSize: 10)
-        style.lineColor = UIColor(white: 0.2, alpha: 1)
-        style.textColor = UIColor(white: 0.8, alpha: 1)
+        style.lineColor = UIColor(hex: styleParam.lineColor)
+        style.textColor = UIColor(hex: styleParam.textColor)
         style.selectedBGColor = UIColor(white: 0.4, alpha: 1)
-        style.selectedTextColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1)
-        style.padding = UIEdgeInsets(top: 16, left: 8, bottom: 4, right: 0)
-        style.backgroundColor = UIColor(hex: 0x232732)
-        style.showYAxisLabel = .right
+        style.selectedTextColor = UIColor(hex: styleParam.selectedTextColor)
+        style.backgroundColor = UIColor(hex: styleParam.backgroundColor)
+        style.isInnerYAxis = styleParam.isInnerYAxis
+        
+        if styleParam.showYAxisLabel == "Left" {
+            style.showYAxisLabel = .left
+            style.padding = UIEdgeInsets(top: 16, left: 0, bottom: 4, right: 8)
+            
+        } else {
+            style.showYAxisLabel = .right
+            style.padding = UIEdgeInsets(top: 16, left: 8, bottom: 4, right: 0)
+            
+        }
+    
         style.algorithms.append(CHChartAlgorithm.timeline)
         
         /************** 配置分区样式 **************/
@@ -611,6 +640,10 @@ extension ChartCustomViewController {
         
         for series in seriesParams {
             
+            if series.hidden {
+                continue
+            }
+            
             //添加指标算法
             style.algorithms.append(contentsOf: series.getAlgorithms())
             
@@ -618,7 +651,19 @@ extension ChartCustomViewController {
             series.appendIn(masterSection: priceSection, assistSections: assistSection1, assistSection2)
         }
         
-        style.sections = [priceSection, assistSection1, assistSection2]
+        style.sections.append(priceSection)
+        if assistSection1.series.count > 0 {
+            style.sections.append(assistSection1)
+        }
+        
+        if assistSection2.series.count > 0 {
+            style.sections.append(assistSection2)
+        }
+        
+        /************** 同时设置图表外的样式背景 **************/
+        self.view.backgroundColor = UIColor(hex: styleParam.backgroundColor)
+        self.topView.backgroundColor = UIColor(hex: styleParam.backgroundColor)
+        self.toolbar.backgroundColor = UIColor(hex: styleParam.backgroundColor)
         
         return style
     }

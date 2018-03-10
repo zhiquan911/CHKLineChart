@@ -15,6 +15,16 @@ class StyleParam: NSObject, Codable {
     
     var showYAxisLabel = "right"
     
+    var candleColors = "Green/Red"
+    
+    var backgroundColor: UInt = 0x232732
+    
+    var textColor: UInt = 0xcccccc
+
+    var selectedTextColor: UInt = 0xcccccc
+    
+    var lineColor: UInt = 0x333333
+    
     var upColor: UInt = 0x00bd9a
 
     var downColor: UInt = 0xff6960
@@ -30,7 +40,13 @@ class StyleParam: NSObject, Codable {
     static var defaultParam: StyleParam {
         let style = StyleParam()
         style.theme = "Dark"   //风格名，Dark，Light
+        style.candleColors = "Green/Red"
         style.showYAxisLabel = "right"
+        style.isInnerYAxis = false
+        style.backgroundColor = 0x232732
+        style.textColor = 0xcccccc
+        style.selectedTextColor = 0xcccccc
+        style.lineColor = 0x333333
         style.upColor = 0x00bd9a
         style.downColor = 0xff6960
         style.lineColors = [

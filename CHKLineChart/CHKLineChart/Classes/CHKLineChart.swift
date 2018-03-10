@@ -1329,6 +1329,7 @@ extension CHKLineChartView {
     /// - Parameter style: 新风格
     public func resetStyle(style: CHKLineChartStyle) {
         self.style = style
+        self.showSelection = false
         self.reloadData()
     }
     

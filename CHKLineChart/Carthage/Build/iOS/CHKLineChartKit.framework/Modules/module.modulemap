@@ -1,0 +1,11 @@
+framework module CHKLineChartKit {
+  umbrella header "CHKLineChartKit.h"
+
+  export *
+  module * { export * }
+}
+
+module CHKLineChartKit.Swift {
+    header "CHKLineChartKit-Swift.h"
+    requires objc
+}

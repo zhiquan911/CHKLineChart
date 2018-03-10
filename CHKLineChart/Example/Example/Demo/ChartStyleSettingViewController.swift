@@ -20,7 +20,7 @@ class ChartStyleSettingViewController: UIViewController {
     }
     
     var rowCount: Int {
-        return 3
+        return 4
     }
     
     lazy var scrollView: UIScrollView = {
@@ -99,6 +99,20 @@ class ChartStyleSettingViewController: UIViewController {
         return view
     }()
     
+    lazy var labelInnerYAxis: UILabel = {
+        let view = UILabel()
+        view.text = "Inner YAxis"
+        
+        return view
+    }()
+    
+    lazy var switchInnerYAxis: UISwitch = {
+        let view = UISwitch()
+        return view
+    }()
+    
+    
+    
     var selectedTheme: Int = 0
     
     var selectedYAxisSide: Int = 1
@@ -115,7 +129,8 @@ class ChartStyleSettingViewController: UIViewController {
         
         self.segmentTheme.selectedSegmentIndex = self.themes.index(of: self.styleParam.theme) ?? self.selectedTheme
         self.segmentYAxisSide.selectedSegmentIndex = self.yAxisSides.index(of: self.styleParam.showYAxisLabel) ?? self.selectedYAxisSide
-        self.segmentCandleColor.selectedSegmentIndex = self.selectedCandleColor
+        self.segmentCandleColor.selectedSegmentIndex = self.candleColors.index(of: self.styleParam.candleColors) ?? self.selectedCandleColor
+        self.switchInnerYAxis.isOn = self.styleParam.isInnerYAxis
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -140,7 +155,7 @@ extension ChartStyleSettingViewController {
         
         let row1 = UIStackView()
         row1.axis = .horizontal
-        row1.distribution = .fillEqually
+        row1.distribution = .equalSpacing
         row1.spacing = 0
         row1.alignment = .center
         
@@ -149,7 +164,7 @@ extension ChartStyleSettingViewController {
         
         let row2 = UIStackView()
         row2.axis = .horizontal
-        row2.distribution = .fillEqually
+        row2.distribution = .equalSpacing
         row2.spacing = 0
         row2.alignment = .center
         
@@ -158,16 +173,26 @@ extension ChartStyleSettingViewController {
         
         let row3 = UIStackView()
         row3.axis = .horizontal
-        row3.distribution = .fillEqually
+        row3.distribution = .equalSpacing
         row3.spacing = 0
         row3.alignment = .center
         
         row3.addArrangedSubview(self.labelCandleColor)
         row3.addArrangedSubview(self.segmentCandleColor)
         
+        let row4 = UIStackView()
+        row4.axis = .horizontal
+        row4.distribution = .equalSpacing
+        row4.spacing = 0
+        row4.alignment = .center
+        
+        row4.addArrangedSubview(self.labelInnerYAxis)
+        row4.addArrangedSubview(self.switchInnerYAxis)
+        
         self.tableStack.addArrangedSubview(row1)
         self.tableStack.addArrangedSubview(row2)
         self.tableStack.addArrangedSubview(row3)
+        self.tableStack.addArrangedSubview(row4)
         
         self.scrollView.addSubview(self.tableStack)
         
@@ -187,15 +212,21 @@ extension ChartStyleSettingViewController {
     func saveStyle() {
         let theme = self.themes[self.segmentTheme.selectedSegmentIndex]
         let yAxisSide = self.yAxisSides[self.segmentYAxisSide.selectedSegmentIndex]
-//        let candleColor = self.themes[self.segmentCandleColor.selectedSegmentIndex]
+        let candleColors = self.candleColors[self.segmentCandleColor.selectedSegmentIndex]
         
         self.styleParam.theme = theme
+        self.styleParam.candleColors = candleColors
         self.styleParam.showYAxisLabel = yAxisSide
+        self.styleParam.isInnerYAxis = self.switchInnerYAxis.isOn
         
         var upcolor: UInt, downcolor: UInt
         var lineColors: [UInt]
         
         if theme == "Dark" {
+            self.styleParam.backgroundColor = 0x232732
+            self.styleParam.textColor = 0xcccccc
+            self.styleParam.selectedTextColor = 0xcccccc
+            self.styleParam.lineColor = 0x333333
             upcolor = 0x00bd9a
             downcolor = 0xff6960
             lineColors = [
@@ -204,6 +235,10 @@ extension ChartStyleSettingViewController {
                 0xF600FF,
             ]
         } else {
+            self.styleParam.backgroundColor = 0xffffff
+            self.styleParam.textColor = 0x808080
+            self.styleParam.selectedTextColor = 0xcccccc
+            self.styleParam.lineColor = 0xcccccc
             upcolor = 0x1E932B
             downcolor = 0xF80D1F
             lineColors = [

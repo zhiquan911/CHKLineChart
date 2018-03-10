@@ -22,7 +22,7 @@ class TickerTopView: UIView {
     /// 涨跌
     lazy var labelRise: UILabel = {
         let view = UILabel()
-        view.textColor = .white
+        view.textColor = UIColor(hex: 0xfe9d25)
         view.font = UIFont.systemFont(ofSize: 12)
         return view
     }()
@@ -30,7 +30,7 @@ class TickerTopView: UIView {
     /// 开盘
     lazy var labelOpen: UILabel = {
         let view = UILabel()
-        view.textColor = .white
+        view.textColor = UIColor(hex: 0xfe9d25)
         view.font = UIFont.systemFont(ofSize: 12)
         return view
     }()
@@ -38,7 +38,7 @@ class TickerTopView: UIView {
     /// 最高
     lazy var labelHigh: UILabel = {
         let view = UILabel()
-        view.textColor = .white
+        view.textColor = UIColor(hex: 0xfe9d25)
         view.font = UIFont.systemFont(ofSize: 12)
         return view
     }()
@@ -46,7 +46,7 @@ class TickerTopView: UIView {
     /// 收盘
     lazy var labelClose: UILabel = {
         let view = UILabel()
-        view.textColor = .white
+        view.textColor = UIColor(hex: 0xfe9d25)
         view.font = UIFont.systemFont(ofSize: 12)
         return view
     }()
@@ -54,7 +54,7 @@ class TickerTopView: UIView {
     /// 最低
     lazy var labelLow: UILabel = {
         let view = UILabel()
-        view.textColor = .white
+        view.textColor = UIColor(hex: 0xfe9d25)
         view.font = UIFont.systemFont(ofSize: 12)
         return view
     }()
@@ -62,7 +62,7 @@ class TickerTopView: UIView {
     /// 交易量
     lazy var labelVol: UILabel = {
         let view = UILabel()
-        view.textColor = .white
+        view.textColor = UIColor(hex: 0xfe9d25)
         view.font = UIFont.systemFont(ofSize: 12)
         return view
     }()
@@ -70,7 +70,7 @@ class TickerTopView: UIView {
     /// 交易额
     lazy var labelTurnover: UILabel = {
         let view = UILabel()
-        view.textColor = .white
+        view.textColor = UIColor(hex: 0xfe9d25)
         view.font = UIFont.systemFont(ofSize: 12)
         return view
     }()
@@ -78,7 +78,7 @@ class TickerTopView: UIView {
     /// 价格±
     lazy var labelMargin: UILabel = {
         let view = UILabel()
-        view.textColor = .white
+        view.textColor = UIColor(hex: 0xfe9d25)
         view.font = UIFont.systemFont(ofSize: 12)
         return view
     }()
