@@ -174,7 +174,7 @@
 				TargetAttributes = {
 					C5F59ECF1FA883DF00AD85A2 = {
 						CreatedOnToolsVersion = 9.0.1;
-						DevelopmentTeam = 2M2W6LSE6S;
+						DevelopmentTeam = HE96WCSGPU;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -350,7 +350,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 2M2W6LSE6S;
+				DEVELOPMENT_TEAM = HE96WCSGPU;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -388,7 +388,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 2M2W6LSE6S;
+				DEVELOPMENT_TEAM = HE96WCSGPU;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
