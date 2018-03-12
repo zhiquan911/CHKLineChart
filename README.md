@@ -9,11 +9,11 @@
 ## Features
 
 - 完美支持Swift4.0编译。
-- 线图丰富，蜡烛图，时分图，柱状图，提供画线扩展模型。
+- 线图丰富，蜡烛图，时分图，柱状图，提供画线扩展模型。
 - 目前支持MA,EMA,BOLL,SAR,KDJ,MACD等技术指标，提供指标算法扩展模型。
 - 支持使用代码创建视图或使用xib/storyboard创建视图。
 - 样式提供更多配置，满足更多商业定制。
-- 底层采用CALayer+UIBezierPath绘制图表，大大提高性能。
+- 底层采用CALayer+UIBezierPath绘制图表，大大提高性能。
 
 ## Requirements
 
@@ -306,7 +306,7 @@ extension CHChartModel {
 
 **5. 运行程序调试你的指标是否计算对了。**
 
-## Custom Style（开发自定义样式）
+## Custom Style（开发自定义样式）
 
 通用的方案是，扩展CHKLineChartStyle编写自己的样式。
 
@@ -329,7 +329,9 @@ public extension CHKLineChartStyle {
 
 ## Contribution（贡献更多指标）
 
-如果你们有更多的指标算法，请一起积极分享，尽情地Pull requests。
+本人现在很少专注K线图表的开发工作，大部分时间投入到区块链的研究与开发工作，如果你感兴趣，可以[联系我](#Author)。
+
+如果你对本K线指标的开发感兴趣，请fork项目，给大家Pull requests更多技术指标。
 
 ## Donations
 
@@ -337,7 +339,7 @@ public extension CHKLineChartStyle {
 
 > 支付宝：
 
-![支付宝](/screenshots/donations/alipay.jpeg) 
+![支付宝](/screenshots/donations/alipay.jpeg)
 
 > 微信支付：
 
@@ -350,10 +352,12 @@ public extension CHKLineChartStyle {
 - **LTC**:  LegqutYRaFMX3dk5ikPMK8dwuPH8oeZAMQ
 
 ## Author
+<span id="Author"><span>
 
 - Author: Chance
 - Email: zhiquan911@qq.com
+- QQ Group：522031421
 
 ## License
 
-Released under [MIT License.](https://github.com/zhiquan911/CHKLineChart/blob/master/LICENSE) 
+Released under [MIT License.](https://github.com/zhiquan911/CHKLineChart/blob/master/LICENSE)

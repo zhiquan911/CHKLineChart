@@ -63,13 +63,18 @@ class SeriesParam: NSObject, Codable {
             let a = CHChartAlgorithm.kdj(Int(self.params[0].value), Int(self.params[1].value), Int(self.params[2].value))
             algorithms.append(a)
         case CHSeriesKey.macd:
-            for p in self.params {
-                let a = CHChartAlgorithm.ema(Int(p.value))
-                algorithms.append(a)
-            }
+            
+            let p1 = CHChartAlgorithm.ema(Int(self.params[0].value))
+            algorithms.append(p1)
+            
+            let p2 = CHChartAlgorithm.ema(Int(self.params[1].value))
+            algorithms.append(p2)
+            
             let a = CHChartAlgorithm.macd(Int(self.params[0].value), Int(self.params[1].value), Int(self.params[2].value))
             algorithms.append(a)
         case CHSeriesKey.boll:
+            let ma = CHChartAlgorithm.ma(Int(self.params[0].value))        //计算BOLL，必须先计算到同周期的MA
+            algorithms.append(ma)
             let a = CHChartAlgorithm.boll(Int(self.params[0].value), Int(self.params[1].value))
             algorithms.append(a)
         case CHSeriesKey.sar:
