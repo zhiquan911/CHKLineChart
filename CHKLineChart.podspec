@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
                    DESC
 
   s.homepage     = "https://github.com/zhiquan911/CHKLineChart"
-  s.screenshots  = "https://github.com/zhiquan911/CHKLineChart/screenshots/s1.png?raw=true"
+  s.screenshots  = "https://raw.githubusercontent.com/zhiquan911/CHKLineChart/master/screenshots/s1.png"
 
   s.license      = "MIT"
   s.author       = { "Chance" => "zhiquan911@qq.com" }
