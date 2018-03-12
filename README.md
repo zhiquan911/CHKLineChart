@@ -335,7 +335,7 @@ public extension CHKLineChartStyle {
 
 ## Donations
 
-如果大家觉得非常好用的话，不忘打赏一下小弟，给小弟一些鼓励。
+如果大家觉得非常好用的话，不忘打赏一下小弟，给小弟一些鼓励。
 
 > 支付宝：
 
