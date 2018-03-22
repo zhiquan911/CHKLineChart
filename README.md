@@ -347,9 +347,9 @@ public extension CHKLineChartStyle {
 
 > 接收以下数字货币：
 
-- **BTC**:  1AXEi7Dj2r6YMZmKtfKn29Um5nbrjZjtzv
-- **ETH**:  0x156ce45aa382db92517a1fbf08b27176bd779852
-- **LTC**:  LegqutYRaFMX3dk5ikPMK8dwuPH8oeZAMQ
+- **BTC**:  16XyEUNgwF3KX6UyMEWtpQDWWXkmqgH7V8
+- **ETH**:  0x4fffdaa5dbba850ae41aa6d031a6dffd91614608
+- **LTC**:  LLevkg1aUiECvY6Uda1bvDbqa38zykjLyR
 
 ## Author
 <span id="Author"><span>
