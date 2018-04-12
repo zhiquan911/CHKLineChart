@@ -42,7 +42,7 @@
 		C5F59ED31FA883DF00AD85A2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C5F700001D7EA94500622E60 /* CHChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHChartModel.swift; path = Classes/CHChartModel.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C5F7FFFA1D7EA57A00622E60 /* CHKLineChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CHKLineChart.swift; path = Classes/CHKLineChart.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		C5FA1F861D92400200271E36 /* CHKLineChart.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CHKLineChart.podspec; path = ../../CHKLineChart.podspec; sourceTree = "<group>"; };
+		C5FA1F861D92400200271E36 /* CHKLineChartKit.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CHKLineChartKit.podspec; path = ../../CHKLineChartKit.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,7 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				C57654D61E30AA480080A095 /* README.md */,
-				C5FA1F861D92400200271E36 /* CHKLineChart.podspec */,
+				C5FA1F861D92400200271E36 /* CHKLineChartKit.podspec */,
 				C5E4E06C1D76CCB400C47F5A /* Classes */,
 			);
 			path = CHKLineChart;

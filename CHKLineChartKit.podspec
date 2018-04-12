@@ -1,6 +1,6 @@
 
 Pod::Spec.new do |s|
-  s.name         = "CHKLineChart"
+  s.name         = "CHKLineChartKit"
   s.version      = "2.2.0"
   s.summary      = "纯Swift4.0代码编写的K线图表组件"
   s.description  = <<-DESC
@@ -21,4 +21,4 @@ Pod::Spec.new do |s|
 
 end
 
-#提交命令：pod trunk push CHKLineChart.podspec
+#提交命令：pod trunk push CHKLineChartKit.podspec
