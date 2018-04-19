@@ -13,15 +13,12 @@ class DemoSelectViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
 
-    let demo: [Int: (String, String)] = [
-//        0: ("K线一般功能演示", "ChartDemoViewController"),
-//        1: ("K线风格设置演示", "CustomStyleViewController"),
-//        2: ("K线商业定制例子", "ChartCustomDesignViewController"),
-//        3: ("K线简单线段例子", "ChartFullViewController"),
-//        4: ("K线静态图片例子", "ChartImageViewController"),
-//        5: ("K线列表图表例子", "ChartInTableViewController"),
-//        6: ("盘口深度图表例子", "DepthChartDemoViewController"),
-        0: ("K线最佳实践例子", "ChartCustomViewController"),
+    let demo: [Int: (String, String, Bool)] = [
+        0: ("K线最佳实践例子", "ChartCustomViewController", false),
+        1: ("K线简单线段例子", "ChartFullViewController", true),
+        2: ("K线静态图片例子", "ChartImageViewController", true),
+        3: ("K线列表图表例子", "ChartInTableViewController", true),
+        4: ("盘口深度图表例子", "DepthChartDemoViewController", true),
     ]
     
     override func viewDidLoad() {
@@ -51,9 +48,30 @@ extension DemoSelectViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let name = self.demo[indexPath.row]!.1
-        let vc = ChartCustomViewController()
-        self.navigationController?.pushViewController(vc, animated: true)
+        if let demoObject = self.demo[indexPath.row] {
+            var vc: UIViewController
+            let className = demoObject.1
+            let isNIB = demoObject.2
+            if isNIB {
+                guard let storyboard = self.storyboard else {
+                    return
+                }
+                vc = storyboard.instantiateViewController(withIdentifier: className)
+            } else {
+                
+                guard let nameSpage = Bundle.main.infoDictionary!["CFBundleExecutable"] as? String else {
+                    return
+                }
+                
+                guard let Type = NSClassFromString(nameSpage + "." + className) as? UIViewController.Type else {
+                    return  //无法获取到该控制器类型 后续代码不用执行
+                }
+                vc = Type.init()
+                
+            }
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
         
     }
     

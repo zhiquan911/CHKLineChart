@@ -14,14 +14,13 @@ class ChartFullViewController: UIViewController {
     @IBOutlet var chartView: CHKLineChartView!
     @IBOutlet var loadingView: UIActivityIndicatorView!
     
-    var klineDatas = [AnyObject]()
+    var klineDatas = [KlineChartData]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.chartView.delegate = self
         self.chartView.style = .simpleLineDark
-
-        self.getRemoteServiceData(size: "200")       //读取网络
+        self.fetchChartDatas(symbol: "BTC-USD", type: "15min")
     }
     
     override func didReceiveMemoryWarning() {
@@ -29,56 +28,28 @@ class ChartFullViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func getRemoteServiceData(size: String) {
+    /// 拉取数据
+    func fetchChartDatas(symbol: String, type: String) {
+        
         self.loadingView.startAnimating()
         self.loadingView.isHidden = false
-        // 快捷方式获得session对象
-        let session = URLSession.shared
         
-        let url = URL(string: "https://www.btc123.com/kline/klineapi?symbol=chbtcbtccny&type=15min&size=\(size)")
-        // 通过URL初始化task,在block内部可以直接对返回的数据进行处理
-        let task = session.dataTask(with: url!, completionHandler: {
-            (data, response, error) in
-            if let data = data {
-                
-                DispatchQueue.main.async {
-                    /*
-                     对从服务器获取到的数据data进行相应的处理.
-                     */
-                    do {
-                        //                        NSLog("\(NSString(data: data, encoding: String.Encoding.utf8.rawValue))")
-                        let dict = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as! [String: AnyObject]
-                        
-                        let isSuc = dict["isSuc"] as? Bool ?? false
-                        if isSuc {
-                            let datas = dict["datas"] as! [AnyObject]
-                            NSLog("chart.datas = \(datas.count)")
-                            self.klineDatas = datas
-                            
-                            self.chartView.reloadData(toPosition: .end)
-                            
-                            
-                        }
-                        
-                    } catch _ {
-                        
-                    }
+        ChartDatasFetcher.shared.getRemoteChartData(
+            symbol: symbol,
+            timeType: type,
+            size: 70) {
+                [weak self](flag, chartsData) in
+                if flag && chartsData.count > 0 {
+                    self?.klineDatas = chartsData
+                    self?.chartView.reloadData(toPosition: .end)
                     
-                    self.loadingView.stopAnimating()
-                    self.loadingView.isHidden = true
                 }
                 
-                
-            }
-        })
-        
-        // 启动任务
-        task.resume()
+                self?.loadingView.stopAnimating()
+                self?.loadingView.isHidden = true
+        }
     }
     
-    @IBAction func handleClosePress(sender: AnyObject?) {
-        self.dismiss(animated: true, completion: nil)
-    }
 }
 
 
@@ -90,14 +61,10 @@ extension ChartFullViewController: CHKLineChartDelegate {
     }
     
     func kLineChart(chart: CHKLineChartView, valueForPointAtIndex index: Int) -> CHChartItem {
-        let data = self.klineDatas[index] as! [Double]
+        let data = self.klineDatas[index]
         let item = CHChartItem()
-        item.time = Int(data[0] / 1000)
-//        item.openPrice = CGFloat(data[1])
-//        item.highPrice = CGFloat(data[2])
-//        item.lowPrice = CGFloat(data[3])
-        item.closePrice = CGFloat(data[4])
-//        item.vol = CGFloat(data[5])
+        item.time = data.time
+        item.closePrice = CGFloat(data.closePrice)
         return item
     }
     
@@ -107,8 +74,8 @@ extension ChartFullViewController: CHKLineChartDelegate {
     }
     
     func kLineChart(chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String {
-        let data = self.klineDatas[index] as! [Double]
-        let timestamp = Int(data[0])
+        let data = self.klineDatas[index]
+        let timestamp = data.time
         var time = Date.ch_getTimeByStamp(timestamp, format: "HH:mm")
         if time == "00:00" {
             time = Date.ch_getTimeByStamp(timestamp, format: "MM-dd")

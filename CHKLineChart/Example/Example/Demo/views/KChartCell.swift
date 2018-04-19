@@ -18,7 +18,7 @@ class KChartCell: UITableViewCell {
     
     static let identifier = "KChartCell"
     
-    var datas = [AnyObject]()
+    var datas = [KlineChartData]()
     
     var currency: String = "" {
         didSet {
@@ -48,20 +48,8 @@ class KChartCell: UITableViewCell {
     /// 刷新数据
     ///
     /// - Parameter datas:
-    func reloadData(datas: [AnyObject], isTime: Bool) {
+    func reloadData(datas: [KlineChartData], isTime: Bool) {
         self.datas = datas
-        
-        //最后如果是选择了时分，就不显示蜡烛图，MA/EM等等
-        if isTime {
-            self.chartView.setSerie(hidden: false, by: CHSeriesKey.timeline, inSection: 0)
-            self.chartView.setSerie(hidden: true, by: CHSeriesKey.candle, inSection: 0)
-            self.chartView.setSerie(hidden: true, by: CHSeriesKey.ma, inSection: 0)
-        } else {
-            self.chartView.setSerie(hidden: true, by: CHSeriesKey.timeline, inSection: 0)
-            self.chartView.setSerie(hidden: false, by: CHSeriesKey.candle, inSection: 0)
-            self.chartView.setSerie(hidden: false, by: CHSeriesKey.ma, inSection: 0)
-        }
-        
         self.chartView.reloadData()
     }
 
@@ -208,14 +196,14 @@ extension KChartCell: CHKLineChartDelegate {
     }
     
     func kLineChart(chart: CHKLineChartView, valueForPointAtIndex index: Int) -> CHChartItem {
-        let data = self.datas[index] as! [Double]
+        let data = self.datas[index]
         let item = CHChartItem()
-        item.time = Int(data[0] / 1000)
-        item.openPrice = CGFloat(data[1])
-        item.highPrice = CGFloat(data[2])
-        item.lowPrice = CGFloat(data[3])
-        item.closePrice = CGFloat(data[4])
-        item.vol = CGFloat(data[5])
+        item.time = data.time
+        item.openPrice = CGFloat(data.openPrice)
+        item.highPrice = CGFloat(data.highPrice)
+        item.lowPrice = CGFloat(data.lowPrice)
+        item.closePrice = CGFloat(data.closePrice)
+        item.vol = CGFloat(data.vol)
         return item
     }
     
@@ -234,8 +222,8 @@ extension KChartCell: CHKLineChartDelegate {
     }
     
     func kLineChart(chart: CHKLineChartView, labelOnXAxisForIndex index: Int) -> String {
-        let data = self.datas[index] as! [Double]
-        let timestamp = Int(data[0])
+        let data = self.datas[index]
+        let timestamp = data.time
         var time = Date.ch_getTimeByStamp(timestamp, format: "HH:mm")
         if time == "00:00" {
             time = Date.ch_getTimeByStamp(timestamp, format: "MM-dd")
