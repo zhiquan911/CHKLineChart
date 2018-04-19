@@ -1591,6 +1591,16 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
     }
    
     
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if otherGestureRecognizer.view is UITableView{
+            
+            return true
+        }
+        
+        return false
+    }
+    
     
     /// 平移拖动操作
     ///
