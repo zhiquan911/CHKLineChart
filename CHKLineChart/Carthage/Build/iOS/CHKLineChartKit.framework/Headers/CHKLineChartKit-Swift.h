@@ -469,6 +469,7 @@ SWIFT_CLASS("_TtC15CHKLineChartKit16CHKLineChartView")
 @interface CHKLineChartView (SWIFT_EXTENSION(CHKLineChartKit)) <UIGestureRecognizerDelegate>
 /// 控制手势开关
 - (BOOL)gestureRecognizer:(UIGestureRecognizer * _Nonnull)gestureRecognizer shouldReceiveTouch:(UITouch * _Nonnull)touch SWIFT_WARN_UNUSED_RESULT;
+- (BOOL)gestureRecognizer:(UIGestureRecognizer * _Nonnull)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer * _Nonnull)otherGestureRecognizer SWIFT_WARN_UNUSED_RESULT;
 @end
 
 
