@@ -1,0 +1,21 @@
+PODS:
+  - MZAppearance (1.1.6)
+  - MZFormSheetPresentationController (2.4.3):
+    - MZAppearance
+  - SnapKit (4.0.0)
+  - SwiftyJSON (4.0.0)
+
+DEPENDENCIES:
+  - MZFormSheetPresentationController
+  - SnapKit (~> 4.0.0)
+  - SwiftyJSON
+
+SPEC CHECKSUMS:
+  MZAppearance: 0c06d3fa9cc55142f1da14bc8631fbe8fd6e19d5
+  MZFormSheetPresentationController: fbfdbad31884f16fac17fbe3c44c168306cc1095
+  SnapKit: a42d492c16e80209130a3379f73596c3454b7694
+  SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
+
+PODFILE CHECKSUM: 37feee6bf5d736bf5909998dc837df6d19635152
+
+COCOAPODS: 1.3.1

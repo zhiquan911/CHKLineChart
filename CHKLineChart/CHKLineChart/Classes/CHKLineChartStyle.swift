@@ -24,6 +24,20 @@ public enum CHUltimateValueStyle {
     case tag(UIColor)
 }
 
+/// 允许手势平移向上
+///
+/// - up: 向上
+/// - down: 向下
+/// - left: 向左
+/// - right: 向右
+
+public enum CHUIPanDirectionType {
+    case up
+    case down
+    case left
+    case right
+}
+
 // MARK: - 图表样式配置类
 open class CHKLineChartStyle {
     
@@ -74,6 +88,9 @@ open class CHKLineChartStyle {
     open var enablePan: Bool = true
     //是否可点选
     open var enableTap: Bool = true
+    
+    /// 允许平移方向集合
+    open var enblePanDirections = [CHUIPanDirectionType.up,CHUIPanDirectionType.down,CHUIPanDirectionType.left,CHUIPanDirectionType.right]
     
     /// 是否显示选中的内容
     open var showSelection: Bool = true

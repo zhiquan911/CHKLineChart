@@ -194,6 +194,9 @@ open class CHKLineChartView: UIView {
         }
     }
     
+    /// 允许平移方向集合
+    open var enblePanDirections = [CHUIPanDirectionType.up,CHUIPanDirectionType.down,CHUIPanDirectionType.left,CHUIPanDirectionType.right]
+    
     /// 是否显示选中的内容
     open var showSelection: Bool = true {
         didSet {
@@ -278,6 +281,7 @@ open class CHKLineChartView: UIView {
             self.enablePan = self.style.enablePan
             self.showSelection = self.style.showSelection
             self.showXAxisOnSection = self.style.showXAxisOnSection
+            self.enblePanDirections = self.style.enblePanDirections
             self.isShowAll = self.style.isShowAll
             self.showXAxisLabel = self.style.showXAxisLabel
             self.borderWidth = self.style.borderWidth
@@ -1605,6 +1609,12 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         
         //手指滑动总平移量
         let translation = sender.translation(in: self)
+        
+        // 允许平移
+        if !self.isPanOperation(translation: translation){
+            return
+        }
+        
         //滑动力度，用于释放手指时完成惯性滚动的效果
         let velocity =  sender.velocity(in: self)
         
@@ -1674,6 +1684,38 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         default:
             break
         }
+    }
+    /**
+     *  是否平移操作
+     *
+     *  @param sender
+     */
+    func isPanOperation(translation:CGPoint)->Bool{
+        let absX = fabs(translation.x)
+        let absY = fabs(translation.y)
+        
+        var dire = CHUIPanDirectionType.left
+        
+        if absX > absY {
+            if translation.x < 0{
+                // 向左
+                dire = .left
+            }else{
+                // 向右
+                dire = .right
+            }
+        }else if absX < absY{
+            if translation.y < 0{
+                // 向上
+                dire = .up
+            }else{
+                // 向下
+                dire = .down
+            }
+        }else{
+            return false
+        }
+        return self.enblePanDirections.contains(dire)
     }
     
     /**

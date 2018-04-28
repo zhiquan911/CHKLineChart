@@ -560,6 +560,8 @@ extension ChartCustomViewController {
         style.backgroundColor = UIColor(hex: styleParam.backgroundColor)
         style.isInnerYAxis = styleParam.isInnerYAxis
         
+        style.enblePanDirections = [.left,.right]
+        
         if styleParam.showYAxisLabel == "Left" {
             style.showYAxisLabel = .left
             style.padding = UIEdgeInsets(top: 16, left: 0, bottom: 4, right: 8)
