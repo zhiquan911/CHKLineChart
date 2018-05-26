@@ -150,21 +150,6 @@ public enum CHChartSelectedPosition {
     /// 切换分区用分页方式展示的线组
     ///
     @objc optional func kLineChart(chart: CHKLineChartView, didFlipPageSeries section: CHSection, series: CHSeries, seriesIndex: Int)
-    
-    /// 在顶部留出空间
-    ///
-    @objc optional func kLineChart(chart: CHKLineChartView,foorViewIn section:Int) -> CGFloat
-    
-    /// 平移手势移返回事件
-    ///
-    /// - Parameters:
-    ///   - chart: 图表
-    ///   - gesture:手势对象
-    ///   - translation:移动量
-    ///   - velocity: 移动速度
-    ///
-    @objc optional func kLineChart(chart: CHKLineChartView,pan gesture:UIPanGestureRecognizer,move translation:CGPoint,and velocity:CGPoint)
-    
 }
 
 open class CHKLineChartView: UIView {
@@ -208,8 +193,6 @@ open class CHKLineChartView: UIView {
             self.showSelection = self.enableTap
         }
     }
-    /// 允许平移方向集合
-    open var enblePanDirections = [CHUIPanDirectionType.up,CHUIPanDirectionType.down,CHUIPanDirectionType.left,CHUIPanDirectionType.right]
     
     /// 是否显示选中的内容
     open var showSelection: Bool = true {
@@ -298,7 +281,6 @@ open class CHKLineChartView: UIView {
             self.isShowAll = self.style.isShowAll
             self.showXAxisLabel = self.style.showXAxisLabel
             self.borderWidth = self.style.borderWidth
-            self.enblePanDirections = self.style.enblePanDirections
         }
         
     }
@@ -729,35 +711,15 @@ extension CHKLineChartView {
                 //把标题添加到主绘图层上
                 self.drawLayer.addSublayer(section.titleLayer)
                 
-//                // section头部嵌入用户自定义view，前提是section留有足够的空间
-//                if let titleView = self.delegate?.kLineChart?(chart: self, viewForHeaderInSection: index) {
-//
-//                    //显示用户自定义的View，显示内容交由委托者
-//                    section.showTitle = false
-//                    section.addCustomView(titleView, inView: self)
-//                }
-//
-//                // 显示用户自定义 section title
-//                if let titleString = self.delegate?.kLineChart?(chart: self,
-//                                                                titleForHeaderInSection: section,
-//                                                                index: self.selectedIndex,
-//                                                                item: self.datas[self.selectedIndex]) {
-//                    //显示用户自定义的section title
-//                    section.drawTitleForHeader(title: titleString)
-//                }else{
-//                    //显示范围最后一个点的内容
-//                    section.drawTitle(self.selectedIndex)
-//                }
-                
                 //是否采用用户自定义
                 if let titleView = self.delegate?.kLineChart?(chart: self, viewForHeaderInSection: index) {
-
+                    
                     //显示用户自定义的View，显示内容交由委托者
                     section.showTitle = false
                     section.addCustomView(titleView, inView: self)
-
+                    
                 } else {
-
+                    
                     if let titleString = self.delegate?.kLineChart?(chart: self,
                                                                    titleForHeaderInSection: section,
                                                                    index: self.selectedIndex,
@@ -768,8 +730,8 @@ extension CHKLineChartView {
                         //显示范围最后一个点的内容
                         section.drawTitle(self.selectedIndex)
                     }
-
-
+                    
+                    
                 }
                 
             }
@@ -878,12 +840,8 @@ extension CHKLineChartView {
         var height = self.frame.size.height - (self.padding.top + self.padding.bottom)
         let width  = self.frame.size.width - (self.padding.left + self.padding.right)
         
-        // 坐标y 的偏移量
-        var offsetY: CGFloat = self.padding.top
-    
         let xAxisHeight = self.delegate?.heightForXAxisInKLineChart?(in: self) ?? self.kXAxisHegiht
         height = height - xAxisHeight
-        
         
         var total = 0
         for (index, section) in self.sections.enumerated() {
@@ -897,8 +855,7 @@ extension CHKLineChartView {
             
         }
         
-        
-        
+        var offsetY: CGFloat = self.padding.top
         //计算每个区域的高度，并绘制
         for (index, section) in self.sections.enumerated() {
 
@@ -933,24 +890,8 @@ extension CHKLineChartView {
             }
             
             //计算每个section的坐标
-
-            /// 用户自定义header高度
-            let offset = self.delegate?.kLineChart!(chart: self, foorViewIn: index) ?? 0
-            if offset != 0{
-                    if index == 0{
-                        section.frame = CGRect(x: 0 + self.padding.left,
-                                                       y: offsetY, width: WidthOfSection, height: heightOfSection - offset)
-                    }else{
-                        section.frame = CGRect(x: 0 + self.padding.left,
-                                                       y: offsetY + offset, width: WidthOfSection, height: heightOfSection)
-                    }
-            }else{
-                section.frame = CGRect(x: 0 + self.padding.left,
+            section.frame = CGRect(x: 0 + self.padding.left,
                                        y: offsetY, width: WidthOfSection, height: heightOfSection)
-            }
-            
-//            section.frame = CGRect(x: 0 + self.padding.left,
-//                                   y: offsetY, width: WidthOfSection, height: heightOfSection)
             offsetY = offsetY + section.frame.height
             
             //如果这个分区设置为显示X轴，下一个分区的Y起始位要加上X轴高度
@@ -1430,7 +1371,7 @@ extension CHKLineChartView {
         
         }
   
-        self.drawLayerView()
+//        self.drawLayerView()
     }
     
     /**
@@ -1650,6 +1591,15 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
     }
    
     
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        
+        if otherGestureRecognizer.view is UITableView{
+            
+            return true
+        }
+        
+        return false
+    }
     
     
     /// 平移拖动操作
@@ -1660,22 +1610,13 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         guard self.enablePan else {
             return
         }
-
+        
         self.showSelection = false
         
         //手指滑动总平移量
         let translation = sender.translation(in: self)
-        
         //滑动力度，用于释放手指时完成惯性滚动的效果
         let velocity =  sender.velocity(in: self)
-        
-        // 返回平移量和移动速度
-        self.delegate?.kLineChart!(chart: self, pan: sender, move: translation, and: velocity)
-        
-        // 允许移动的方向
-        if !self.isPanOperation(translation: translation){
-            return
-        }
         
         //获取可见的其中一个分区
         let visiableSection = self.sections.filter { !$0.hidden }
@@ -1743,39 +1684,6 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         default:
             break
         }
-    }
-    
-    /**
-     *  是否平移操作
-     *
-     *  @param sender
-     */
-    func isPanOperation(translation:CGPoint)->Bool{
-        let absX = fabs(translation.x)
-        let absY = fabs(translation.y)
-        
-        var dire = CHUIPanDirectionType.left
-        
-        if absX > absY {
-            if translation.x < 0{
-                // 向左
-                dire = .left
-            }else{
-                // 向右
-                dire = .right
-            }
-        }else if absX < absY{
-            if translation.y < 0{
-                // 向上
-                dire = .up
-            }else{
-                // 向下
-                dire = .down
-            }
-        }else{
-            return false
-        }
-        return self.enblePanDirections.contains(dire)
     }
     
     /**
