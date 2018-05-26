@@ -111,6 +111,9 @@ open class CHKLineChartStyle {
     /// 卖方深度图层颜色
     open var askColor: (stroke: UIColor, fill: UIColor, lineWidth: CGFloat) = (.white, .white, 1)
     
+    /// 买单居右
+    open var bidChartOnDirection:CHKDepthChartOnDirection = .right
+    
     public init() {
         
     }

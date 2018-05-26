@@ -14,10 +14,11 @@ class ChartImageViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     var klineDatas = [(Int, Double)]()
     let imageSize: CGSize = CGSize(width: 80, height: 30)
+    let dataSize = 40
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.getRemoteServiceData(size: "800")
+        self.fetchChartDatas(symbol: "BTC-USD", type: "15min")
     }
 
     override func didReceiveMemoryWarning() {
@@ -25,52 +26,23 @@ class ChartImageViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    
-    func getRemoteServiceData(size: String) {
-        // 快捷方式获得session对象
-        let session = URLSession.shared
-        
-        let url = URL(string: "https://www.btc123.com/kline/klineapi?symbol=chbtcbtccny&type=15min&size=\(size)")
-        // 通过URL初始化task,在block内部可以直接对返回的数据进行处理
-        let task = session.dataTask(with: url!, completionHandler: {
-            (data, response, error) in
-            if let data = data {
-                
-                DispatchQueue.main.async {
-                    /*
-                     对从服务器获取到的数据data进行相应的处理.
-                     */
-                    do {
-                        let dict = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableLeaves) as! [String: AnyObject]
-                        
-                        let isSuc = dict["isSuc"] as? Bool ?? false
-                        if isSuc {
-                            let datas = dict["datas"] as! [[Double]]
-                            self.klineDatas = datas.map {
-                                (Int($0[0] / 1000), Double($0[4]))
-                            }
-                            NSLog("chart.datas = \(datas.count)")
-                            self.tableView.reloadData()
-                        }
-                        
-                    } catch _ {
-                        
+    /// 拉取数据
+    func fetchChartDatas(symbol: String, type: String) {
+        ChartDatasFetcher.shared.getRemoteChartData(
+            symbol: symbol,
+            timeType: type,
+            size: 70) {
+                [weak self](flag, chartsData) in
+                if flag && chartsData.count > 0 {
+                    self?.klineDatas = chartsData.map {
+                        ($0.time, $0.closePrice)
                     }
+                    self?.tableView.reloadData()
                     
                 }
-                
-                
-            }
-        })
-        
-        // 启动任务
-        task.resume()
+        }
     }
     
-    
-    @IBAction func handleClosePress(sender: AnyObject?) {
-        self.dismiss(animated: true, completion: nil)
-    }
 }
 
 extension ChartImageViewController: UITableViewDelegate, UITableViewDataSource {
@@ -81,7 +53,7 @@ extension ChartImageViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if self.klineDatas.count > 0 {
-            return 20
+            return self.klineDatas.count / self.dataSize + 1
         } else {
             return 0
         }
@@ -92,8 +64,8 @@ extension ChartImageViewController: UITableViewDelegate, UITableViewDataSource {
         cell?.selectionStyle = .none
         
         let imageView = cell?.contentView.viewWithTag(100) as? UIImageView
-        let start = indexPath.row * 40
-        var end = start + 40 - 1
+        let start = indexPath.row * self.dataSize
+        var end = start + self.dataSize - 1
         if end >= self.klineDatas.count {
             end = self.klineDatas.count - 1
         }
@@ -104,7 +76,7 @@ extension ChartImageViewController: UITableViewDelegate, UITableViewDataSource {
         imageView?.image = CHChartImageGenerator.share.getImage(
             by: Array(data),
             lineWidth: 1,
-            backgroundColor: UIColor.ch_hex(0xF5F5F5),
+            backgroundColor: UIColor.white,
             lineColor: UIColor.ch_hex(0xA4AAB3),
             size: imageSize)
         
