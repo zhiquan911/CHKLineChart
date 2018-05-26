@@ -38,8 +38,9 @@ class DepthChartDemoViewController: UIViewController {
             //print(dict)
             let asks = dict["asks"] as! [[Double]]
             let bids = dict["bids"] as! [[Double]]
-            self.decodeDatasToAppend(datas: bids, type: .bid)
-            self.decodeDatasToAppend(datas: asks, type: .ask)
+            self.decodeDatasToAppend(datas: asks.reversed(), type: .ask)
+            self.decodeDatasToAppend(datas: bids.reversed(), type: .bid)
+            
             self.depthChart.reloadData()
         }
     }
@@ -68,6 +69,15 @@ class DepthChartDemoViewController: UIViewController {
 }
 
 extension DepthChartDemoViewController: CHKDepthChartDelegate {
+    
+    func depthChartOfDecimal(chart: CHDepthChartView) -> Int {
+        return 4
+    }
+    
+    func depthChartOfVolDecimal(chart: CHDepthChartView) -> Int {
+        return 6
+    }
+    
     
     
     /// 图表的总条数
@@ -153,20 +163,27 @@ extension CHKLineChartStyle {
         //文字颜色
         style.textColor = UIColor(white: 0.5, alpha: 1)
         //整个图表的内边距
-        style.padding = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
+        style.padding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         //Y轴是否内嵌式
-        style.isInnerYAxis = true
+        style.isInnerYAxis = false
         //Y轴显示在右边
         style.showYAxisLabel = .right
+        
+        /// 买单居右
+        style.bidChartOnDirection = .left
+        
         //边界宽度
-        style.borderWidth = (0, 0, 0.5, 0)
-        style.enableTap = false
+        style.borderWidth = (0, 0, 0, 0)
+        
+        style.enableTap = true
+        
+        //买方深度图层的颜色 UIColor(hex:0xAD6569) UIColor(hex:0x469777)
+        style.bidColor = (UIColor(hex:0xAD6569), UIColor(hex:0xAD6569), 1)
+        //        style.askColor = (UIColor(hex:0xAD6569), UIColor(hex:0xAD6569), 1)
         //买方深度图层的颜色
-        style.bidColor = (UIColor.ch_hex(0x599F66), UIColor.ch_hex(0xC1E1CB), 1)
-        //买方深度图层的颜色
-        style.askColor = (UIColor.ch_hex(0xB1414C), UIColor.ch_hex(0xEBD4D7), 1)
-
+        style.askColor = (UIColor(hex:0x469777), UIColor(hex:0x469777), 1)
+        //        style.bidColor = (UIColor(hex:0x469777), UIColor(hex:0x469777), 1)
+        
         return style
-    
     }()
 }
