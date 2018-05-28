@@ -38,8 +38,13 @@ class DepthChartDemoViewController: UIViewController {
             //print(dict)
             let asks = dict["asks"] as! [[Double]]
             let bids = dict["bids"] as! [[Double]]
-            self.decodeDatasToAppend(datas: bids, type: .bid)
-            self.decodeDatasToAppend(datas: asks, type: .ask)
+            if self.depthChart.style.bidChartOnDirection == .left{
+                self.decodeDatasToAppend(datas: asks.reversed(), type: .ask)
+                self.decodeDatasToAppend(datas: bids.reversed(), type: .bid)
+            }else{
+                self.decodeDatasToAppend(datas: asks, type: .ask)
+                self.decodeDatasToAppend(datas: bids, type: .bid)
+            }
             self.depthChart.reloadData()
         }
     }
@@ -68,6 +73,17 @@ class DepthChartDemoViewController: UIViewController {
 }
 
 extension DepthChartDemoViewController: CHKDepthChartDelegate {
+    
+    /// 价格的小数位
+    func depthChartOfDecimal(chart: CHDepthChartView) -> Int {
+        return 4
+    }
+    
+    /// 量的小数位
+    func depthChartOfVolDecimal(chart: CHDepthChartView) -> Int {
+        return 6
+    }
+    
     
     
     /// 图表的总条数
@@ -160,11 +176,16 @@ extension CHKLineChartStyle {
         style.showYAxisLabel = .right
         //边界宽度
         style.borderWidth = (0, 0, 0.5, 0)
-        style.enableTap = false
+        
+        style.bidChartOnDirection = .right
+        
+        style.enableTap = true
+        //买方深度图层的颜色 UIColor(hex:0xAD6569) UIColor(hex:0x469777)
+        style.bidColor = (UIColor(hex:0xAD6569), UIColor(hex:0xAD6569), 1)
+        //        style.askColor = (UIColor(hex:0xAD6569), UIColor(hex:0xAD6569), 1)
         //买方深度图层的颜色
-        style.bidColor = (UIColor.ch_hex(0x599F66), UIColor.ch_hex(0xC1E1CB), 1)
-        //买方深度图层的颜色
-        style.askColor = (UIColor.ch_hex(0xB1414C), UIColor.ch_hex(0xEBD4D7), 1)
+        style.askColor = (UIColor(hex:0x469777), UIColor(hex:0x469777), 1)
+        //        style.bidColor = (UIColor(hex:0x469777), UIColor(hex:0x469777), 1)
 
         return style
     
