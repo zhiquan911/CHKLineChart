@@ -155,6 +155,9 @@ public extension CHKLineChartStyle {
             CHChartAlgorithm.ema(30),
             CHChartAlgorithm.macd(12, 26, 9),
             CHChartAlgorithm.kdj(9, 3, 3),
+            CHChartAlgorithm.rsi(6),
+            CHChartAlgorithm.rsi(12),
+            CHChartAlgorithm.rsi(24)
         ]
         
         //分区点线样式

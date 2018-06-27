@@ -31,7 +31,7 @@ class ChartCustomViewController: UIViewController {
     
     /// 副图指标
     let assistIndex: [String] = [
-        CHSeriesKey.volume, CHSeriesKey.sam, CHSeriesKey.kdj, CHSeriesKey.macd, Hide
+        CHSeriesKey.volume, CHSeriesKey.sam, CHSeriesKey.kdj, CHSeriesKey.macd, CHSeriesKey.rsi, Hide
     ]
     
     //选择交易对

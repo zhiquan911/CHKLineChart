@@ -41,6 +41,7 @@ public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
     case boll(Int, Int)                         //布林线
     case sar(Int, CGFloat, CGFloat)             //停损转向操作点指标(判定周期，加速因子初值，加速因子最大值)
     case sam(Int)                               //SAM指标公式
+    case rsi(Int)                               //RSI指标公式
     
     /**
      获取Key值的名称
@@ -69,7 +70,8 @@ public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
             return "\(CHSeriesKey.sar)\(name)"
         case let .sam(num):
             return "\(CHSeriesKey.sam)_\(num)_\(name)"
-        
+        case let .rsi(num):
+            return "\(CHSeriesKey.rsi)_\(num)_\(name)"
         }
     }
     
@@ -100,10 +102,78 @@ public enum CHChartAlgorithm: CHChartAlgorithmProtocol {
             return self.handleSAR(num,minAF: minAF, maxAF: maxAF, datas: datas)
         case let .sam(num):
             return self.handleSAM(num, datas: datas)
+        case let .rsi(num):
+            return self.handleRSI(num, datas: datas)
         }
     }
     
     
+}
+
+
+// MARK: - 《RSI》 处理算法
+extension CHChartAlgorithm {
+
+    fileprivate func getAAndB(_ a: Int, _ b: Int, datas: [CHChartItem]) -> [CGFloat] { 
+        var tA = a
+        if tA < 0 {
+            tA = 0
+        }
+        var sum: CGFloat = 0
+        var dif: CGFloat = 0
+        var closeT: CGFloat!
+        var closeY: CGFloat!
+        var result: [CGFloat] = [0, 0]
+        for index in tA...b {
+            if (index > tA) {
+                closeT = datas[index].closePrice
+                closeY = datas[index - 1].closePrice
+                let c:CGFloat = closeT - closeY
+                if (c > 0) {
+                    sum = sum + c
+                } else {
+                    dif = sum + c
+                }
+                dif = abs(dif)
+            }
+        }
+        result[0] = sum
+        result[1] = dif
+        return result
+    }
+
+    fileprivate func handleRSI(_ num: Int, datas: [CHChartItem]) -> [CHChartItem] {
+    
+        let defaultVal: CGFloat = 100
+        let index = num - 1
+        var sum: CGFloat = 0
+        var dif: CGFloat = 0
+        var rsi: CGFloat = 0
+        
+        for (i, data) in datas.enumerated() {
+            if (num == 0) {
+                sum = 0
+                dif = 0
+            } else {
+                let k = i - num + 1
+                let wrs:[CGFloat] = self.getAAndB(k, i, datas: datas)
+                sum = wrs[0]
+                dif = wrs[1]
+            }
+            if (dif != 0) {
+                let h = sum + dif
+                rsi = sum / h * 100
+            } else {
+                rsi = 100
+            }
+            
+            if (i < index) {
+                rsi = defaultVal
+            }
+            data.extVal["\(self.key(CHSeriesKey.timeline))"] = rsi
+        }
+        return datas
+    }
 }
 
 // MARK: - 《时分价格》 处理算法

@@ -4,13 +4,13 @@
 ![s2.png](/screenshots/s2.png)![s3.png](/screenshots/s3.png)
 ![s4.png](/screenshots/s4.png)![s5.png](/screenshots/s5.png)
 
-> 纯Swift4.0代码编写的K线图表组件，支持：MA,EMA,KDJ,MACD等技术指标显示。集成使用简单，二次开发扩展强大。
+> 纯Swift4.0代码编写的K线图表组件，支持：MA,EMA,KDJ,MACD,RSI等技术指标显示。集成使用简单，二次开发扩展强大。
 
 ## Features
 
 - 完美支持Swift4.0编译。
 - 线图丰富，蜡烛图，时分图，柱状图，提供画线扩展模型。
-- 目前支持MA,EMA,BOLL,SAR,KDJ,MACD等技术指标，提供指标算法扩展模型。
+- 目前支持MA,EMA,BOLL,SAR,KDJ,MACD,RSI等技术指标，提供指标算法扩展模型。
 - 支持使用代码创建视图或使用xib/storyboard创建视图。
 - 样式提供更多配置，满足更多商业定制。
 - 底层采用CALayer+UIBezierPath绘制图表，大大提高性能。
