@@ -22,6 +22,7 @@ public struct CHSeriesKey {
     public static let boll = "BOLL"
     public static let sar = "SAR"
     public static let sam = "SAM"
+    public static let rsi = "RSI"
 }
 
 
@@ -191,6 +192,21 @@ extension CHSeries {
         for (i, n) in num.enumerated() {
             
             let ma = CHChartModel.getLine(colors[i], title: "\(key)\(n)", key: "\(key)_\(n)_\(valueKey)")
+            ma.section = section
+            series.chartModels.append(ma)
+        }
+        return series
+    }
+    
+        
+    /**
+     返回一个移动平均线系列样式
+     */
+    public class func getRSI(num: [Int], colors: [UIColor], section: CHSection) -> CHSeries {
+        let series = CHSeries()
+        series.key = CHSeriesKey.rsi
+        for (i, n) in num.enumerated() {
+            let ma = CHChartModel.getLine(colors[i], title: "\(series.key)\(n)", key: "\(series.key)_\(n)_\(CHSeriesKey.timeline)")
             ma.section = section
             series.chartModels.append(ma)
         }

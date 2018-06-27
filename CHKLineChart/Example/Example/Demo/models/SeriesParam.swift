@@ -83,6 +83,11 @@ class SeriesParam: NSObject, Codable {
         case CHSeriesKey.sam:
             let a = CHChartAlgorithm.sam(Int(self.params[0].value))
             algorithms.append(a)
+        case CHSeriesKey.rsi:
+            for p in self.params {
+                let a = CHChartAlgorithm.rsi(Int(p.value))
+                algorithms.append(a)
+            }
         default:
             let a = CHChartAlgorithm.none
             algorithms.append(a)
@@ -223,7 +228,20 @@ class SeriesParam: NSObject, Codable {
                 assistSection.series.append(volWithSAMSeries)
             }
             
+        case CHSeriesKey.rsi:
+        
+            var maColor = [UIColor]()
+            for i in 0..<self.params.count {
+                maColor.append(lineColors[i])
+            }
             
+            for assistSection in assistSections {
+                let series = CHSeries.getRSI(
+                num: self.params.map {Int($0.value)},
+                colors: maColor,
+                section: assistSection)
+                assistSection.series.append(series)
+            }
             
         default:break
         }
@@ -373,7 +391,15 @@ extension SeriesParamList {
                                order: 6,
                                hidden: false)
         
-        
+        let rsi = SeriesParam(seriesKey: "RSI",
+                     name: "RSI",
+                     params: [
+                        SeriesParamControl(value: 6, note: "相对强弱指数", min: 5, max: 120, step: 1),
+                        SeriesParamControl(value: 12, note: "相对强弱指数", min: 5, max: 120, step: 1),
+                        SeriesParamControl(value: 24, note: "相对强弱指数", min: 5, max: 120, step: 1),
+                        ],
+                     order: 7,
+                     hidden: false)
         return [
             ma,
             ema,
@@ -382,6 +408,7 @@ extension SeriesParamList {
             sam,
             kdj,
             macd,
+            rsi
         ]
     }
     
