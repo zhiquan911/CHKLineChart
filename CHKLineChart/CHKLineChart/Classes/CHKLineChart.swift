@@ -447,7 +447,7 @@ open class CHKLineChartView: UIView {
     /// 取显示X轴坐标的分区
     ///
     /// - Returns:
-    func getSecionWhichShowXAxis() -> CHSection {
+    func getSecionWhichShowXAxis() -> CHSection? {
         let visiableSection = self.sections.filter { !$0.hidden }
         var showSection: CHSection?
         for (i, section) in visiableSection.enumerated() {
@@ -461,7 +461,7 @@ open class CHKLineChartView: UIView {
             }
         }
         
-        return showSection!
+        return showSection
     }
     
     /**
@@ -496,7 +496,9 @@ open class CHKLineChartView: UIView {
             return
         }
         
-        let showXAxisSection = self.getSecionWhichShowXAxis()
+        guard let showXAxisSection = self.getSecionWhichShowXAxis() else {
+            return
+        }
         
         //重置文字颜色和字体
         self.selectedYAxisLabel?.font = self.labelFont
@@ -736,9 +738,10 @@ extension CHKLineChartView {
                 
             }
             
-            let showXAxisSection = self.getSecionWhichShowXAxis()
-            //显示在分区下面绘制X轴坐标
-            self.drawXAxisLabel(showXAxisSection, xAxisToDraw: xAxisToDraw)
+            if let showXAxisSection = self.getSecionWhichShowXAxis() {
+                //显示在分区下面绘制X轴坐标
+                self.drawXAxisLabel(showXAxisSection, xAxisToDraw: xAxisToDraw)
+            }
             
             //重新显示点击选中的坐标
             //self.setSelectedIndexByPoint(self.selectedPoint)
@@ -813,8 +816,8 @@ extension CHKLineChartView {
         //重置图表刷新滚动默认不处理
         self.scrollToPosition = .none
         
-        //选择最后一个元素选中
-        if selectedIndex == -1 {
+        //超出范围，选择最后一个元素选中
+        if self.selectedIndex < 0 || self.selectedIndex >= self.rangeTo {
             self.selectedIndex = self.rangeTo - 1
         }
         
@@ -1723,6 +1726,8 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         guard self.enablePinch else {
             return
         }
+        
+        self.showSelection = false
         
         //获取可见的其中一个分区
         let visiableSection = self.sections.filter { !$0.hidden }

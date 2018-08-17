@@ -830,7 +830,7 @@ public extension CHChartModel {
 extension CHChartModel {
     
     //生成一个点线样式
-    class func getLine(_ color: UIColor, title: String, key: String) -> CHLineModel {
+    public class func getLine(_ color: UIColor, title: String, key: String) -> CHLineModel {
         let model = CHLineModel(upStyle: (color, true), downStyle: (color, true),
                                 titleColor: color)
         model.title = title
@@ -839,7 +839,7 @@ extension CHChartModel {
     }
     
     //生成一个蜡烛样式
-    class func getCandle(upStyle: (color: UIColor, isSolid: Bool),
+    public class func getCandle(upStyle: (color: UIColor, isSolid: Bool),
                          downStyle: (color: UIColor, isSolid: Bool),
                          titleColor: UIColor,
                          key: String = CHSeriesKey.candle) -> CHCandleModel {
@@ -850,7 +850,7 @@ extension CHChartModel {
     }
     
     //生成一个交易量样式
-    class func getVolume(upStyle: (color: UIColor, isSolid: Bool),
+    public class func getVolume(upStyle: (color: UIColor, isSolid: Bool),
                          downStyle: (color: UIColor, isSolid: Bool),
                          key: String = CHSeriesKey.volume) -> CHColumnModel {
         let model = CHColumnModel(upStyle: upStyle, downStyle: downStyle,
@@ -861,7 +861,7 @@ extension CHChartModel {
     }
     
     //生成一个柱状样式
-    class func getBar(upStyle: (color: UIColor, isSolid: Bool),
+    public class func getBar(upStyle: (color: UIColor, isSolid: Bool),
                       downStyle: (color: UIColor, isSolid: Bool),
                       titleColor: UIColor, title: String, key: String) -> CHBarModel {
         let model = CHBarModel(upStyle: upStyle, downStyle: downStyle,
@@ -872,7 +872,7 @@ extension CHChartModel {
     }
     
     //生成一个圆点样式
-    class func getRound(upStyle: (color: UIColor, isSolid: Bool),
+    public class func getRound(upStyle: (color: UIColor, isSolid: Bool),
                         downStyle: (color: UIColor, isSolid: Bool),
                         titleColor: UIColor, title: String,
                         plotPaddingExt: CGFloat,
