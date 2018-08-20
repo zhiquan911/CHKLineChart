@@ -12,7 +12,7 @@ import CHKLineChartKit
 @objc
 class LineChartView: UIView {
     
-    var klineData = [KlineInfo](){
+    @objc var klineData = [KlineInfo](){
         didSet {
             self.chartView.reloadData(toPosition: .end)
         }
