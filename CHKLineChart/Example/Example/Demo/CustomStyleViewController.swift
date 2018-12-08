@@ -38,7 +38,7 @@ class CustomStyleViewController: UIViewController {
         self.getDataByFile()        //读取文件
         
         
-        settingVC = self.storyboard?.instantiateViewController(withIdentifier: "StyleSettingViewController") as! StyleSettingViewController
+        settingVC = self.storyboard?.instantiateViewController(withIdentifier: "StyleSettingViewController") as? StyleSettingViewController
         settingVC.chartView = self.chartView
     }
 
