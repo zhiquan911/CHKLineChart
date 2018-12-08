@@ -109,7 +109,7 @@ extension SelectionPopView: UITableViewDataSource, UITableViewDelegate {
         let SelectionPopViewCell = "SelectionPopViewCell"
         var cell = tableView.dequeueReusableCell(withIdentifier: SelectionPopViewCell)
         if cell == nil {
-            cell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: SelectionPopViewCell)
+            cell = UITableViewCell(style: UITableViewCell.CellStyle.default, reuseIdentifier: SelectionPopViewCell)
         }
         
         let section = self.sections[indexPath.section]

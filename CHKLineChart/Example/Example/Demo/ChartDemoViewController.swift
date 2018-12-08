@@ -57,7 +57,7 @@ class ChartDemoViewController: UIViewController {
         self.contentView.addConstraints(
             NSLayoutConstraint.constraints(
                 withVisualFormat: "H:|-0-[chartView]-0-|",
-                options: NSLayoutFormatOptions(),
+                options: NSLayoutConstraint.FormatOptions(),
                 metrics: nil,
                 views:["chartView": self.chartView]))
         
@@ -65,7 +65,7 @@ class ChartDemoViewController: UIViewController {
         self.contentView.addConstraints(
             NSLayoutConstraint.constraints(
                 withVisualFormat: "V:|-0-[chartView]-0-|",
-                options: NSLayoutFormatOptions(),
+                options: NSLayoutConstraint.FormatOptions(),
                 metrics: nil,
                 views:["chartView": self.chartView]))
     }

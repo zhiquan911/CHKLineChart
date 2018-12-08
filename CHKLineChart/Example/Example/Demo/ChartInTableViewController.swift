@@ -45,7 +45,7 @@ class ChartInTableViewController: UIViewController {
                     self?.klineDatas[symbol] = chartsData
                     let row = self?.exPairs.index(of: symbol)
                     self?.tableView.reloadRows(at: [IndexPath(row: row!, section: 0)],
-                                              with: UITableViewRowAnimation.automatic)
+                                              with: UITableView.RowAnimation.automatic)
                     
                 }
         }

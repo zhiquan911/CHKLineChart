@@ -57,11 +57,11 @@ extension String {
         var textSize:CGSize!
         let newStr = NSString(string: self)
         if size.equalTo(CGSize.zero) {
-            let attributes = [NSAttributedStringKey.font: font]
+            let attributes = [NSAttributedString.Key.font: font]
             textSize = newStr.size(withAttributes: attributes)
         } else {
             let option = NSStringDrawingOptions.usesLineFragmentOrigin
-            let attributes = [NSAttributedStringKey.font: font]
+            let attributes = [NSAttributedString.Key.font: font]
             let stringRect = newStr.boundingRect(with: size, options: option, attributes: attributes, context: nil)
             textSize = stringRect.size
         }

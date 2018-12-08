@@ -175,7 +175,7 @@ class ChartCustomViewController: UIViewController {
     }()
     
     lazy var loadingView: UIActivityIndicatorView = {
-        let v = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        let v = UIActivityIndicatorView(style: .whiteLarge)
         return v
     }()
     
@@ -489,7 +489,7 @@ extension ChartCustomViewController: CHKLineChartDelegate {
         for (title, color) in attributes {
             titleString.append(NSAttributedString(string: title))
             let range = NSMakeRange(start, title.ch_length)
-            let colorAttribute = [NSAttributedStringKey.foregroundColor: color]
+            let colorAttribute = [NSAttributedString.Key.foregroundColor: color]
             titleString.addAttributes(colorAttribute, range: range)
             start += title.ch_length
         }
