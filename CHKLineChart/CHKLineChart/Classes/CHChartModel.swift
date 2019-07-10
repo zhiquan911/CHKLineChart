@@ -134,8 +134,8 @@ open class CHLineModel: CHChartModel {
         modelLayer.strokeColor = self.upStyle.color.cgColor
         modelLayer.fillColor = UIColor.clear.cgColor
         modelLayer.lineWidth = self.lineWidth
-        modelLayer.lineCap = kCALineCapRound
-        modelLayer.lineJoin = kCALineJoinBevel
+        modelLayer.lineCap = CAShapeLayerLineCap.round
+        modelLayer.lineJoin = CAShapeLayerLineJoin.bevel
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
@@ -570,8 +570,8 @@ open class CHRoundModel: CHChartModel {
         modelLayer.strokeColor = self.upStyle.color.cgColor
         modelLayer.fillColor = UIColor.clear.cgColor
         modelLayer.lineWidth = self.lineWidth
-        modelLayer.lineCap = kCALineCapRound
-        modelLayer.lineJoin = kCALineJoinBevel
+        modelLayer.lineCap = CAShapeLayerLineCap.round
+        modelLayer.lineJoin = CAShapeLayerLineJoin.bevel
         
         //每个点的间隔宽度
         let plotWidth = (self.section.frame.size.width - self.section.padding.left - self.section.padding.right) / CGFloat(endIndex - startIndex)
@@ -669,7 +669,7 @@ public extension CHChartModel {
     /**
      绘画最大值
      */
-    public func drawGuideValue(value: String, section: CHSection, point: CGPoint, trend: CHChartItemTrend) -> CAShapeLayer {
+    func drawGuideValue(value: String, section: CHSection, point: CGPoint, trend: CHChartItemTrend) -> CAShapeLayer {
         
         let guideValueLayer = CAShapeLayer()
         
