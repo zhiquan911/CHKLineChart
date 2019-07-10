@@ -25,7 +25,7 @@ public extension String {
         let boundingBox = self.boundingRect(
             with: constraintRect,
             options: NSStringDrawingOptions.usesLineFragmentOrigin,
-            attributes: [NSAttributedStringKey.font: font],
+            attributes: [NSAttributedString.Key.font: font],
             context: nil)
         return boundingBox.size
     }
@@ -107,7 +107,7 @@ public extension Array where Element: Equatable {
     }
     
     mutating func ch_removeObject(_ object: Element) {
-        if let index = self.index(of: object) {
+        if let index = self.firstIndex(of: object) {
             self.remove(at: index)
         }
     }

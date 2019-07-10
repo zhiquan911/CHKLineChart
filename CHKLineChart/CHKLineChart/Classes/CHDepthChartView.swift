@@ -166,8 +166,8 @@ open class CHKDepthChartItem: NSObject {
 open class CHDepthChartView: UIView {
     
     /// MARK: - 常量
-    open let kYAxisLabelWidth: CGFloat = 46        //默认宽度
-    open let kXAxisHegiht: CGFloat = 16        //默认X坐标的高度
+    public let kYAxisLabelWidth: CGFloat = 46        //默认宽度
+    public let kXAxisHegiht: CGFloat = 16        //默认X坐标的高度
     
     /// MARK: - 成员变量
     open var bidColor: (stroke: UIColor, fill: UIColor, lineWidth: CGFloat) = (.green, .green, 1)
@@ -846,16 +846,16 @@ extension CHDepthChartView {
     /// - Parameter yAxisToDraw:
     fileprivate func drawYAxisLabel(_ yAxisToDraw: [(CGRect, String)]) {
         
-        var alignmentMode = kCAAlignmentLeft
+        var alignmentMode = CATextLayerAlignmentMode.left
         //分区中各个y轴虚线和y轴的label
         //控制y轴的label在左还是右显示
         switch self.showYAxisLabel {
         case .left:
-            alignmentMode = self.isInnerYAxis ? kCAAlignmentLeft : kCAAlignmentRight
+            alignmentMode = self.isInnerYAxis ? CATextLayerAlignmentMode.left : CATextLayerAlignmentMode.right
         case .right:
-            alignmentMode = self.isInnerYAxis ? kCAAlignmentRight : kCAAlignmentLeft
+            alignmentMode = self.isInnerYAxis ? CATextLayerAlignmentMode.right : CATextLayerAlignmentMode.left
         case .none:
-            alignmentMode = kCAAlignmentLeft
+            alignmentMode = CATextLayerAlignmentMode.left
         }
         
         for (yLabelRect, strValue) in yAxisToDraw {
@@ -976,15 +976,15 @@ extension CHDepthChartView {
         }
         
         let xAxis = CHShapeLayer()
-        var alignment = kCAAlignmentCenter
+        var alignment = CATextLayerAlignmentMode.center
         
         let startY = self.bounds.maxY //需要显示x坐标标签名字的分区，再最下方显示
         //绘制x坐标标签，x的位置通过画辅助线时计算得出
         for (index,(var barLabelRect, xLabel)) in xAxisToDraw.enumerated() {
             if index == 0 || index == 2{
-                alignment = kCAAlignmentLeft
+                alignment = CATextLayerAlignmentMode.left
             }else if index == 3 || index == 1{
-                alignment = kCAAlignmentRight
+                alignment = CATextLayerAlignmentMode.right
             }
             barLabelRect.origin.y = startY
             //绘制文本
@@ -1108,7 +1108,7 @@ extension CHDepthChartView {
                 typelayer.string = "卖"
             }
             typelayer.frame = textRect
-            typelayer.alignmentMode = kCAAlignmentLeft
+            typelayer.alignmentMode = CATextLayerAlignmentMode.left
             typelayer.fontSize = UIFont.systemFont(ofSize: 10).pointSize
             typelayer.foregroundColor =  UIColor.white.cgColor
             typelayer.backgroundColor = UIColor.clear.cgColor
@@ -1119,7 +1119,7 @@ extension CHDepthChartView {
             pricelayer.string = item.value.ch_toString(maxF:self.decimal)//String(Double(iteme.value))
             textRect = CGRect(x: textRect.origin.x, y: textRect.origin.y + textHeight, width: width - padding, height: textHeight)
             pricelayer.frame = textRect
-            pricelayer.alignmentMode = kCAAlignmentLeft
+            pricelayer.alignmentMode = CATextLayerAlignmentMode.left
             pricelayer.fontSize = UIFont.systemFont(ofSize: 10).pointSize
             pricelayer.foregroundColor =  UIColor.white.cgColor
             pricelayer.backgroundColor = UIColor.clear.cgColor
@@ -1138,7 +1138,7 @@ extension CHDepthChartView {
             vollayer.string = amountStr
             textRect = CGRect(x: textRect.origin.x, y: textRect.origin.y + textHeight, width: width - padding, height: textHeight)
             vollayer.frame = textRect
-            vollayer.alignmentMode = kCAAlignmentLeft
+            vollayer.alignmentMode = CATextLayerAlignmentMode.left
             vollayer.fontSize = UIFont.systemFont(ofSize: 10).pointSize
             vollayer.foregroundColor =  UIColor.white.cgColor
             vollayer.backgroundColor = UIColor.clear.cgColor
@@ -1336,8 +1336,8 @@ extension CHDepthChartView {
         lineLayer.strokeColor = strokeColor.cgColor
         lineLayer.fillColor = UIColor.clear.cgColor
         lineLayer.lineWidth = lineWidth
-        lineLayer.lineCap = kCALineCapRound
-        lineLayer.lineJoin = kCALineJoinBevel
+        lineLayer.lineCap = CAShapeLayerLineCap.round
+        lineLayer.lineJoin = CAShapeLayerLineJoin.bevel
         depthChart.addSublayer(lineLayer)
         
         // 【二】绘制填充区域
