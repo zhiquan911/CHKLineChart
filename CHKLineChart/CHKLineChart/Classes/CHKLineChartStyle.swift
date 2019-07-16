@@ -38,7 +38,7 @@ open class CHKLineChartStyle {
     open var backgroundColor: UIColor = UIColor.white
     
     /// 显示边线上左下有
-    open var borderWidth: (top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) = (0.5, 0.5, 0.5, 0.5)
+    open var ch_borderWidth: (top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) = (0.5, 0.5, 0.5, 0.5)
     
     /**
      边距

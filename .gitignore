@@ -44,8 +44,9 @@ playground.xcworkspace
 *.DS_Store
 .idea/
 .vscode/
-.NewKLineChart/
-
+NewKLineDemo/
+CHKlineDemo/
+*/xcuserdata/
 # CocoaPods
 #
 # We recommend against adding the Pods directory to your .gitignore. However
