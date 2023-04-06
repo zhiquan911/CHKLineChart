@@ -158,8 +158,8 @@ open class CHKLineChartView: UIView {
     let kMinRange = 13       //最小缩放范围
     let kMaxRange = 133     //最大缩放范围
     let kPerInterval = 4    //缩放的每段间隔
-    open let kYAxisLabelWidth: CGFloat = 46        //默认宽度
-    open let kXAxisHegiht: CGFloat = 16        //默认X坐标的高度
+    public let kYAxisLabelWidth: CGFloat = 46        //默认宽度
+    public let kXAxisHegiht: CGFloat = 16        //默认X坐标的高度
     
     /// MARK: - 成员变量
     @IBInspectable open var upColor: UIColor = UIColor.green     //升的颜色
@@ -214,15 +214,15 @@ open class CHKLineChartView: UIView {
     /// 是否显示所有内容
     open var isShowAll: Bool = false
     
-    /// 显示边线上左下有
-    open var borderWidth: (top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) = (0.25, 0.25, 0.25, 0.25)
+    /// 显示边线上左下右
+    open var ch_borderWidth: (top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) = (0.25, 0.25, 0.25, 0.25)
     
     var lineWidth: CGFloat = 0.5
     var plotCount: Int = 0
     var rangeFrom: Int = 0                          //可见区域的开始索引位
     var rangeTo: Int = 0                            //可见区域的结束索引位
     open var range: Int = 77                             //显示在可见区域的个数
-    var borderColor: UIColor = UIColor.gray
+    var ch_borderColor: UIColor = UIColor.gray
     open var labelSize = CGSize(width: 40, height: 16)
     
     var datas: [CHChartItem] = [CHChartItem]()      //数据源
@@ -280,7 +280,7 @@ open class CHKLineChartView: UIView {
             self.showXAxisOnSection = self.style.showXAxisOnSection
             self.isShowAll = self.style.isShowAll
             self.showXAxisLabel = self.style.showXAxisLabel
-            self.borderWidth = self.style.borderWidth
+            self.ch_borderWidth = self.style.ch_borderWidth
         }
         
     }
@@ -600,11 +600,11 @@ open class CHKLineChartView: UIView {
                 
                 self.showSelection = true
                 
-                self.bringSubview(toFront: self.verticalLineView!)
-                self.bringSubview(toFront: self.horizontalLineView!)
-                self.bringSubview(toFront: self.selectedXAxisLabel!)
-                self.bringSubview(toFront: self.selectedYAxisLabel!)
-                self.bringSubview(toFront: self.sightView!)
+                self.bringSubviewToFront(self.verticalLineView!)
+                self.bringSubviewToFront(self.horizontalLineView!)
+                self.bringSubviewToFront(self.selectedXAxisLabel!)
+                self.bringSubviewToFront(self.selectedYAxisLabel!)
+                self.bringSubviewToFront(self.sightView!)
                 
                 //设置选中点
                 self.setSelectedIndexByIndex(i)
@@ -1026,7 +1026,7 @@ extension CHKLineChartView {
             let xLabelText = CHTextLayer()
             xLabelText.frame = barLabelRect
             xLabelText.string = xLabel
-            xLabelText.alignmentMode = kCAAlignmentCenter
+            xLabelText.alignmentMode = CATextLayerAlignmentMode.center
             xLabelText.fontSize = self.labelFont.pointSize
             xLabelText.foregroundColor =  self.textColor.cgColor
             xLabelText.backgroundColor = UIColor.clear.cgColor
@@ -1057,32 +1057,32 @@ extension CHKLineChartView {
         let borderPath = UIBezierPath()
         
         //画低部边线
-        if self.borderWidth.bottom > 0 {
+        if self.ch_borderWidth.bottom > 0 {
             
-            borderPath.append(UIBezierPath(rect: CGRect(x: section.frame.origin.x + section.padding.left, y: section.frame.size.height + section.frame.origin.y, width: section.frame.size.width - section.padding.left, height: self.borderWidth.bottom)))
+            borderPath.append(UIBezierPath(rect: CGRect(x: section.frame.origin.x + section.padding.left, y: section.frame.size.height + section.frame.origin.y, width: section.frame.size.width - section.padding.left, height: self.ch_borderWidth.bottom)))
         
         }
         
         //画顶部边线
-        if self.borderWidth.top > 0 {
+        if self.ch_borderWidth.top > 0 {
             
-            borderPath.append(UIBezierPath(rect: CGRect(x: section.frame.origin.x + section.padding.left, y: section.frame.origin.y, width: section.frame.size.width - section.padding.left, height: self.borderWidth.top)))
+            borderPath.append(UIBezierPath(rect: CGRect(x: section.frame.origin.x + section.padding.left, y: section.frame.origin.y, width: section.frame.size.width - section.padding.left, height: self.ch_borderWidth.top)))
             
         }
         
         
         //画左边线
-        if self.borderWidth.left > 0 {
+        if self.ch_borderWidth.left > 0 {
             
-            borderPath.append(UIBezierPath(rect: CGRect(x: section.frame.origin.x + section.padding.left, y: section.frame.origin.y, width: self.borderWidth.left, height: section.frame.size.height)))
+            borderPath.append(UIBezierPath(rect: CGRect(x: section.frame.origin.x + section.padding.left, y: section.frame.origin.y, width: self.ch_borderWidth.left, height: section.frame.size.height)))
         
         }
         
         
         //画右边线
-        if self.borderWidth.right > 0 {
+        if self.ch_borderWidth.right > 0 {
             
-            borderPath.append(UIBezierPath(rect: CGRect(x: section.frame.origin.x + section.frame.size.width - section.padding.right, y: section.frame.origin.y, width: self.borderWidth.left, height: section.frame.size.height)))
+            borderPath.append(UIBezierPath(rect: CGRect(x: section.frame.origin.x + section.frame.size.width - section.padding.right, y: section.frame.origin.y, width: self.ch_borderWidth.left, height: section.frame.size.height)))
             
         }
         
@@ -1242,16 +1242,16 @@ extension CHKLineChartView {
     /// - Parameter yAxisToDraw:
     fileprivate func drawYAxisLabel(_ yAxisToDraw: [(CGRect, String)]) {
         
-        var alignmentMode = kCAAlignmentLeft
+        var alignmentMode = CATextLayerAlignmentMode.left
         //分区中各个y轴虚线和y轴的label
         //控制y轴的label在左还是右显示
         switch self.showYAxisLabel {
         case .left:
-            alignmentMode = self.isInnerYAxis ? kCAAlignmentLeft : kCAAlignmentRight
+            alignmentMode = self.isInnerYAxis ? CATextLayerAlignmentMode.left : CATextLayerAlignmentMode.right
         case .right:
-            alignmentMode = self.isInnerYAxis ? kCAAlignmentRight : kCAAlignmentLeft
+            alignmentMode = self.isInnerYAxis ? CATextLayerAlignmentMode.right : CATextLayerAlignmentMode.left
         case .none:
-            alignmentMode = kCAAlignmentLeft
+            alignmentMode = CATextLayerAlignmentMode.left
         }
         
         for (yLabelRect, strValue) in yAxisToDraw {
@@ -1636,12 +1636,12 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
         case .changed:
             
             //计算移动距离的绝对值，距离满足超过线条宽度就进行图表平移刷新
-            let distance = fabs(translation.x)
+            let distance = abs(translation.x)
 //            print("translation.x = \(translation.x)")
 //            print("distance = \(distance)")
             if distance > plotWidth {
                 let isRight = translation.x > 0 ? true : false
-                let interval = lroundf(fabs(Float(distance / plotWidth)))
+                let interval = lroundf(abs(Float(distance / plotWidth)))
                 self.moveChart(by: interval, direction: isRight)
                 //重新计算起始位
                 sender.setTranslation(CGPoint(x: 0, y: 0), in: self)
@@ -1668,11 +1668,11 @@ extension CHKLineChartView: UIGestureRecognizerDelegate {
                 let itemX = self?.dynamicItem.center.x ?? 0
                 let startX = self?.decelerationStartX ?? 0
                 //计算移动距离的绝对值，距离满足超过线条宽度就进行图表平移刷新
-                let distance = fabs(itemX - startX)
+                let distance = abs(itemX - startX)
                 //            print("distance = \(distance)")
                 if distance > plotWidth {
                     let isRight = itemX > 0 ? true : false
-                    let interval = lroundf(fabs(Float(distance / plotWidth)))
+                    let interval = lroundf(abs(Float(distance / plotWidth)))
                     self?.moveChart(by: interval, direction: isRight)
                     //重新计算起始位
                     self?.decelerationStartX = itemX
