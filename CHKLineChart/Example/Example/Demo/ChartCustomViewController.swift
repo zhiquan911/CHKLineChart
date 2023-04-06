@@ -16,7 +16,7 @@ class ChartCustomViewController: UIViewController {
     
     //选择时间
     let times: [String] = [
-        "5min", "15min", "1hour", "6hour","1day",
+        "5m", "15m", "1H", "6H","1D",
     ]
 
     /// 主图线段
@@ -219,7 +219,7 @@ extension ChartCustomViewController {
         ChartDatasFetcher.shared.getRemoteChartData(
             symbol: symbol,
             timeType: self.times[self.selectedTime],
-            size: 1000) {
+            size: 300) {
                 [weak self](flag, chartsData) in
                 if flag && chartsData.count > 0 {
                     self?.klineDatas = chartsData

@@ -18,7 +18,7 @@ class ChartImageViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.fetchChartDatas(symbol: "BTC-USD", type: "15min")
+        self.fetchChartDatas(symbol: "BTC-USD", type: "15m")
     }
 
     override func didReceiveMemoryWarning() {

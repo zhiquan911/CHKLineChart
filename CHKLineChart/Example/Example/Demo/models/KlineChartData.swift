@@ -29,8 +29,8 @@ class KlineChartData: NSObject, Codable {
         self.init()
         self.time = json[0].intValue
         self.highPrice = json[2].doubleValue
-        self.lowPrice = json[1].doubleValue
-        self.openPrice = json[3].doubleValue
+        self.lowPrice = json[3].doubleValue
+        self.openPrice = json[1].doubleValue
         self.closePrice = json[4].doubleValue
         self.vol = json[5].doubleValue
         

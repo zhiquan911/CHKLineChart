@@ -15,13 +15,13 @@ class ChartInTableViewController: UIViewController {
     
     //选择时间
     let times: [String] = [
-        "5min", "15min", "1hour", "1day",
+        "5m", "15m", "1H", "1D",
         ]
     
     //选择交易对
     let exPairs: [String] = [
         "BTC-USD", "ETH-USD", "LTC-USD",
-        "LTC-BTC", "ETH-BTC", "BCH-BTC",
+        "DOGE-USD", "FIL-USD", "SOL-USD",
         ]
     
     var klineDatas = [String : [KlineChartData]]()

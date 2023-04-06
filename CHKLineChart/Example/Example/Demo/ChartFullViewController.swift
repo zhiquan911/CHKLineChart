@@ -20,7 +20,7 @@ class ChartFullViewController: UIViewController {
         super.viewDidLoad()
         self.chartView.delegate = self
         self.chartView.style = .simpleLineDark
-        self.fetchChartDatas(symbol: "BTC-USD", type: "15min")
+        self.fetchChartDatas(symbol: "BTC-USD", type: "15m")
     }
     
     override func didReceiveMemoryWarning() {
