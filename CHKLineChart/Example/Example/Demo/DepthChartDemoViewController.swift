@@ -175,7 +175,7 @@ extension CHKLineChartStyle {
         //Y轴显示在右边
         style.showYAxisLabel = .right
         //边界宽度
-        style.borderWidth = (0, 0, 0.5, 0)
+        style.ch_borderWidth = (0, 0, 0.5, 0)
         
         style.bidChartOnDirection = .right
         

@@ -89,7 +89,7 @@ extension CHKLineChartStyle {
         //是否显示X轴
         style.showXAxisLabel = true
         //边界宽度
-        style.borderWidth = (0.5, 0, 0.5, 0)
+        style.ch_borderWidth = (0.5, 0, 0.5, 0)
         
         //是否把所有点都显示
         style.isShowAll = true
