@@ -329,34 +329,7 @@ public extension CHKLineChartStyle {
 
 ## Contribution（贡献更多指标）
 
-本人现在很少专注K线图表的开发工作，大部分时间投入到区块链的研究与开发工作，如果你感兴趣，可以[联系我](#Author)。
-
 如果你对本K线指标的开发感兴趣，请fork项目，给大家Pull requests更多技术指标。
-
-## Donations
-
-如果大家觉得非常好用的话，不忘打赏一下小弟，给小弟一些鼓励。
-
-> 支付宝：
-
-![支付宝](/screenshots/donations/alipay.jpeg)
-
-> 微信支付：
-
-![微信支付](/screenshots/donations/wepay.png)
-
-> 接收以下数字货币：
-
-- **BTC**:  16XyEUNgwF3KX6UyMEWtpQDWWXkmqgH7V8
-- **ETH**:  0x4fffdaa5dbba850ae41aa6d031a6dffd91614608
-- **LTC**:  LLevkg1aUiECvY6Uda1bvDbqa38zykjLyR
-
-## Author
-<span id="Author"><span>
-
-- Author: Chance
-- Email: zhiquan911@qq.com
-- QQ Group：522031421
 
 ## License
 
